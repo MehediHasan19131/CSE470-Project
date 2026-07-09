@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SmartCare">
+  <defs>
+    <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f7c90"/>
+      <stop offset="100%" stop-color="#23836f"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#icon-grad)"/>
+  <path d="M32 18c-3.3 0-6 2.7-6 6 0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6z" fill="#ffffff" opacity="0.95"/>
+  <rect x="28" y="28" width="8" height="18" rx="2" fill="#ffffff"/>
+  <rect x="21" y="35" width="22" height="7" rx="2" fill="#ffffff"/>
+  <path d="M8 46h6l3-6 3 10 3-7 3 3h6" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+</svg>

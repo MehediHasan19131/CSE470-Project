@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Admin Dashboard')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Admin dashboard', 'User authentication and platform settings', 'bi-shield-check')}"></div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-people"></i></div>
+            <span>Total Users</span>
+            <strong th:text="${data.metrics.totalUsers}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-person-check"></i></div>
+            <span>Active Users</span>
+            <strong th:text="${data.metrics.activeUsers}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-shield-lock"></i></div>
+            <span>Admins</span>
+            <strong th:text="${data.metrics.adminUsers}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-heart-pulse"></i></div>
+            <span>Patients</span>
+            <strong th:text="${data.metrics.patientUsers}">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="panel h-100">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Authentication</p>
+                <h2 class="h6 fw-bold mb-0">User Management</h2>
+              </div>
+            </div>
+            <p class="text-secondary small mb-3">Manage registered users and assign roles.</p>
+            <div class="action-grid">
+              <a class="action-tile" href="/api/admin/users"><i class="bi bi-people"></i><span>View Users API</span></a>
+              <a class="action-tile" href="/api/me"><i class="bi bi-person-badge"></i><span>Current Session</span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="panel h-100">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Settings</p>
+                <h2 class="h6 fw-bold mb-0">Admin Settings</h2>
+              </div>
+            </div>
+            <p class="text-secondary small mb-3">Configure platform settings for Sprint 1.</p>
+            <div class="action-grid">
+              <a class="action-tile" href="/api/admin/settings"><i class="bi bi-gear"></i><span>View Settings API</span></a>
+              <a class="action-tile" href="/api/dashboard"><i class="bi bi-speedometer2"></i><span>Admin Dashboard API</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
