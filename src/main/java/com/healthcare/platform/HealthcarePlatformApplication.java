@@ -14,6 +14,7 @@ import com.healthcare.platform.repository.ProfileRepository;
 import com.healthcare.platform.repository.RatingRepository;
 import com.healthcare.platform.repository.UserRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -47,13 +48,48 @@ public class HealthcarePlatformApplication {
             User diagnostic = createUser(users, passwordEncoder, "Prime Diagnostic Centre", "diagnostic@health.test", UserRole.DIAGNOSTIC, "+8801700000005");
             User ambulance = createUser(users, passwordEncoder, "Rapid Ambulance", "ambulance@health.test", UserRole.AMBULANCE, "+8801700000006");
 
+            // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami): a few more
+            // doctors across specialties and patients so /doctors and /doctors/search
+            // have real data to demo, on top of the single doctor/patient above.
+            User doctor2 = createUser(users, passwordEncoder, "Dr. Ayesha Rahman", "ayesha.rahman@health.test", UserRole.DOCTOR, "+8801700000010");
+            User doctor3 = createUser(users, passwordEncoder, "Dr. Karim Hossain", "karim.hossain@health.test", UserRole.DOCTOR, "+8801700000011");
+            User doctor4 = createUser(users, passwordEncoder, "Dr. Nusrat Jahan", "nusrat.jahan@health.test", UserRole.DOCTOR, "+8801700000012");
+            User doctor5 = createUser(users, passwordEncoder, "Dr. Rafiq Ahmed", "rafiq.ahmed@health.test", UserRole.DOCTOR, "+8801700000013");
+
+            User patient2 = createUser(users, passwordEncoder, "Tanvir Alam", "tanvir.alam@health.test", UserRole.PATIENT, "+8801700000020");
+            User patient3 = createUser(users, passwordEncoder, "Sadia Karim", "sadia.karim@health.test", UserRole.PATIENT, "+8801700000021");
+
             createProfileIfMissing(profiles, admin, "Road 1, Dhaka", "Dhaka", "Platform admin profile.", null, null, "Platform Admin", false, 23.8103, 90.4125);
-            createProfileIfMissing(profiles, patient, "Road 2, Dhaka", "Dhaka", "Patient profile.", null, null, "Patient", false, 23.8203, 90.4225);
-            createProfileIfMissing(profiles, doctor, "Road 3, Dhaka", "Dhaka", "Cardiology specialist profile.", "Cardiology", "DOC-1001", null, false, 23.8303, 90.4325);
             createProfileIfMissing(profiles, hospital, "Road 4, Dhaka", "Dhaka", "Multi-speciality hospital.", null, "HOSP-1001", "Multi-speciality Hospital", true, 23.8403, 90.4425);
             createProfileIfMissing(profiles, pharmacy, "Road 5, Dhaka", "Dhaka", "24/7 pharmacy service.", null, "PHAR-1001", "24/7 Pharmacy", true, 23.8503, 90.4525);
             createProfileIfMissing(profiles, diagnostic, "Road 6, Dhaka", "Dhaka", "Diagnostic centre service.", null, "DIAG-1001", "Diagnostics", false, 23.8603, 90.4625);
             createProfileIfMissing(profiles, ambulance, "Road 7, Dhaka", "Dhaka", "Emergency ambulance service.", null, "AMB-1001", "Emergency Ambulance", true, 23.8703, 90.4725);
+
+            // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami): dedicated
+            // doctor/patient profile seeding so /doctors and /doctors/search have
+            // real, varied data (different specialties/cities) to demo.
+            createDoctorProfileIfMissing(profiles, doctor, "Road 3, Dhaka", "Dhaka",
+                    "Senior cardiologist with 12 years of experience treating heart disease.",
+                    "Cardiology", "DOC-1001", "MBBS, FCPS (Cardiology)", 12, 1200.0, 23.8303, 90.4325);
+            createDoctorProfileIfMissing(profiles, doctor2, "Road 8, Dhaka", "Dhaka",
+                    "Neurologist treating headaches, stroke, and nervous system disorders.",
+                    "Neurology", "DOC-1002", "MBBS, FCPS (Neurology)", 9, 1300.0, 23.8803, 90.4825);
+            createDoctorProfileIfMissing(profiles, doctor3, "Road 9, Chattogram", "Chattogram",
+                    "Dermatologist specializing in skin allergies and cosmetic dermatology.",
+                    "Dermatology", "DOC-1003", "MBBS, DDV", 8, 800.0, 22.3569, 91.7832);
+            createDoctorProfileIfMissing(profiles, doctor4, "Road 10, Dhaka", "Dhaka",
+                    "Pediatrician with a focus on newborn and child care.",
+                    "Pediatrics", "DOC-1004", "MBBS, DCH", 10, 700.0, 23.8903, 90.4925);
+            createDoctorProfileIfMissing(profiles, doctor5, "Road 11, Sylhet", "Sylhet",
+                    "Orthopedic surgeon experienced in joint replacement and sports injuries.",
+                    "Orthopedics", "DOC-1005", "MBBS, MS (Ortho)", 15, 1500.0, 24.8949, 91.8687);
+
+            createPatientProfileIfMissing(profiles, patient, "Road 2, Dhaka", "Dhaka", "Patient profile.",
+                    LocalDate.of(1998, 9, 23), "Female", "O+", 23.8203, 90.4225);
+            createPatientProfileIfMissing(profiles, patient2, "Road 12, Dhaka", "Dhaka", null,
+                    LocalDate.of(1990, 1, 30), "Male", "A-", null, null);
+            createPatientProfileIfMissing(profiles, patient3, "Road 13, Dhaka", "Dhaka", null,
+                    LocalDate.of(1995, 4, 12), "Female", "B+", null, null);
 
             if (ratings.count() == 0) {
                 ratings.save(new Rating(doctor, patient, 5, "Good service"));
@@ -108,6 +144,54 @@ public class HealthcarePlatformApplication {
         if (profiles.findByUserId(user.getId()).isEmpty()) {
             profiles.save(new Profile(user, address, city, bio, specialization, licenseNumber, serviceName, emergencyAvailable, latitude, longitude));
         }
+    }
+
+    // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami)
+    private void createDoctorProfileIfMissing(
+            ProfileRepository profiles,
+            User doctor,
+            String address,
+            String city,
+            String bio,
+            String specialization,
+            String licenseNumber,
+            String qualification,
+            Integer experienceYears,
+            Double consultationFee,
+            Double latitude,
+            Double longitude
+    ) {
+        if (profiles.findByUserId(doctor.getId()).isPresent()) {
+            return;
+        }
+        Profile profile = new Profile(doctor, address, city, bio, specialization, licenseNumber, null, false, latitude, longitude);
+        profile.setQualification(qualification);
+        profile.setExperienceYears(experienceYears);
+        profile.setConsultationFee(consultationFee);
+        profiles.save(profile);
+    }
+
+    // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami)
+    private void createPatientProfileIfMissing(
+            ProfileRepository profiles,
+            User patient,
+            String address,
+            String city,
+            String bio,
+            LocalDate dateOfBirth,
+            String gender,
+            String bloodGroup,
+            Double latitude,
+            Double longitude
+    ) {
+        if (profiles.findByUserId(patient.getId()).isPresent()) {
+            return;
+        }
+        Profile profile = new Profile(patient, address, city, bio, null, null, null, false, latitude, longitude);
+        profile.setDateOfBirth(dateOfBirth);
+        profile.setGender(gender);
+        profile.setBloodGroup(bloodGroup);
+        profiles.save(profile);
     }
 
     private void createSettingIfMissing(AppSettingRepository settings, String key, String value) {

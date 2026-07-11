@@ -3,6 +3,7 @@ package com.healthcare.platform.config;
 import com.healthcare.platform.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -25,6 +26,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/doctors/search", "/api/hospitals", "/api/pharmacies").hasRole("PATIENT")
                         .requestMatchers("/api/pharmacy/**").hasRole("PHARMACY")
                         .requestMatchers("/pharmacy/**").hasRole("PHARMACY")
+                        // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami):
+                        // anyone logged in can browse/search doctors; only admins manage records.
+                        .requestMatchers(HttpMethod.GET, "/api/doctors/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/doctors/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/patients/**").hasAnyRole("ADMIN", "DOCTOR")
+                        .requestMatchers(HttpMethod.POST, "/api/patients/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/patients/**").hasAnyRole("ADMIN", "PATIENT")
+                        .requestMatchers(HttpMethod.DELETE, "/api/patients/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

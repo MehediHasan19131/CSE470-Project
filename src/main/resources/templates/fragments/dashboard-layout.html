@@ -21,6 +21,9 @@
           <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="200" height="46">
         </a>
         <div class="d-flex align-items-center gap-3">
+          <a href="/doctors" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-person-badge"></i> Doctors
+          </a>
           <span class="badge text-bg-primary text-capitalize" th:text="${#strings.toLowerCase(user.role)}">role</span>
           <span class="small text-secondary" th:text="${user.fullName}">User</span>
           <form method="post" action="/logout">

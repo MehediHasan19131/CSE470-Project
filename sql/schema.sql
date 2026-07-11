@@ -23,6 +23,14 @@ CREATE TABLE IF NOT EXISTS profiles (
   emergency_available BOOLEAN NOT NULL DEFAULT FALSE,
   latitude DOUBLE,
   longitude DOUBLE,
+  -- Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami): nullable extra
+  -- fields so a Profile row can carry doctor or patient specific details.
+  qualification VARCHAR(150),
+  experience_years INT,
+  consultation_fee DOUBLE,
+  date_of_birth DATE,
+  gender VARCHAR(20),
+  blood_group VARCHAR(5),
   CONSTRAINT fk_profiles_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
