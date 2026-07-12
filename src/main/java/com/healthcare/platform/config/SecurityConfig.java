@@ -1,5 +1,6 @@
 package com.healthcare.platform.config;
 
+import com.healthcare.platform.auth.JwtAuthFilter;
 import com.healthcare.platform.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,15 +13,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/logged-out", "/api/auth/login", "/css/**", "/images/**", "/error").permitAll()
+                        // NOTE: static assets actually live under /img/** (see static/img) - the
+                        // original /images/** matcher below never matched anything real, which
+                        // could block the logo/icons on the login page for logged-out visitors.
+                        // Kept /images/** too in case something else still points at it.
+                        .requestMatchers(
+                                "/", "/logged-out", "/register",
+                                "/api/auth/login", "/api/auth/register", "/api/auth/token",
+                                "/css/**", "/img/**", "/images/**", "/error"
+                        ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/doctors/search", "/api/hospitals", "/api/pharmacies").hasRole("PATIENT")
                         .requestMatchers("/api/pharmacy/**").hasRole("PHARMACY")
@@ -41,7 +51,12 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                // Added for Member 1 (Auth): lets API clients authenticate with
+                // "Authorization: Bearer <jwt>" instead of a session cookie.
+                // Runs before the session-based filters and does nothing if there's
+                // no Bearer header, so the existing formLogin/session flow is unaffected.
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

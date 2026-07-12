@@ -38,6 +38,9 @@ SmartCare is a full-stack healthcare platform that connects patients, doctors, h
 ## Sprint 1 (Implemented)
 
 - User login and authentication
+- **Registration (sign-up) - new**, at `/register`, plain JDBC (no ORM) - see `docs/MVC_ARCHITECTURE.md`
+- **Account profile page - new**, at `/profile`
+- **JWT login for API clients - new**, `POST /api/auth/token`, alongside the existing session login
 - Role management
 - Admin dashboard and settings
 - Patient, Doctor, Hospital, Pharmacy, Diagnostic Centre, and Ambulance dashboards

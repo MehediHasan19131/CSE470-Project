@@ -51,6 +51,7 @@
             <h2 class="h4 fw-bold mb-2">Welcome back</h2>
             <p class="text-secondary mb-0">Sign in to continue to your role-based dashboard.</p>
           </div>
+          <div class="alert alert-success py-2" th:if="${registered}">Account created. You can log in now.</div>
           <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Invalid email or password</div>
           <form method="post" action="/login" class="vstack gap-3">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -77,6 +78,9 @@
             <i class="bi bi-info-circle"></i>
             <span>Demo accounts: admin, patient, doctor, hospital, and pharmacy emails from the README.</span>
           </div>
+          <p class="text-center small text-secondary mt-3 mb-0">
+            New here? <a th:href="@{/register}">Create an account</a>
+          </p>
         </div>
       </div>
     </section>
