@@ -5,7 +5,7 @@
     <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
 
     <main class="container-fluid p-4">
-      <div th:replace="~{fragments/dashboard-layout :: page-heading('Admin dashboard', 'User authentication and platform settings', 'bi-shield-check')}"></div>
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Admin dashboard', 'Platform settings and user role management', 'bi-shield-check')}"></div>
 
       <div class="row g-3 mb-4">
         <div class="col-12 col-sm-6 col-xl-3">
@@ -43,14 +43,14 @@
           <div class="panel h-100">
             <div class="section-title">
               <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Authentication</p>
-                <h2 class="h6 fw-bold mb-0">User Management</h2>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Member 4</p>
+                <h2 class="h6 fw-bold mb-0">Admin APIs (JWT)</h2>
               </div>
             </div>
-            <p class="text-secondary small mb-3">Manage registered users and assign roles.</p>
+            <p class="text-secondary small mb-3">Use <code>Authorization: Bearer &lt;token&gt;</code> for API access. Login JWT is owned by Member 1.</p>
             <div class="action-grid">
-              <a class="action-tile" href="/api/admin/users"><i class="bi bi-people"></i><span>View Users API</span></a>
-              <a class="action-tile" href="/api/me"><i class="bi bi-person-badge"></i><span>Current Session</span></a>
+              <a class="action-tile" href="/api/admin/users"><i class="bi bi-people"></i><span>GET /api/admin/users</span></a>
+              <a class="action-tile" href="/api/admin/settings"><i class="bi bi-gear"></i><span>GET /api/admin/settings</span></a>
             </div>
           </div>
         </div>
@@ -63,11 +63,15 @@
                 <h2 class="h6 fw-bold mb-0">Admin Settings</h2>
               </div>
             </div>
-            <p class="text-secondary small mb-3">Configure platform settings for Sprint 1.</p>
-            <div class="action-grid">
-              <a class="action-tile" href="/api/admin/settings"><i class="bi bi-gear"></i><span>View Settings API</span></a>
-              <a class="action-tile" href="/api/dashboard"><i class="bi bi-speedometer2"></i><span>Admin Dashboard API</span></a>
+            <div class="data-list">
+              <div class="data-row" th:each="setting : ${data.settings}">
+                <div>
+                  <strong th:text="${setting.key}">key</strong>
+                  <span th:text="${setting.value}">value</span>
+                </div>
+              </div>
             </div>
+            <a class="btn btn-outline-primary btn-sm mt-3" href="/api/dashboard"><i class="bi bi-speedometer2"></i> Dashboard API</a>
           </div>
         </div>
       </div>

@@ -52,14 +52,15 @@ SmartCare is a full-stack healthcare platform that connects patients, doctors, h
 .
 ├── docs
 │   ├── API_ENDPOINTS.md
-│   ├── GITHUB_PUSH_GUIDE.md
 │   └── MVC_ARCHITECTURE.md
 ├── sql
-│   ├── schema.sql
-│   └── seed.sql
+│   └── schema.sql
 ├── src/main/java/com/healthcare/platform
 │   ├── config
+│   │   └── security
 │   ├── controller
+│   │   ├── api
+│   │   └── web
 │   ├── dto
 │   ├── model
 │   ├── repository
@@ -69,6 +70,7 @@ SmartCare is a full-stack healthcare platform that connects patients, doctors, h
 │   ├── static/img
 │   ├── templates
 │   └── application.properties
+├── .gitignore
 ├── docker-compose.yml
 ├── pom.xml
 └── README.md
@@ -78,7 +80,6 @@ More details:
 
 - [MVC architecture](docs/MVC_ARCHITECTURE.md)
 - [API endpoints](docs/API_ENDPOINTS.md)
-- [GitHub push guide](docs/GITHUB_PUSH_GUIDE.md)
 
 ## Setup
 

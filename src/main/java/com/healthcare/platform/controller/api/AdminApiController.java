@@ -1,4 +1,4 @@
-package com.healthcare.platform.controller;
+package com.healthcare.platform.controller.api;
 
 import com.healthcare.platform.dto.RoleUpdateRequest;
 import com.healthcare.platform.dto.SettingUpdateRequest;

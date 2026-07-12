@@ -1,4 +1,4 @@
-package com.healthcare.platform.controller;
+package com.healthcare.platform.controller.api;
 
 import com.healthcare.platform.dto.LoginRequest;
 import com.healthcare.platform.dto.LoginResponse;

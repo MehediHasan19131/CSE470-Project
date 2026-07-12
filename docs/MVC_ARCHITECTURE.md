@@ -7,7 +7,7 @@ SmartCare follows a standard Spring Boot MVC structure.
 ```text
 Browser / API Client
         |
-Controller Layer
+Controller Layer (web + api)
         |
 Service Layer
         |
@@ -22,13 +22,25 @@ MySQL Database
 src/main/java/com/healthcare/platform/config
 ```
 
-Application configuration, including Spring Security.
+Application configuration, including Spring Security and demo data seeding.
 
 ```text
-src/main/java/com/healthcare/platform/controller
+src/main/java/com/healthcare/platform/config/security
 ```
 
-MVC page controllers and REST API controllers. Controllers receive HTTP requests, call services, and return views or JSON responses.
+JWT authentication service and filter.
+
+```text
+src/main/java/com/healthcare/platform/controller/web
+```
+
+MVC page controllers. Handle browser requests and return Thymeleaf views.
+
+```text
+src/main/java/com/healthcare/platform/controller/api
+```
+
+REST API controllers. Handle JSON requests and return API responses.
 
 ```text
 src/main/java/com/healthcare/platform/service
@@ -64,19 +76,18 @@ Thymeleaf HTML templates using Bootstrap.
 src/main/resources/static
 ```
 
-Static assets such as CSS.
+Static assets such as CSS and images.
+
+```text
+sql/schema.sql
+```
+
+Database schema reference.
 
 ## Current Sprint Modules
 
 - Authentication and role-based access
-- Admin dashboard
-- Patient dashboard
-- Doctor dashboard
-- Hospital dashboard
-- Pharmacy dashboard
-- Diagnostic centre dashboard
-- Ambulance dashboard
-- Doctor search
-- Hospital listing
-- Pharmacy listing
-- Admin users and settings APIs
+- Admin dashboard and settings APIs
+- Patient, doctor, hospital, and pharmacy dashboards
+- Doctor search and facility listings
+- JWT-protected dashboard and admin APIs

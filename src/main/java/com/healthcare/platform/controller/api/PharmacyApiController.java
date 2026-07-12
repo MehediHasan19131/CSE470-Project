@@ -1,4 +1,4 @@
-package com.healthcare.platform.controller;
+package com.healthcare.platform.controller.api;
 
 import com.healthcare.platform.repository.MedicineRepository;
 import java.util.LinkedHashMap;
