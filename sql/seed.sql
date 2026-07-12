@@ -1,2 +1,0 @@
--- Demo data is inserted automatically by the Spring Boot application on startup.
--- Use the README demo accounts after running mvn spring-boot:run.
