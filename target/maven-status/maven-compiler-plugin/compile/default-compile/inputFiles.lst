@@ -1,38 +1,40 @@
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/HealthcarePlatformApplication.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/config/SecurityConfig.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/controller/AdminApiController.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/controller/AuthApiController.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/controller/DashboardApiController.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/controller/PharmacyApiController.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/controller/SearchApiController.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/controller/WebController.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/dto/LoginRequest.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/dto/LoginResponse.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/dto/RoleUpdateRequest.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/dto/ServiceListingResponse.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/dto/SettingUpdateRequest.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/dto/UserResponse.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/AppSetting.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/Appointment.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/HospitalAvailability.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/HospitalDoctorAvailability.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/HospitalService.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/Medicine.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/Profile.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/Rating.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/TestOffer.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/User.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/model/UserRole.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/AppSettingRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/AppointmentRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/HospitalAvailabilityRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/HospitalDoctorAvailabilityRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/HospitalServiceRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/MedicineRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/ProfileRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/RatingRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/TestOfferRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/repository/UserRepository.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/service/CurrentUserService.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/service/DashboardService.java
-/Users/mehedihasan/Documents/Codex/2026-06-27/i-am-going-to-do-a/src/main/java/com/healthcare/platform/service/ListingService.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/HealthcarePlatformApplication.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/config/SecurityConfig.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/controller/AdminApiController.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/controller/AuthApiController.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/controller/DashboardApiController.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/controller/PharmacyApiController.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/controller/SearchApiController.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/controller/WebController.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/dto/LoginRequest.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/dto/LoginResponse.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/dto/RoleUpdateRequest.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/dto/ServiceListingResponse.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/dto/SettingUpdateRequest.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/dto/UserResponse.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/AppSetting.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/Appointment.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/HospitalAvailability.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/HospitalDoctorAvailability.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/HospitalService.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/Medicine.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/Profile.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/Rating.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/TestOffer.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/User.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/model/UserRole.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/AppSettingRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/AppointmentRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/HospitalAvailabilityRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/HospitalDoctorAvailabilityRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/HospitalServiceRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/MedicineRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/ProfileRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/RatingRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/TestOfferRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/repository/UserRepository.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/security/JwtAuthenticationFilter.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/security/JwtService.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/service/CurrentUserService.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/service/DashboardService.java
+/Users/mehedihasan/Documents/CSE470_Project copy/src/main/java/com/healthcare/platform/service/ListingService.java

@@ -5,249 +5,28 @@
     <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
 
     <main class="container-fluid p-4">
-      <div th:replace="~{fragments/dashboard-layout :: page-heading('Patient dashboard', 'Find care, manage appointments, and view your health records', 'bi-heart-pulse')}"></div>
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Patient dashboard', 'Your care hub — Member 4 dashboard shell', 'bi-heart-pulse')}"></div>
 
-      <div class="sprint-badge mb-3">
+      <div class="sprint-badge mb-4">
         <i class="bi bi-info-circle"></i>
-        <span>Medical profile UI preview — full health records backend planned for Sprint 4</span>
-      </div>
-
-      <div class="row g-3 mb-4">
-        <div class="col-12 col-sm-6 col-xl-3">
-          <div class="metric-card">
-            <div class="metric-icon"><i class="bi bi-calendar2-check"></i></div>
-            <span>Upcoming Appointments</span>
-            <strong th:text="${data.metrics.upcomingAppointments}">0</strong>
-          </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xl-3">
-          <div class="metric-card">
-            <div class="metric-icon"><i class="bi bi-check2-circle"></i></div>
-            <span>Completed Appointments</span>
-            <strong th:text="${data.metrics.completedAppointments}">0</strong>
-          </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xl-3">
-          <div class="metric-card">
-            <div class="metric-icon"><i class="bi bi-droplet"></i></div>
-            <span>Blood Group</span>
-            <strong th:text="${data.medicalProfile.bloodGroup}">—</strong>
-          </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xl-3">
-          <div class="metric-card">
-            <div class="metric-icon"><i class="bi bi-file-medical"></i></div>
-            <span>Health Records</span>
-            <strong th:text="${#lists.size(data.medicalProfile.labResults)} + ' labs'">0 labs</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel mb-4">
-        <div class="section-title">
-          <div>
-            <p class="text-uppercase text-primary small fw-semibold mb-1">Health</p>
-            <h2 class="h6 fw-bold mb-0">Medical Profile — <span th:text="${data.medicalProfile.patientName}">Patient</span></h2>
-          </div>
-        </div>
-
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="health-section">
-              <h3 class="health-section-title"><i class="bi bi-person-vcard"></i> Basic Info</h3>
-              <div class="info-grid">
-                <div>
-                  <span>Blood Group</span>
-                  <strong th:text="${data.medicalProfile.bloodGroup}">—</strong>
-                </div>
-                <div>
-                  <span>Height</span>
-                  <strong th:text="${data.medicalProfile.height}">—</strong>
-                </div>
-                <div>
-                  <span>Weight</span>
-                  <strong th:text="${data.medicalProfile.weight}">—</strong>
-                </div>
-              </div>
-              <div class="health-tags mt-3">
-                <p class="small text-muted mb-1">Allergies</p>
-                <span class="health-tag warning" th:each="allergy : ${data.medicalProfile.allergies}" th:text="${allergy}">Allergy</span>
-              </div>
-              <div class="health-tags mt-2">
-                <p class="small text-muted mb-1">Chronic Conditions</p>
-                <span class="health-tag info" th:each="condition : ${data.medicalProfile.chronicConditions}" th:text="${condition}">Condition</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-8">
-            <div class="health-section">
-              <h3 class="health-section-title"><i class="bi bi-activity"></i> Recent Vitals</h3>
-              <div class="vital-grid">
-                <div class="vital-card" th:each="vital : ${data.medicalProfile.vitals}">
-                  <span class="vital-name" th:text="${vital.name}">Vital</span>
-                  <strong class="vital-value" th:text="${vital.value}">—</strong>
-                  <span class="vital-date" th:text="${vital.date}">Date</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-4 mb-4">
-        <div class="col-lg-4">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Medication</p>
-                <h2 class="h6 fw-bold mb-0">Active Prescriptions</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="rx : ${data.medicalProfile.prescriptions}">
-                <div>
-                  <strong th:text="${rx.medicine}">Medicine</strong>
-                  <span th:text="${rx.doctor} + ' · ' + ${rx.dosage}">Doctor</span>
-                </div>
-                <span class="badge text-bg-light" th:text="${rx.date}">Date</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Lab</p>
-                <h2 class="h6 fw-bold mb-0">Lab Results</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="lab : ${data.medicalProfile.labResults}">
-                <div>
-                  <strong th:text="${lab.test}">Test</strong>
-                  <span th:text="${lab.date}">Date</span>
-                </div>
-                <span class="badge text-bg-success" th:text="${lab.result}">Result</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">History</p>
-                <h2 class="h6 fw-bold mb-0">Visit History</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="visit : ${data.medicalProfile.visitHistory}">
-                <div>
-                  <strong th:text="${visit.reason}">Visit</strong>
-                  <span th:text="${visit.provider} + ' · ' + ${visit.facility}">Provider</span>
-                </div>
-                <span class="badge text-bg-light" th:text="${visit.date}">Date</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-4 mb-4">
-        <div class="col-lg-4">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Search</p>
-                <h2 class="h6 fw-bold mb-0">Doctors</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="doctor : ${doctors}">
-                <div>
-                  <strong th:text="${doctor.name}">Doctor</strong>
-                  <span th:text="${doctor.specialization}">Speciality</span>
-                </div>
-                <span class="badge text-bg-light" th:text="${doctor.city}">City</span>
-              </div>
-            </div>
-            <a class="btn btn-outline-primary btn-sm mt-3" href="/api/doctors/search">Doctor Search API</a>
-          </div>
-        </div>
-
-        <div class="col-lg-4">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Listing</p>
-                <h2 class="h6 fw-bold mb-0">Hospitals</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="hospital : ${hospitals}">
-                <div>
-                  <strong th:text="${hospital.name}">Hospital</strong>
-                  <span th:text="${hospital.serviceName}">Service</span>
-                </div>
-                <span class="badge text-bg-light" th:text="${hospital.city}">City</span>
-              </div>
-            </div>
-            <a class="btn btn-outline-primary btn-sm mt-3" href="/api/hospitals">Hospital Listing API</a>
-          </div>
-        </div>
-
-        <div class="col-lg-4">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Listing</p>
-                <h2 class="h6 fw-bold mb-0">Pharmacies</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="pharmacy : ${pharmacies}">
-                <div>
-                  <strong th:text="${pharmacy.name}">Pharmacy</strong>
-                  <span th:text="${pharmacy.serviceName}">Service</span>
-                </div>
-                <span class="badge" th:classappend="${pharmacy.emergencyAvailable} ? ' text-bg-success' : ' text-bg-light'" th:text="${pharmacy.emergencyAvailable} ? '24/7' : 'Regular'">Status</span>
-              </div>
-            </div>
-            <a class="btn btn-outline-primary btn-sm mt-3" href="/api/pharmacies">Pharmacy Listing API</a>
-          </div>
-        </div>
+        <span th:text="${data.integrationNote}">Integration note</span>
       </div>
 
       <div class="panel">
         <div class="section-title">
           <div>
-            <p class="text-uppercase text-primary small fw-semibold mb-1">My Care</p>
-            <h2 class="h6 fw-bold mb-0">My Appointments</h2>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Modules</p>
+            <h2 class="h6 fw-bold mb-0">Planned Integrations</h2>
           </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-sm align-middle mb-0">
-            <thead>
-              <tr>
-                <th>Doctor</th>
-                <th>Scheduled</th>
-                <th>Reason</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="appointment : ${data.appointments}">
-                <td th:text="${appointment.doctorName}">Doctor</td>
-                <td th:text="${appointment.scheduledAt}">Time</td>
-                <td th:text="${appointment.reason}">Reason</td>
-                <td><span class="badge text-bg-primary text-capitalize" th:text="${appointment.status}">pending</span></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="data-list">
+          <div class="data-row" th:each="module : ${data.modules}">
+            <div>
+              <strong th:text="${module}">Module</strong>
+              <span>Owned by another sprint member</span>
+            </div>
+            <span class="badge text-bg-light">Pending</span>
+          </div>
         </div>
       </div>
     </main>

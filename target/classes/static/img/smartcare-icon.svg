@@ -6,8 +6,14 @@
     </linearGradient>
   </defs>
   <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#icon-grad)"/>
-  <path d="M32 18c-3.3 0-6 2.7-6 6 0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6z" fill="#ffffff" opacity="0.95"/>
-  <rect x="28" y="28" width="8" height="18" rx="2" fill="#ffffff"/>
-  <rect x="21" y="35" width="22" height="7" rx="2" fill="#ffffff"/>
-  <path d="M8 46h6l3-6 3 10 3-7 3 3h6" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+  <line x1="32" y1="13" x2="32" y2="52" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+  <circle cx="32" cy="10" r="2.6" fill="#ffffff"/>
+  <path d="M32 17
+           C39 19, 43 25, 36 30
+           C29 35, 22 33, 25 38
+           C28 43, 38 44, 35 49
+           C33 52, 29 53, 31 55"
+        fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="31" cy="54.5" r="1.8" fill="#ffffff"/>
+  <ellipse cx="31.5" cy="54" rx="1" ry="0.6" fill="#0f7c90"/>
 </svg>
