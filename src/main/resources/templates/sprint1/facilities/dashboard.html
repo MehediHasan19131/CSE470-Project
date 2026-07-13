@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Facilities Dashboard')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Facilities Dashboard', 'Browse hospitals, diagnostic centers, and pharmacies', 'bi-hospital')}"></div>
+
+      <div class="dashboard-hero">
+        <div>
+          <h1 class="h3 fw-bold mb-2">Hospital, Diagnostic &amp; Pharmacy Module</h1>
+          <p class="mb-0">Browse and search all registered healthcare facilities. View detailed profiles, ratings, services, and availability information.</p>
+        </div>
+        <div class="hero-graphic">
+          <i class="bi bi-grid-3x3-gap"></i>
+          <div class="pulse-ring"></div>
+        </div>
+      </div>
+
+      <div class="filter-tabs">
+        <a class="filter-tab" th:classappend="${selectedType == 'ALL' ? 'active' : ''}" href="/facilities">
+          <i class="bi bi-grid-3x3-gap"></i> All
+        </a>
+        <a class="filter-tab" th:classappend="${selectedType == 'HOSPITAL' ? 'active' : ''}" href="/facilities?type=HOSPITAL">
+          <i class="bi bi-hospital"></i> Hospitals
+        </a>
+        <a class="filter-tab" th:classappend="${selectedType == 'DIAGNOSTIC' ? 'active' : ''}" href="/facilities?type=DIAGNOSTIC">
+          <i class="bi bi-microscope"></i> Diagnostic Centers
+        </a>
+        <a class="filter-tab" th:classappend="${selectedType == 'PHARMACY' ? 'active' : ''}" href="/facilities?type=PHARMACY">
+          <i class="bi bi-capsule"></i> Pharmacies
+        </a>
+        <a class="filter-tab" href="/facilities/search">
+          <i class="bi bi-search"></i> Search
+        </a>
+      </div>
+
+      <div class="facility-grid" th:if="${!#lists.isEmpty(facilities)}">
+        <div class="facility-card" th:each="f : ${facilities}">
+          <div class="facility-card-body">
+            <div class="facility-card-header">
+              <div>
+                <span class="facility-card-type" th:classappend="${#strings.toLowerCase(f.role)}" th:text="${#strings.capitalize(#strings.toLowerCase(f.role))}">Type</span>
+                <a class="facility-card-title d-block mt-1" th:href="@{/facilities/{type}/{id}(type=${#strings.toLowerCase(f.role)}, id=${f.id})}" th:text="${f.name}">Name</a>
+              </div>
+              <div class="facility-card-icon" th:classappend="${#strings.toLowerCase(f.role)}">
+                <i class="bi" th:class="|bi-${f.role.name() == 'HOSPITAL' ? 'hospital' : f.role.name() == 'DIAGNOSTIC' ? 'microscope' : 'capsule'}|"></i>
+              </div>
+            </div>
+            <div class="facility-card-meta">
+              <span th:if="${f.city}"><i class="bi bi-geo-alt"></i> <span th:text="${f.city}">City</span></span>
+              <span th:if="${f.serviceName}"><i class="bi bi-tag"></i> <span th:text="${f.serviceName}">Service</span></span>
+            </div>
+          </div>
+          <div class="facility-card-footer">
+            <div class="facility-rating" th:if="${f.totalReviews > 0}">
+              <i class="bi bi-star-fill"></i>
+              <span th:text="${f.averageRating}">0.0</span>
+              <span class="muted" th:text="'(' + ${f.totalReviews} + ')'">(0)</span>
+            </div>
+            <div class="facility-rating" th:unless="${f.totalReviews > 0}">
+              <span class="muted">No reviews yet</span>
+            </div>
+            <a class="btn btn-sm btn-outline-primary" th:href="@{/facilities/{type}/{id}(type=${#strings.toLowerCase(f.role)}, id=${f.id})}">
+              View Details <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel text-center py-5" th:unless="${!#lists.isEmpty(facilities)}">
+        <i class="bi bi-inbox fs-1 text-secondary"></i>
+        <p class="mt-3 mb-0 text-secondary">No facilities found for the selected type.</p>
+      </div>
+
+    </main>
+  </body>
+</html>

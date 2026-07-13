@@ -1,0 +1,313 @@
+/* ── Sprint 1: Hospital, Diagnostic Center & Pharmacy Module ── */
+/* Rony Miah (24141084) — isolated styles, no conflict with other sprints */
+
+/* Facility cards grid */
+.facility-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.facility-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 280ms ease, box-shadow 280ms ease;
+  animation: dashboardFadeIn 420ms ease both;
+  will-change: transform;
+}
+
+.facility-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(15, 124, 144, 0.35);
+  box-shadow: 0 28px 52px rgba(24, 34, 42, 0.14);
+  background: linear-gradient(135deg, #ffffff, #f8fdfc);
+}
+
+.facility-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  flex: 1;
+}
+
+.facility-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.facility-card-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.facility-card-icon.hospital { color: var(--coral); background: var(--rose); }
+.facility-card-icon.diagnostic { color: var(--blue); background: var(--sky); }
+.facility-card-icon.pharmacy { color: var(--green); background: var(--mint); }
+
+.facility-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.facility-card-title:hover { color: var(--cyan); }
+
+.facility-card-type {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.facility-card-type.hospital { color: #8a3b2d; background: var(--rose); }
+.facility-card-type.diagnostic { color: #084298; background: var(--sky); }
+.facility-card-type.pharmacy { color: #0f5132; background: var(--mint); }
+
+.facility-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.facility-card-meta i {
+  width: 18px;
+  color: var(--cyan);
+}
+
+.facility-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid #edf2f4;
+  background: #fafcfd;
+  font-size: 0.88rem;
+}
+
+.facility-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.facility-rating i { color: var(--gold); }
+.facility-rating .muted { color: var(--muted); }
+
+/* Facility type filter tabs */
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 180ms ease;
+}
+
+.filter-tab:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.filter-tab.active {
+  border-color: var(--cyan);
+  color: #ffffff;
+  background: var(--cyan);
+}
+
+/* Search controls */
+.search-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.search-controls .form-control,
+.search-controls .form-select {
+  min-height: 44px;
+  border-color: #d9e4e9;
+  border-radius: 8px;
+}
+
+.search-controls .form-control:focus,
+.search-controls .form-select:focus {
+  border-color: rgba(15, 124, 144, 0.55);
+  box-shadow: 0 0 0 0.2rem rgba(15, 124, 144, 0.12);
+}
+
+/* Facility profile */
+.profile-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: 28px;
+  min-height: 240px;
+  padding: 28px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(35, 131, 111, 0.18), transparent 180px),
+    linear-gradient(135deg, rgba(37, 99, 184, 0.12), rgba(35, 131, 111, 0.13)),
+    linear-gradient(90deg, #ffffff, #eef8f4);
+  animation: dashboardFadeIn 420ms ease both;
+}
+
+.profile-hero-name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.profile-hero-type {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.profile-hero-type.hospital { color: #8a3b2d; background: var(--rose); }
+.profile-hero-type.diagnostic { color: #084298; background: var(--sky); }
+.profile-hero-type.pharmacy { color: #0f5132; background: var(--mint); }
+
+.profile-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+
+.profile-stat {
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+
+.profile-stat strong {
+  display: block;
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.profile-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-info-item label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.profile-info-item span {
+  display: block;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Review/review card */
+.review-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.review-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(15, 124, 144, 0.22);
+  box-shadow: 0 12px 28px rgba(24, 34, 42, 0.08);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.review-author {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.review-stars i { color: var(--gold); }
+.review-stars i.empty { color: #dde3e7; }
+
+.review-comment {
+  color: #3f5560;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.review-date {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .search-controls {
+    grid-template-columns: 1fr;
+  }
+  .profile-hero {
+    grid-template-columns: 1fr;
+  }
+  .profile-hero-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .facility-grid {
+    grid-template-columns: 1fr;
+  }
+}
