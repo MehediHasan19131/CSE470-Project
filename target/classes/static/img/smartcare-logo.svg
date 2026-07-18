@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 56" role="img" aria-label="SmartCare">
+  <defs>
+    <linearGradient id="sc-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f7c90"/>
+      <stop offset="100%" stop-color="#23836f"/>
+    </linearGradient>
+    <linearGradient id="sc-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f7c90"/>
+      <stop offset="55%" stop-color="#2563b8"/>
+      <stop offset="100%" stop-color="#23836f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon mark -->
+  <rect x="2" y="6" width="44" height="44" rx="12" fill="url(#sc-grad)"/>
+  <path d="M24 18c-2.2 0-4 1.8-4 4 0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z" fill="#ffffff" opacity="0.95"/>
+  <rect x="21" y="24" width="6" height="14" rx="1.5" fill="#ffffff"/>
+  <rect x="16" y="29" width="16" height="5" rx="1.5" fill="#ffffff"/>
+  <path d="M50 34h8l4-8 4 14 4-10 4 4h8" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+  <!-- Wordmark -->
+  <text x="58" y="36" font-family="Segoe UI, system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" fill="url(#sc-text)">Smart</text>
+  <text x="148" y="36" font-family="Segoe UI, system-ui, -apple-system, sans-serif" font-size="26" font-weight="700" fill="#18222a">Care</text>
+  <text x="58" y="50" font-family="Segoe UI, system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="600" letter-spacing="1.8" fill="#5e6b76">HEALTHCARE PLATFORM</text>
+</svg>

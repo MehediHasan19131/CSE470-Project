@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head(${medicine.name})}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <a href="/pharmacy-store" class="btn btn-sm btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Back to Pharmacy Store
+      </a>
+
+      <div class="panel">
+        <div class="section-title flex-wrap">
+          <div>
+            <h1 class="h3 fw-bold mb-1" th:text="${medicine.name}">Medicine name</h1>
+            <span class="badge text-bg-success" th:if="${medicine.stockQuantity} > 0">In stock</span>
+            <span class="badge text-bg-secondary" th:unless="${medicine.stockQuantity} > 0">Out of stock</span>
+          </div>
+          <div class="text-md-end">
+            <h3 class="text-primary mb-0">৳<span th:text="${medicine.price}">0</span></h3>
+          </div>
+        </div>
+
+        <hr>
+
+        <p th:text="${medicine.description}">Medicine description goes here.</p>
+        <p class="small text-muted">Available quantity: <strong th:text="${medicine.stockQuantity}">0</strong></p>
+
+        <hr>
+
+        <h3 class="health-section-title"><i class="bi bi-bag-plus"></i> Order this medicine</h3>
+
+        <form method="post" th:action="@{'/pharmacy-store/' + ${medicine.id} + '/order'}" class="row g-3" th:if="${medicine.stockQuantity} > 0">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+          <div class="col-md-3">
+            <label class="form-label">Quantity</label>
+            <input type="number" name="quantity" class="form-control" value="1" min="1" th:max="${medicine.stockQuantity}" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Delivery address</label>
+            <input type="text" name="deliveryAddress" class="form-control" placeholder="e.g. Road 5, Dhaka">
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-success w-100">
+              <i class="bi bi-cart-check"></i> Place Order
+            </button>
+          </div>
+        </form>
+
+        <div class="alert alert-secondary mb-0" th:unless="${medicine.stockQuantity} > 0">
+          This medicine is currently out of stock.
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

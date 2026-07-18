@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Search Doctors')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Search doctor by specialty', 'Find the right doctor for your needs', 'bi-search-heart')}"></div>
+
+      <div class="panel mb-4">
+        <form method="get" th:action="@{/doctors/search}" class="row g-3 align-items-end">
+          <div class="col-md-8">
+            <label class="form-label">Specialty</label>
+            <input
+              type="text"
+              name="specialty"
+              class="form-control"
+              list="specialty-options"
+              placeholder="e.g. Cardiology"
+              th:value="${specialty}">
+            <datalist id="specialty-options">
+              <option th:each="s : ${specialties}" th:value="${s}"></option>
+            </datalist>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div th:if="${searched}">
+        <h2 class="h6 fw-bold mb-3" th:if="${#lists.size(results) > 0}">
+          Found <span th:text="${#lists.size(results)}">0</span> doctor(s) for "<span th:text="${specialty}">specialty</span>"
+        </h2>
+
+        <div class="row g-4" th:if="${#lists.size(results) > 0}">
+          <div class="col-12 col-md-6 col-xl-4" th:each="doctor : ${results}">
+            <div class="panel h-100">
+              <div class="section-title">
+                <div>
+                  <p class="text-uppercase text-primary small fw-semibold mb-1" th:text="${doctor.specialization}">Specialty</p>
+                  <h2 class="h6 fw-bold mb-0" th:text="${doctor.fullName}">Dr. Name</h2>
+                </div>
+              </div>
+              <div class="data-list">
+                <div class="data-row">
+                  <div>
+                    <strong>Experience</strong>
+                    <span th:text="${doctor.experienceYears} != null ? ${doctor.experienceYears} + ' years' : '—'">—</span>
+                  </div>
+                  <span class="badge text-bg-light" th:text="${doctor.city} ?: '—'">City</span>
+                </div>
+              </div>
+              <a th:href="@{'/doctors/' + ${doctor.id}}" class="btn btn-primary btn-sm w-100 mt-3">View Profile</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning" th:if="${#lists.size(results) == 0}">
+          No doctors matched "<span th:text="${specialty}">specialty</span>". Try a different specialty.
+        </div>
+      </div>
+
+      <div class="alert alert-secondary" th:unless="${searched}">
+        Enter a specialty above (or pick one from the suggestions) to search.
+      </div>
+    </main>
+  </body>
+</html>
