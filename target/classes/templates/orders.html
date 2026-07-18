@@ -33,7 +33,7 @@
             <div class="data-list">
               <div class="data-row" th:each="item : ${order.items}">
                 <div>
-                  <strong th:text="${item.medicineName}">Medicine</strong>
+                  <strong th:text="${item.medicine.name}">Medicine</strong>
                   <span>Qty <span th:text="${item.quantity}">1</span> &times; ৳<span th:text="${item.unitPrice}">0</span></span>
                 </div>
                 <span class="badge text-bg-light">৳<span th:text="${item.subtotal}">0</span></span>
