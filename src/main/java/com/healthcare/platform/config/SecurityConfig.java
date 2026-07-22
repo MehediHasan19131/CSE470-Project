@@ -31,6 +31,12 @@ public class SecurityConfig {
                                 "/api/auth/login", "/api/auth/register", "/api/auth/token",
                                 "/css/**", "/img/**", "/error"
                         ).permitAll()
+                        // Admin user-management panel (Sprint 2 addition) - ADMIN only.
+                        // .roles(...) in the UserDetailsService bean below grants "ROLE_<NAME>",
+                        // so hasRole("ADMIN") here (Spring adds the "ROLE_" prefix automatically)
+                        // matches both session login AND the JwtAuthFilter path, which grants the
+                        // same "ROLE_" + role name format.
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
