@@ -1,0 +1,105 @@
+/* ── Sprint 2: Appointment & Service Booking Module ── */
+/* Rony Miah (24141084) — isolated styles, no conflict with other sprints */
+
+.appointment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appointment-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 280ms ease, box-shadow 280ms ease;
+  will-change: transform;
+}
+
+.appointment-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(15, 124, 144, 0.28);
+  box-shadow: 0 20px 40px rgba(24, 34, 42, 0.1);
+}
+
+.appointment-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px 0;
+}
+
+.appointment-doctor {
+  display: block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.appointment-specialty {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.appointment-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.appointment-status.pending {
+  color: #805b00;
+  background: #fff7df;
+}
+
+.appointment-status.confirmed {
+  color: #0f5132;
+  background: var(--mint);
+}
+
+.appointment-status.cancelled {
+  color: #8a3b2d;
+  background: var(--rose);
+}
+
+.appointment-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px 20px 16px;
+}
+
+.appointment-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3f5560;
+  font-size: 0.9rem;
+}
+
+.appointment-detail i {
+  width: 18px;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.appointment-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid #edf2f4;
+  background: #fafcfd;
+}
+
+@media (max-width: 576px) {
+  .appointment-card-body {
+    grid-template-columns: 1fr;
+  }
+}
