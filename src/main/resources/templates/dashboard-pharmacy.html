@@ -5,28 +5,29 @@
     <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
 
     <main class="container-fluid p-4">
-      <div th:replace="~{fragments/dashboard-layout :: page-heading('Pharmacy dashboard', 'Stock and sales — Member 4 dashboard shell', 'bi-capsule')}"></div>
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Pharmacy dashboard', 'Stock, sales, and incoming medicine orders', 'bi-capsule')}"></div>
 
       <div class="sprint-badge mb-4">
         <i class="bi bi-info-circle"></i>
-        <span th:text="${data.integrationNote}">Integration note</span>
+        <span>Sprint 2: manage incoming medicine orders and view patient reviews.</span>
       </div>
 
       <div class="panel">
         <div class="section-title">
           <div>
-            <p class="text-uppercase text-primary small fw-semibold mb-1">Modules</p>
-            <h2 class="h6 fw-bold mb-0">Planned Integrations</h2>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Quick actions</p>
+            <h2 class="h6 fw-bold mb-0">Sprint 2 features</h2>
           </div>
         </div>
-        <div class="data-list">
-          <div class="data-row" th:each="module : ${data.modules}">
-            <div>
-              <strong th:text="${module}">Module</strong>
-              <span>Owned by Member 3 (Pharmacy Module)</span>
-            </div>
-            <span class="badge text-bg-light">Pending</span>
-          </div>
+        <div class="action-grid">
+          <a href="/orders" class="action-tile">
+            <i class="bi bi-capsule"></i>
+            <span>Manage medicine orders</span>
+          </a>
+          <a href="/reviews" class="action-tile">
+            <i class="bi bi-star-half"></i>
+            <span>Reviews about me</span>
+          </a>
         </div>
       </div>
     </main>

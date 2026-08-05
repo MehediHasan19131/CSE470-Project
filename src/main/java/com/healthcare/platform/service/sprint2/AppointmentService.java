@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-@Service
+// Named explicitly: com.healthcare.platform.service.AppointmentService has the same simple name, and two beans
+// sharing the default name "appointmentService" break context startup.
+@Service("sprint2AppointmentService")
 public class AppointmentService {
 
     private final AppointmentRepository appointments;

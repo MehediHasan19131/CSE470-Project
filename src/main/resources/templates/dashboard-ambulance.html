@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ambulance Dashboard | SmartCare</title>
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  </head>
+  <body th:attr="data-user-id=${user.id}">
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Ambulance dashboard', 'Fleet, incoming requests, and live location — Member 4 (Ambulance Service + Map)', 'bi-truck-front')}"></div>
+
+      <div class="sprint-badge mb-4">
+        <i class="bi bi-info-circle"></i>
+        <span>Sprint 2: request/track ambulance backend, ride-sharing style booking, and OpenStreetMap + Leaflet.js map integration.</span>
+      </div>
+
+      <div class="row g-3 mb-4" id="fleetCards"></div>
+
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="panel mb-4">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Location</p>
+                <h2 class="h6 fw-bold mb-0">Update my live position</h2>
+              </div>
+            </div>
+            <div id="providerMap" style="height:260px;border-radius:8px;overflow:hidden;border:1px solid var(--border);" class="mb-3"></div>
+            <button type="button" class="btn btn-primary btn-sm" id="updateLocationBtn">
+              <i class="bi bi-crosshair"></i> Share my current GPS location
+            </button>
+            <span class="small text-secondary ms-2" id="locationStatus"></span>
+          </div>
+
+          <div class="panel">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Reviews</p>
+                <h2 class="h6 fw-bold mb-0">What patients say</h2>
+              </div>
+              <a href="/reviews" class="btn btn-outline-secondary btn-sm">View all</a>
+            </div>
+            <div class="data-list" id="reviewsPreview">
+              <div class="data-row"><span class="text-secondary">Loading…</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="panel">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Requests</p>
+                <h2 class="h6 fw-bold mb-0">Incoming &amp; assigned requests</h2>
+              </div>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="refreshRequests"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+            <div class="data-list" id="requestsList">
+              <div class="data-row"><span class="text-secondary">Loading…</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      const currentUserId = document.body.dataset.userId;
+      const providerMap = L.map('providerMap').setView([23.8103, 90.4125], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(providerMap);
+      let providerMarker = null;
+      let myFleet = [];
+
+      async function loadFleet() {
+        const res = await fetch('/api/ambulances/mine', { credentials: 'same-origin' });
+        myFleet = await res.json();
+        const cards = document.getElementById('fleetCards');
+        cards.innerHTML = myFleet.map(a => `
+          <div class="col-md-4">
+            <div class="metric-card">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="metric-icon"><i class="bi bi-truck-front"></i></div>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" data-ambulance-id="${a.id}" ${a.available ? 'checked' : ''} onchange="toggleAvailability(${a.id}, this.checked)">
+                </div>
+              </div>
+              <div>
+                <strong>${a.vehicleNumber}</strong>
+                <span>${a.vehicleType} · capacity ${a.capacity}</span>
+              </div>
+            </div>
+          </div>
+        `).join('') || '<div class="col-12"><p class="text-secondary">No vehicles registered under this account yet.</p></div>';
+
+        const withLocation = myFleet.find(a => a.latitude != null && a.longitude != null);
+        if (withLocation) {
+          providerMap.setView([withLocation.latitude, withLocation.longitude], 13);
+          providerMarker = L.marker([withLocation.latitude, withLocation.longitude]).addTo(providerMap);
+        }
+      }
+
+      async function toggleAvailability(ambulanceId, available) {
+        await fetch(`/api/ambulances/${ambulanceId}/availability`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ available })
+        });
+      }
+
+      document.getElementById('updateLocationBtn').addEventListener('click', () => {
+        if (!navigator.geolocation) return;
+        const status = document.getElementById('locationStatus');
+        status.textContent = 'Locating…';
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          providerMap.setView([latitude, longitude], 15);
+          if (providerMarker) providerMap.removeLayer(providerMarker);
+          providerMarker = L.marker([latitude, longitude]).addTo(providerMap);
+
+          const primary = myFleet[0];
+          if (primary) {
+            await fetch(`/api/ambulances/${primary.id}/location`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({ latitude, longitude })
+            });
+            status.textContent = `Updated ${primary.vehicleNumber} location just now.`;
+          }
+        }, () => { status.textContent = 'Could not read GPS location.'; });
+      });
+
+      async function loadRequests() {
+        const list = document.getElementById('requestsList');
+        const res = await fetch('/api/ambulance-requests/incoming', { credentials: 'same-origin' });
+        const items = await res.json();
+        if (!items.length) {
+          list.innerHTML = '<div class="data-row"><span class="text-secondary">No requests right now.</span></div>';
+          return;
+        }
+        list.innerHTML = items.map(r => `
+          <div class="data-row">
+            <div>
+              <strong>${r.pickupAddress}</strong>
+              <span>${r.patientName} · ${r.emergencyType || 'General'} · ${new Date(r.requestedAt).toLocaleString()}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge text-bg-light">${r.status}</span>
+              ${actionButtons(r)}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function actionButtons(r) {
+        if (r.status === 'REQUESTED') return btn(r.id, 'ACCEPTED', 'Accept');
+        if (r.status === 'ACCEPTED') return btn(r.id, 'EN_ROUTE', 'Start trip') + ' ' + btn(r.id, 'CANCELLED', 'Cancel', 'outline-danger');
+        if (r.status === 'EN_ROUTE') return btn(r.id, 'COMPLETED', 'Complete');
+        return '';
+      }
+
+      function btn(id, status, label, variant) {
+        return `<button class="btn btn-sm btn-${variant || 'primary'}" onclick="updateStatus(${id}, '${status}')">${label}</button>`;
+      }
+
+      async function updateStatus(requestId, status) {
+        await fetch(`/api/ambulance-requests/${requestId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ status })
+        });
+        loadRequests();
+        loadFleet();
+      }
+
+      document.getElementById('refreshRequests').addEventListener('click', loadRequests);
+
+      async function loadReviews() {
+        const box = document.getElementById('reviewsPreview');
+        try {
+          const res = await fetch(`/api/ratings/target/${currentUserId}`, { credentials: 'same-origin' });
+          const summary = await res.json();
+          if (!summary.reviews.length) {
+            box.innerHTML = '<div class="data-row"><span class="text-secondary">No reviews yet.</span></div>';
+            return;
+          }
+          box.innerHTML = summary.reviews.slice(0, 3).map(r => `
+            <div class="data-row">
+              <div><strong>${r.reviewerName}</strong><span>${r.comment || ''}</span></div>
+              <span class="badge text-bg-light">${r.score} ★</span>
+            </div>
+          `).join('');
+        } catch (e) {
+          box.innerHTML = '<div class="data-row"><span class="text-secondary">Could not load reviews.</span></div>';
+        }
+      }
+
+      loadFleet();
+      loadRequests();
+      loadReviews();
+      setInterval(loadRequests, 15000);
+    </script>
+  </body>
+</html>
