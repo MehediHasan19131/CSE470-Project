@@ -19,19 +19,54 @@
             <img src="/img/smartcare-icon.svg" alt="" width="32" height="32" class="d-inline-block">
             <span class="fw-bold" style="color: #0f7c90;">SmartCare</span>
         </a>
-        <div class="d-flex align-items-center gap-3">
-            <a href="/doctors" class="btn btn-outline-primary btn-sm">
+        <!--
+          Role-aware navigation. Every link here is one a user of that role can
+          actually act on, so nobody is shown a page that will 403 or come back
+          empty. The controllers already scope their data by role - /appointments
+          returns a doctor's own appointments and a patient's own, and /orders is
+          patient-scoped - so the nav mirrors that rather than inventing new rules.
+        -->
+        <div class="d-flex align-items-center gap-3" th:with="role=${user != null ? user.role.name() : ''}">
+
+            <!-- Patients: the full set of things they can browse and buy. -->
+            <a href="/doctors" class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-person-badge"></i> Doctors
             </a>
-            <a href="/appointments" class="btn btn-outline-primary btn-sm">
+            <a href="/appointments" class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-calendar-check"></i> Appointments
             </a>
-            <a href="/pharmacy-store" class="btn btn-outline-primary btn-sm">
+            <a href="/pharmacy-store" class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-capsule"></i> Pharmacy
             </a>
-            <a href="/reviews" class="btn btn-outline-primary btn-sm">
+            <a href="/reviews" class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-star"></i> Reviews
             </a>
+
+            <!-- Doctors: their own schedule only. AppointmentController already
+                 returns doctorHistory() for this role. -->
+            <a href="/appointments" class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'DOCTOR'}">
+                <i class="bi bi-calendar-check"></i> My Appointments
+            </a>
+
+            <!-- Providers see the reviews written about them, not the directory
+                 of everyone else. /reviews/{id} is that provider's own page. -->
+            <a class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'DOCTOR' or role == 'HOSPITAL' or role == 'PHARMACY'
+                        or role == 'DIAGNOSTIC' or role == 'AMBULANCE'}"
+               th:href="@{'/reviews/' + ${user.id}}">
+                <i class="bi bi-star"></i> My Reviews
+            </a>
+
+            <!-- Admin panel. -->
+            <a href="/admin" class="btn btn-outline-primary btn-sm" th:if="${role == 'ADMIN'}">
+                <i class="bi bi-shield-check"></i> Admin
+            </a>
+
             <span class="badge text-bg-primary text-capitalize"
                   th:text="${user != null ? #strings.toLowerCase(user.role) : ''}">role</span>
             <span class="text-secondary small" th:text="${user != null ? user.fullName : ''}">User</span>

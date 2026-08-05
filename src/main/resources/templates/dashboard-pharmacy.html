@@ -20,11 +20,11 @@
           </div>
         </div>
         <div class="action-grid">
-          <a href="/orders" class="action-tile">
+          <a href="/pharmacy-store" class="action-tile">
             <i class="bi bi-capsule"></i>
-            <span>Manage medicine orders</span>
+            <span>Medicine catalogue</span>
           </a>
-          <a href="/reviews" class="action-tile">
+          <a class="action-tile" th:href="@{'/reviews/' + ${user.id}}">
             <i class="bi bi-star-half"></i>
             <span>Reviews about me</span>
           </a>
