@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Pharmacy Store')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Pharmacy store', 'Browse and order medicines', 'bi-capsule')}"></div>
+
+      <div class="panel mb-4">
+        <form method="get" th:action="@{/pharmacy-store}" class="row g-3 align-items-end">
+          <div class="col-md-9">
+            <label class="form-label">Search medicine</label>
+            <input type="text" name="q" class="form-control" placeholder="e.g. Paracetamol" th:value="${q}">
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h6 fw-bold mb-0" th:if="${searched}">
+          Results for "<span th:text="${q}">query</span>"
+        </h2>
+        <a href="/orders" class="btn btn-outline-primary btn-sm ms-auto">
+          <i class="bi bi-receipt"></i> My Orders
+        </a>
+      </div>
+
+      <div class="row g-4" th:if="${#lists.size(medicines) > 0}">
+        <div class="col-12 col-md-6 col-xl-4" th:each="medicine : ${medicines}">
+          <div class="panel h-100">
+            <div class="section-title">
+              <div>
+                <h2 class="h6 fw-bold mb-1" th:text="${medicine.name}">Medicine name</h2>
+                <span class="badge text-bg-success" th:if="${medicine.stockQuantity} > 0">In stock</span>
+                <span class="badge text-bg-secondary" th:unless="${medicine.stockQuantity} > 0">Out of stock</span>
+              </div>
+            </div>
+            <p class="small text-muted" th:text="${medicine.description}">Description</p>
+            <div class="data-list">
+              <div class="data-row">
+                <div>
+                  <strong>Price</strong>
+                  <span>৳<span th:text="${medicine.price}">0</span></span>
+                </div>
+                <span class="badge text-bg-light">Qty: <span th:text="${medicine.stockQuantity}">0</span></span>
+              </div>
+            </div>
+            <a th:href="@{'/pharmacy-store/' + ${medicine.id}}" class="btn btn-primary btn-sm w-100 mt-3">View Details</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-warning" th:if="${#lists.size(medicines) == 0}">
+        No medicines found.
+      </div>
+    </main>
+  </body>
+</html>

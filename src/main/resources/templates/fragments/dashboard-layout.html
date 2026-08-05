@@ -26,6 +26,12 @@
             <a href="/appointments" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-calendar-check"></i> Appointments
             </a>
+            <a href="/pharmacy-store" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-capsule"></i> Pharmacy
+            </a>
+            <a href="/reviews" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-star"></i> Reviews
+            </a>
             <span class="badge text-bg-primary text-capitalize"
                   th:text="${user != null ? #strings.toLowerCase(user.role) : ''}">role</span>
             <span class="text-secondary small" th:text="${user != null ? user.fullName : ''}">User</span>

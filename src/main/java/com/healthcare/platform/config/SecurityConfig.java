@@ -49,6 +49,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/patients/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/patients/**").hasAnyRole("ADMIN", "PATIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/patients/**").hasRole("ADMIN")
+                        // Pharmacy Service Module (Sprint 2 - Imtiaz Zaman Sami):
+                        // anyone logged in can browse/search medicines; only patients place orders,
+                        // and an order can only ever be viewed by its owner (or admin/pharmacy staff),
+                        // which OrderService enforces at the data level.
+                        .requestMatchers(HttpMethod.GET, "/api/medicines/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/orders").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/pharmacy-store/*/order").hasRole("PATIENT")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
