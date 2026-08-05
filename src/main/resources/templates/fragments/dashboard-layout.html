@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/styles.css" rel="stylesheet">
     <link href="/css/sprint1.css" rel="stylesheet">
+    <link href="/css/sprint2.css" rel="stylesheet">
 </head>
 
 <nav th:fragment="navbar" class="navbar navbar-expand-lg bg-white border-bottom mb-0">
@@ -21,6 +22,9 @@
         <div class="d-flex align-items-center gap-3">
             <a href="/doctors" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-person-badge"></i> Doctors
+            </a>
+            <a href="/appointments" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-calendar-check"></i> Appointments
             </a>
             <span class="badge text-bg-primary text-capitalize"
                   th:text="${user != null ? #strings.toLowerCase(user.role) : ''}">role</span>
