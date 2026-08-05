@@ -1,3 +1,7 @@
+// SPRINT 3 MERGE NOTE:
+// This file REPLACES the Sprint 2 version of WebController.java.
+// Changes: 2 new page routes were added for Telemedicine — /telemedicine/history and
+// /telemedicine/call/{consultationId}. Everything else is unchanged from Sprint 2.
 package com.healthcare.platform.controller;
 
 import com.healthcare.platform.model.User;
@@ -9,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -43,15 +48,57 @@ public class WebController {
         return "logged-out";
     }
 
-    // Ambulance Module (Sprint 2 - Mehedi Hasan). The appointment, medicine-order
-    // and review pages that used to live here were duplicates of Rony's, Sami's
-    // and Nahian's modules and have been removed; those features are served by
-    // AppointmentController, PharmacyStoreWebController and ReviewWebController.
+    // ---- Sprint 2 feature pages ----
+
+    @GetMapping("/appointments/book")
+    public String appointmentBooking(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "appointment-booking";
+    }
+
+    @GetMapping("/appointments/manage")
+    public String appointmentManagement(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "appointment-management";
+    }
 
     @GetMapping("/ambulance/book")
     public String ambulanceBooking(Authentication authentication, Model model) {
         model.addAttribute("user", currentUserService.get(authentication));
         return "ambulance-booking";
+    }
+
+    @GetMapping("/medicines/order")
+    public String medicineOrdering(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "medicine-ordering";
+    }
+
+    @GetMapping("/orders/manage")
+    public String orderManagement(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "order-management";
+    }
+
+    @GetMapping("/reviews")
+    public String reviews(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "reviews";
+    }
+
+    // ---- Sprint 3 feature pages (Telemedicine) ----
+
+    @GetMapping("/telemedicine/history")
+    public String consultationHistory(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "consultation-history";
+    }
+
+    @GetMapping("/telemedicine/call/{consultationId}")
+    public String videoCall(@PathVariable Long consultationId, Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        model.addAttribute("consultationId", consultationId);
+        return "video-call";
     }
 
     private String dashboardTemplate(UserRole role) {

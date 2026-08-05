@@ -1,3 +1,5 @@
+<!-- SPRINT 3 MERGE NOTE: this file REPLACES the Sprint 2 version of dashboard-patient.html.
+     Adds a quick-action tile linking to Telemedicine consultation history. -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{fragments/dashboard-layout :: head('Patient Dashboard')}"></head>
@@ -9,14 +11,14 @@
 
       <div class="sprint-badge mb-4">
         <i class="bi bi-info-circle"></i>
-        <span>Sprint 2: Appointment Booking, Reviews, Medicine Ordering, and Ambulance Booking are now live.</span>
+        <span>Sprint 3: Telemedicine video consultations are now live, powered by Jitsi Meet.</span>
       </div>
 
       <div class="panel">
         <div class="section-title">
           <div>
             <p class="text-uppercase text-primary small fw-semibold mb-1">Quick actions</p>
-            <h2 class="h6 fw-bold mb-0">Sprint 2 features</h2>
+            <h2 class="h6 fw-bold mb-0">Care &amp; services</h2>
           </div>
         </div>
         <div class="action-grid">
@@ -24,11 +26,15 @@
             <i class="bi bi-calendar2-check"></i>
             <span>Book an appointment</span>
           </a>
+          <a href="/telemedicine/history" class="action-tile">
+            <i class="bi bi-camera-video"></i>
+            <span>Video consultations</span>
+          </a>
           <a href="/ambulance/book" class="action-tile">
             <i class="bi bi-truck-front"></i>
             <span>Book an ambulance</span>
           </a>
-          <a href="/pharmacy-store" class="action-tile">
+          <a href="/medicines/order" class="action-tile">
             <i class="bi bi-capsule"></i>
             <span>Order medicine</span>
           </a>
