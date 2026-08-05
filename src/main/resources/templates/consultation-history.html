@@ -20,11 +20,25 @@
         </div>
       </div>
 
-      <p class="small text-secondary mt-3">
-        Video consultations are only available for <strong>confirmed</strong> appointments.
-        Go to <a th:href="@{/appointments/book}">appointment booking</a> or
-        <a th:href="@{/appointments/manage}">appointment management</a> to start one.
-      </p>
+      <!-- Was small grey body text and easy to miss, which matters because it
+           explains why the list above is empty. /appointments/manage no longer
+           exists - appointment management lives at /appointments now. -->
+      <div class="alert alert-info d-flex align-items-start gap-3 mt-4" role="note">
+        <i class="bi bi-info-circle-fill fs-5 mt-1"></i>
+        <div>
+          <p class="fw-semibold mb-1">Video consultations need a confirmed appointment</p>
+          <p class="mb-2">
+            A consultation room is created once a doctor confirms your appointment.
+            Book one first, then come back here to join the call.
+          </p>
+          <a th:href="@{/appointments/book}" class="btn btn-primary btn-sm">
+            <i class="bi bi-calendar2-plus"></i> Book an appointment
+          </a>
+          <a th:href="@{/appointments}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-calendar-check"></i> My appointments
+          </a>
+        </div>
+      </div>
     </main>
 
     <script>
