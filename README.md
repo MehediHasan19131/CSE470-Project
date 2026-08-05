@@ -274,70 +274,32 @@ Full request/response shapes: [docs/SPRINT2_API_ENDPOINTS.md](docs/SPRINT2_API_E
 
 ---
 
-## Sprint 2 — Ambulance Module & member-4 additions
+## Sprint 2 — Ambulance Module
 **Member:** Mehedi Hasan
 
-The ambulance booking/dispatch feature is unique to this branch. The appointment,
-medicine-order and rating endpoints below are a second implementation of features
-Rony, Sami and Nahian also built; both are kept, with this member's overlapping
-routes namespaced under `/mehedi` and `/api/mehedi` so Spring can start.
+Ambulance booking and dispatch: providers register vehicles and toggle
+availability/location, patients request the nearest available ambulance and
+track the request through its lifecycle.
 
-### API endpoints
-
-```http
-#### Ambulance (Member 4)
-GET    /api/ambulances?lat=&lng=&availableOnly=
-GET    /api/ambulances/mine
-PATCH  /api/ambulances/{id}/location
-PATCH  /api/ambulances/{id}/availability
-POST   /api/ambulance-requests
-GET    /api/ambulance-requests/me
-GET    /api/ambulance-requests/incoming
-GET    /api/ambulance-requests/{id}
-PATCH  /api/ambulance-requests/{id}/status
-PATCH  /api/ambulance-requests/{id}/cancel
-
-#### Appointment booking + reminders
-POST   /api/appointments
-GET    /api/appointments/me
-GET    /api/appointments/reminders
-PATCH  /api/appointments/{id}/status
-
-#### Reviews
-POST   /api/ratings
-GET    /api/ratings/target/{userId}
-GET    /api/ratings/me
-
-#### Medicine ordering
-GET    /api/medicines
-POST   /api/medicine-orders
-GET    /api/medicine-orders/me
-GET    /api/medicine-orders/pharmacy
-PATCH  /api/medicine-orders/{id}/status
-```
+This member also built appointment, medicine-order and rating implementations
+during Sprint 2. They duplicated the modules Rony, Sami and Nahian delivered, so
+after integration the more complete implementation of each was kept and these
+duplicates were removed; the code remains in git history on `sprint2-Mehedi`.
 
 ### Page routes
 
-```text
-/appointments/book      patient — search doctors and book
-/appointments/manage    doctor  — confirm / complete / cancel
-/ambulance/book         patient — Leaflet map booking + live tracking
-/medicines/order        patient — pharmacy catalog + cart + checkout
-/orders/manage          pharmacy — fulfill medicine orders
-/reviews                any role — browse & submit ratings
-```
+| Method | Path | Access | Purpose |
+|--------|------|--------|---------|
+| GET | `/ambulance/book` | any logged-in user | Ambulance booking page with map |
+| GET | `/dashboard` | AMBULANCE role | Ambulance provider dashboard |
 
-### Ambulance & map design notes
+### API endpoints
 
-- **Database:** `Ambulance` (a vehicle owned by an AMBULANCE-role account) and `AmbulanceRequest`
-  (a ride request with pickup/drop coordinates and a status lifecycle:
-  `REQUESTED → ACCEPTED → EN_ROUTE → COMPLETED`, or `CANCELLED`).
-- **Backend:** `AmbulanceService` auto-assigns the nearest available vehicle using the Haversine
-  formula, estimates a fare from `baseFare + perKmRate × distance`, and exposes tracking/incoming/
-  status-update endpoints for the request-ambulance and track-ambulance flows.
-- **Frontend:** `ambulance-booking.html` uses **Leaflet.js** tiles from **OpenStreetMap**
-  (`tile.openstreetmap.org`) with click-to-pin pickup/drop, `navigator.geolocation` for GPS,
-  best-effort reverse geocoding via the free Nominatim API, a nearby-fleet list, and a live tracking
-  panel that polls the request every 5 seconds until it's completed or cancelled.
-  `dashboard-ambulance.html` is the driver-side counterpart: toggle vehicle availability, push GPS
-  location, and accept/advance/complete requests.
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/api/ambulances` | List ambulances |
+| GET | `/api/ambulances/mine` | Vehicles owned by the logged-in provider |
+| POST | `/api/ambulance-requests` | Book an ambulance |
+| GET | `/api/ambulance-requests/me` | Requests made by the logged-in patient |
+| GET | `/api/ambulance-requests/incoming` | Requests addressed to the provider |
+| GET | `/api/ambulance-requests/{id}` | One request |
