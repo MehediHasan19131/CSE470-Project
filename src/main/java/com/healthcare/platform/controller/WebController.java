@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -52,6 +53,24 @@ public class WebController {
     public String ambulanceBooking(Authentication authentication, Model model) {
         model.addAttribute("user", currentUserService.get(authentication));
         return "ambulance-booking";
+    }
+
+    // Telemedicine Module (Sprint 3 - Mehedi Hasan). Only these two routes were
+    // taken from the Sprint 3 WebController; the rest of that file duplicated
+    // Rony's /appointments/book and Nahian's /reviews, which Spring rejects as
+    // Ambiguous mapping.
+
+    @GetMapping("/telemedicine/history")
+    public String consultationHistory(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "consultation-history";
+    }
+
+    @GetMapping("/telemedicine/call/{consultationId}")
+    public String videoCall(@PathVariable Long consultationId, Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        model.addAttribute("consultationId", consultationId);
+        return "video-call";
     }
 
     private String dashboardTemplate(UserRole role) {
