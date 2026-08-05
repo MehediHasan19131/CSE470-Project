@@ -2,48 +2,34 @@ package com.healthcare.platform.service;
 
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.model.UserRole;
-<<<<<<< HEAD
-import com.healthcare.platform.repository.*;
-import java.util.*;
-=======
 import com.healthcare.platform.repository.AppSettingRepository;
+import com.healthcare.platform.repository.AppointmentRepository;
+import com.healthcare.platform.repository.MedicineRepository;
+import com.healthcare.platform.repository.RatingRepository;
 import com.healthcare.platform.repository.UserRepository;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
->>>>>>> origin/sprint1-Mehedi
 import org.springframework.stereotype.Service;
 
 @Service
 public class DashboardService {
     private final UserRepository users;
-<<<<<<< HEAD
+    private final AppSettingRepository settings;
     private final AppointmentRepository appointments;
     private final MedicineRepository medicines;
     private final RatingRepository ratings;
 
-    public DashboardService(UserRepository users, AppointmentRepository appointments,
-                            MedicineRepository medicines, RatingRepository ratings) {
+    public DashboardService(UserRepository users,
+                            AppSettingRepository settings,
+                            AppointmentRepository appointments,
+                            MedicineRepository medicines,
+                            RatingRepository ratings) {
         this.users = users;
+        this.settings = settings;
         this.appointments = appointments;
         this.medicines = medicines;
         this.ratings = ratings;
-    }
-
-    public Map<String, Object> dashboard(User user) {
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("totalPatients", users.findByRole(UserRole.PATIENT).size());
-        data.put("totalDoctors", users.findByRole(UserRole.DOCTOR).size());
-        data.put("totalHospitals", users.findByRole(UserRole.HOSPITAL).size());
-        data.put("totalPharmacies", users.findByRole(UserRole.PHARMACY).size());
-        data.put("totalAppointments", appointments.count());
-        data.put("totalMedicines", medicines.count());
-=======
-    private final AppSettingRepository settings;
-
-    public DashboardService(UserRepository users, AppSettingRepository settings) {
-        this.users = users;
-        this.settings = settings;
     }
 
     public Map<String, Object> dashboard(User currentUser) {
@@ -76,12 +62,24 @@ public class DashboardService {
 
     private Map<String, Object> adminDashboard(User currentUser) {
         Map<String, Object> data = basePayload(currentUser);
-        data.put("metrics", Map.of(
-                "totalUsers", users.count(),
-                "activeUsers", users.findAll().stream().filter(User::isActive).count(),
-                "adminUsers", users.countByRole(UserRole.ADMIN),
-                "patientUsers", users.countByRole(UserRole.PATIENT)
-        ));
+
+        long hospitals = users.countByRole(UserRole.HOSPITAL);
+        long pharmacies = users.countByRole(UserRole.PHARMACY);
+
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        metrics.put("totalUsers", users.count());
+        metrics.put("activeUsers", users.findAll().stream().filter(User::isActive).count());
+        metrics.put("adminUsers", users.countByRole(UserRole.ADMIN));
+        metrics.put("patientUsers", users.countByRole(UserRole.PATIENT));
+        metrics.put("doctorUsers", users.countByRole(UserRole.DOCTOR));
+        metrics.put("hospitalUsers", hospitals);
+        metrics.put("pharmacyUsers", pharmacies);
+        metrics.put("totalFacilities", hospitals + pharmacies);
+        metrics.put("totalAppointments", appointments.count());
+        metrics.put("totalMedicines", medicines.count());
+        metrics.put("totalRatings", ratings.count());
+        data.put("metrics", metrics);
+
         data.put("settings", settings.findAll().stream()
                 .map(setting -> Map.of("key", setting.getKey(), "value", setting.getValue()))
                 .toList());
@@ -110,7 +108,6 @@ public class DashboardService {
                 "name", currentUser.getFullName(),
                 "email", currentUser.getEmail()
         ));
->>>>>>> origin/sprint1-Mehedi
         return data;
     }
 }

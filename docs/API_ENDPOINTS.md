@@ -1,8 +1,8 @@
-# API Endpoints — Member 1: Authentication & User Management
+# API Endpoints
 
-Only endpoints belonging to this sprint task are listed here. (Other members'
-endpoints - admin, dashboard, search, pharmacy - were removed from this submission;
-see `docs/MVC_ARCHITECTURE.md`.)
+Sprint 1 endpoints across the merged branches. Authentication & user management
+(Member 1) is documented first, followed by the Doctor & Patient module.
+See `docs/MVC_ARCHITECTURE.md` for the layering.
 
 ## Session-based login (browser)
 
@@ -37,9 +37,37 @@ Valid `role` values: `PATIENT`, `DOCTOR`, `HOSPITAL`, `PHARMACY`, `DIAGNOSTIC`, 
 (not `ADMIN` - admin accounts are seeded only). Returns `201` with the created user, or
 `400` if the email is already taken.
 
-<<<<<<< HEAD
 ## JWT login (stateless, for API/mobile clients)
-=======
+
+```http
+POST /api/auth/token
+```
+```json
+{ "email": "jane@example.com", "password": "secret123" }
+```
+Response:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "tokenType": "Bearer",
+  "role": "PATIENT",
+  "fullName": "Jane Doe",
+  "expiresInMs": 86400000
+}
+```
+Send it on later requests as `Authorization: Bearer <token>`.
+
+## Server-rendered pages
+
+| Method | Path       | Access          | Purpose                                  |
+|--------|-----------|-----------------|--------------------------------------------|
+| GET    | /          | public          | Login page                                 |
+| POST   | /login     | public          | Processes login (Spring Security formLogin)|
+| GET    | /register  | public          | Registration form                          |
+| POST   | /register  | public          | Creates the account, redirects to /        |
+| GET/POST | /profile | any logged-in user | View / edit your own account details   |
+| GET    | /logged-out | public         | Shown after logout                         |
+
 ## Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami, 23101551)
 
 Doctors and patients are stored the same way every other role is: a `User` row
@@ -111,35 +139,3 @@ Content-Type: application/json
   "bio": null
 }
 ```
-
-## Admin
->>>>>>> origin/sami-sprint1
-
-```http
-POST /api/auth/token
-```
-```json
-{ "email": "jane@example.com", "password": "secret123" }
-```
-Response:
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9...",
-  "tokenType": "Bearer",
-  "role": "PATIENT",
-  "fullName": "Jane Doe",
-  "expiresInMs": 86400000
-}
-```
-Send it on later requests as `Authorization: Bearer <token>`.
-
-## Server-rendered pages
-
-| Method | Path       | Access          | Purpose                                  |
-|--------|-----------|-----------------|--------------------------------------------|
-| GET    | /          | public          | Login page                                 |
-| POST   | /login     | public          | Processes login (Spring Security formLogin)|
-| GET    | /register  | public          | Registration form                          |
-| POST   | /register  | public          | Creates the account, redirects to /        |
-| GET/POST | /profile | any logged-in user | View / edit your own account details   |
-| GET    | /logged-out | public         | Shown after logout                         |

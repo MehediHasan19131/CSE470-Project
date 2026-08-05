@@ -35,6 +35,24 @@ public class Profile {
     private Double latitude;
     private Double longitude;
 
+    // Added for the Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami).
+    // Nullable so existing roles (admin, hospital, pharmacy, etc.) are unaffected.
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    private String gender;
+
+    @Column(name = "blood_group", length = 5)
+    private String bloodGroup;
+
+    private String qualification;
+
+    @Column(name = "experience_years")
+    private Integer experienceYears;
+
+    @Column(name = "consultation_fee")
+    private Double consultationFee;
+
     public Profile() {}
 
     public Profile(User user, String address, String city, String bio, String specialization,
@@ -59,13 +77,30 @@ public class Profile {
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }
     public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
     public String getSpecialization() { return specialization; }
     public void setSpecialization(String specialization) { this.specialization = specialization; }
     public String getLicenseNumber() { return licenseNumber; }
+    public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
     public String getServiceName() { return serviceName; }
     public void setServiceName(String serviceName) { this.serviceName = serviceName; }
     public boolean isEmergencyAvailable() { return emergencyAvailable; }
     public void setEmergencyAvailable(boolean emergencyAvailable) { this.emergencyAvailable = emergencyAvailable; }
     public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
     public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+    public String getBloodGroup() { return bloodGroup; }
+    public void setBloodGroup(String bloodGroup) { this.bloodGroup = bloodGroup; }
+    public String getQualification() { return qualification; }
+    public void setQualification(String qualification) { this.qualification = qualification; }
+    public Integer getExperienceYears() { return experienceYears; }
+    public void setExperienceYears(Integer experienceYears) { this.experienceYears = experienceYears; }
+    public Double getConsultationFee() { return consultationFee; }
+    public void setConsultationFee(Double consultationFee) { this.consultationFee = consultationFee; }
 }
