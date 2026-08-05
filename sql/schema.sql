@@ -109,3 +109,26 @@ CREATE TABLE IF NOT EXISTS order_items (
     CONSTRAINT fk_order_items_order    FOREIGN KEY (order_id)    REFERENCES orders(id),
     CONSTRAINT fk_order_items_medicine FOREIGN KEY (medicine_id) REFERENCES medicines(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Telemedicine Module (Sprint 3 - Mehedi Hasan). One consultation per
+-- appointment; the room name is what the Jitsi Meet client joins.
+CREATE TABLE IF NOT EXISTS consultations (
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id BIGINT       NOT NULL UNIQUE,
+    patient_id     BIGINT       NOT NULL,
+    doctor_id      BIGINT       NOT NULL,
+    room_name      VARCHAR(120) NOT NULL UNIQUE,
+    status         VARCHAR(30)  NOT NULL DEFAULT 'SCHEDULED',
+    notes          TEXT,
+    prescription   TEXT,
+    scheduled_at   DATETIME     NOT NULL,
+    started_at     DATETIME,
+    ended_at       DATETIME,
+    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX ix_consultations_patient_id (patient_id),
+    INDEX ix_consultations_doctor_id (doctor_id),
+    INDEX ix_consultations_status (status),
+    CONSTRAINT fk_consultations_appointment FOREIGN KEY (appointment_id) REFERENCES appointments(id),
+    CONSTRAINT fk_consultations_patient     FOREIGN KEY (patient_id)     REFERENCES users(id),
+    CONSTRAINT fk_consultations_doctor      FOREIGN KEY (doctor_id)      REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

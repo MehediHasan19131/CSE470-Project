@@ -62,6 +62,13 @@
                 <i class="bi bi-star"></i> My Reviews
             </a>
 
+            <!-- Telemedicine (Sprint 3): consultations are between a patient
+                 and a doctor, so only those two roles get the link. -->
+            <a href="/telemedicine/history" class="btn btn-outline-primary btn-sm"
+               th:if="${role == 'PATIENT' or role == 'DOCTOR'}">
+                <i class="bi bi-camera-video"></i> Telemedicine
+            </a>
+
             <!-- Admin panel. -->
             <a href="/admin" class="btn btn-outline-primary btn-sm" th:if="${role == 'ADMIN'}">
                 <i class="bi bi-shield-check"></i> Admin

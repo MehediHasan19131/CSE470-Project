@@ -1,7 +1,3 @@
-// SPRINT 3 MERGE NOTE:
-// This file REPLACES the Sprint 2 version of WebController.java.
-// Changes: 2 new page routes were added for Telemedicine — /telemedicine/history and
-// /telemedicine/call/{consultationId}. Everything else is unchanged from Sprint 2.
 package com.healthcare.platform.controller;
 
 import com.healthcare.platform.model.User;
@@ -48,19 +44,10 @@ public class WebController {
         return "logged-out";
     }
 
-    // ---- Sprint 2 feature pages ----
-
-    @GetMapping("/appointments/book")
-    public String appointmentBooking(Authentication authentication, Model model) {
-        model.addAttribute("user", currentUserService.get(authentication));
-        return "appointment-booking";
-    }
-
-    @GetMapping("/appointments/manage")
-    public String appointmentManagement(Authentication authentication, Model model) {
-        model.addAttribute("user", currentUserService.get(authentication));
-        return "appointment-management";
-    }
+    // Ambulance Module (Sprint 2 - Mehedi Hasan). The appointment, medicine-order
+    // and review pages that used to live here were duplicates of Rony's, Sami's
+    // and Nahian's modules and have been removed; those features are served by
+    // AppointmentController, PharmacyStoreWebController and ReviewWebController.
 
     @GetMapping("/ambulance/book")
     public String ambulanceBooking(Authentication authentication, Model model) {
@@ -68,25 +55,10 @@ public class WebController {
         return "ambulance-booking";
     }
 
-    @GetMapping("/medicines/order")
-    public String medicineOrdering(Authentication authentication, Model model) {
-        model.addAttribute("user", currentUserService.get(authentication));
-        return "medicine-ordering";
-    }
-
-    @GetMapping("/orders/manage")
-    public String orderManagement(Authentication authentication, Model model) {
-        model.addAttribute("user", currentUserService.get(authentication));
-        return "order-management";
-    }
-
-    @GetMapping("/reviews")
-    public String reviews(Authentication authentication, Model model) {
-        model.addAttribute("user", currentUserService.get(authentication));
-        return "reviews";
-    }
-
-    // ---- Sprint 3 feature pages (Telemedicine) ----
+    // Telemedicine Module (Sprint 3 - Mehedi Hasan). Only these two routes were
+    // taken from the Sprint 3 WebController; the rest of that file duplicated
+    // Rony's /appointments/book and Nahian's /reviews, which Spring rejects as
+    // Ambiguous mapping.
 
     @GetMapping("/telemedicine/history")
     public String consultationHistory(Authentication authentication, Model model) {
