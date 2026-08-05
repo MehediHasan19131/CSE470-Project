@@ -562,3 +562,203 @@ body {
     transition-duration: 1ms !important;
   }
 }
+
+@media (max-width: 992px) {
+  .login-panel {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .login-brand {
+    padding: 34px;
+  }
+
+  .login-form-panel {
+    padding: 34px;
+  }
+
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-graphic {
+    justify-self: start;
+  }
+
+  .roadmap-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Review & Rating System (Member 2)                                      */
+/* ---------------------------------------------------------------------- */
+
+.star-display {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--gold);
+  font-size: 1rem;
+}
+
+.star-display i.bi-star {
+  color: #d8e2e7;
+}
+
+.rating-hero-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.rating-hero-score strong {
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.rating-hero-score span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Pure-CSS 1-5 star input: radios rendered in reverse order so the
+   "checked ~ label" / "label:hover ~ label" sibling selectors can light up
+   every star up to and including the one under the cursor or selected. */
+.star-input {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 6px;
+}
+
+.star-input input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.star-input label {
+  font-size: 2rem;
+  line-height: 1;
+  color: #d8e2e7;
+  cursor: pointer;
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.star-input input:checked ~ label,
+.star-input label:hover,
+.star-input label:hover ~ label {
+  color: var(--gold);
+}
+
+.star-input input:focus-visible ~ label {
+  outline: 2px solid rgba(15, 124, 144, 0.4);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.review-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: linear-gradient(145deg, #ffffff, #f8fbfc);
+}
+
+.review-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.review-card-header strong {
+  display: block;
+  color: var(--ink);
+}
+
+.review-card-header span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.review-card p {
+  margin: 0;
+  color: #324650;
+  font-size: 0.92rem;
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.provider-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: linear-gradient(145deg, #ffffff, #f8fbfc);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.provider-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(15, 124, 144, 0.26);
+  box-shadow: 0 14px 28px rgba(24, 34, 42, 0.08);
+}
+
+.provider-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 576px) {
+  .login-shell {
+    padding: 14px;
+  }
+
+  .login-brand,
+  .login-form-panel {
+    padding: 24px;
+  }
+
+  .login-role-grid,
+  .login-status-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-hero {
+    padding: 22px;
+  }
+
+  .logout-card {
+    padding: 28px;
+  }
+
+  .hero-graphic {
+    width: 118px;
+  }
+
+  .hero-graphic i {
+    width: 76px;
+    font-size: 2.2rem;
+  }
+
+  .action-grid,
+  .roadmap-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-grid,
+  .vital-grid {
+    grid-template-columns: 1fr;
+  }
+}

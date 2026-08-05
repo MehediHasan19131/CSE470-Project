@@ -196,3 +196,78 @@ CSE470 course project — University of ...
 - `dto/ServiceListingResponse.java`
 - `templates/fragments/dashboard-layout.html`
 - `static/css/styles.css`
+
+---
+
+## Sprint 2 — Review & Rating System
+**Member:** Nahian Mahmud
+
+### Task
+
+**Database:** Reviews, Ratings
+**Backend:** Create Review, Update Review
+**Frontend:** Review Form, Rating Display
+
+### What's implemented
+
+- `reviews` table + `ratings` table (plain SQL, `src/main/resources/review-schema.sql`)
+  - `reviews` — one row per (reviewer, target) pair: a 1–5 star rating + optional
+    written comment. A reviewer can only have one review per provider — to
+    change their mind they **update** that row, they don't create a second one.
+  - `ratings` — one row per provider: a running average + review count, kept in
+    sync with `reviews` every time a review is created or updated. This is what
+    the "Rating Display" page reads from, instead of re-aggregating the whole
+    `reviews` table on every request.
+- **Create Review** — `POST /api/reviews`, and via the on-page form at `/reviews/{targetId}`
+- **Update Review** — `PUT /api/reviews/{id}`, and via the same on-page form
+  (it detects you already have a review for that provider and updates it instead)
+- **Review Form** — `/reviews/{targetId}`, a star-rating + comment form (pure
+  CSS star picker, no JS). Pre-fills with your existing review if you have one.
+- **Rating Display** — the same page shows the provider's average rating (stars
+  + number) and the full list of individual reviews.
+- **Browse providers** — `/reviews`, a directory of every doctor/hospital/
+  pharmacy/diagnostic centre/ambulance service with their current rating,
+  linking into each one's review page. This wasn't one of the two assigned
+  frontend items — it exists only so there's a way to reach a review page
+  without typing a raw id into the URL, since the provider search/listing
+  feature is a different member's task. Feel free to drop it once that page exists.
+- 3 demo reviews seeded automatically on startup via `review-data.sql`, kept
+  consistent with the `ratings` table so the pages have something to show
+  immediately.
+
+### Project structure
+
+```text
+.
+├── docs
+│   ├── SPRINT2_API_ENDPOINTS.md
+│   ├── (your Sprint 1 docs stay here too)
+│   └── SPRINT2_MVC_ARCHITECTURE.md
+├── sql                        (reference copies - see src/main/resources for the real ones)
+│   ├── schema.sql / seed.sql          (Member 1 - users, borrowed unchanged)
+│   └── review-schema.sql / review-seed.sql   (Member 2 - reviews, ratings)
+├── src/main/java/com/healthcare/platform
+│   ├── review                 (Member 2: everything new this sprint - all JDBC, no ORM)
+│   ├── auth, config, controller, dto, model, service   (Member 1 - borrowed unchanged)
+├── src/main/resources
+│   ├── schema.sql / data.sql              (Member 1 - users)
+│   ├── review-schema.sql / review-data.sql (Member 2 - reviews, ratings)
+│   ├── static/css, static/img
+│   ├── templates
+│   └── application.properties  (2 lines added - see below)
+├── docker-compose.yml
+├── pom.xml
+└── README.md
+```
+
+More details: [MVC architecture](docs/SPRINT2_MVC_ARCHITECTURE.md) ·
+[API endpoints](docs/SPRINT2_API_ENDPOINTS.md) — for pushing to GitHub, see the `docs/GITHUB_PUSH_GUIDE.md` already in this repo from Sprint 1, same steps apply.
+
+### API highlights
+
+- `POST /api/reviews` — create a review
+- `PUT /api/reviews/{id}` — update your own review
+- `GET /api/reviews/target/{targetId}` — all reviews for a provider
+- `GET /api/ratings/{targetId}` — a provider's average rating + count
+
+Full request/response shapes: [docs/SPRINT2_API_ENDPOINTS.md](docs/SPRINT2_API_ENDPOINTS.md)

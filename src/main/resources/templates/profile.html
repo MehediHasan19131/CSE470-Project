@@ -16,6 +16,7 @@
           <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="200" height="46">
         </a>
         <div class="d-flex align-items-center gap-3">
+          <a href="/reviews" class="btn btn-outline-primary btn-sm"><i class="bi bi-star"></i> Providers &amp; Reviews</a>
           <span class="badge text-bg-primary text-capitalize" th:text="${#strings.toLowerCase(user.role)}">role</span>
           <span class="small text-secondary" th:text="${user.fullName}">User</span>
           <a class="btn btn-outline-secondary btn-sm" href="/logout">
@@ -96,6 +97,76 @@
             <p class="text-secondary small mb-0">
               Member since <span th:text="${#temporals.format(user.createdAt, 'dd MMM yyyy')}">date</span>.
             </p>
+          </div>
+
+          <!-- Admin: quick link into the user management panel -->
+          <div class="panel mb-4" th:if="${user.role.name() == 'ADMIN'}">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Admin</p>
+                <h2 class="h6 fw-bold mb-0">User management</h2>
+              </div>
+            </div>
+            <p class="text-secondary small">Create, edit, or remove any account on the platform.</p>
+            <a href="/admin" class="btn btn-primary btn-sm"><i class="bi bi-speedometer2"></i> Open admin panel</a>
+          </div>
+
+          <!-- Patient: reviews they've written -->
+          <div class="panel mb-4" th:if="${user.role.name() == 'PATIENT'}">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Reviews &amp; ratings</p>
+                <h2 class="h6 fw-bold mb-0">Reviews you've written</h2>
+              </div>
+            </div>
+            <p class="text-secondary small mb-2" th:if="${#lists.isEmpty(myReviews)}">
+              You haven't reviewed any providers yet.
+            </p>
+            <div class="data-list" th:unless="${#lists.isEmpty(myReviews)}">
+              <a class="review-card text-decoration-none text-dark" th:each="r : ${myReviews}" th:href="@{'/reviews/' + ${r.targetId}}">
+                <div class="review-card-header">
+                  <div>
+                    <strong th:text="${r.targetName}">Provider name</strong>
+                    <span class="star-display" aria-hidden="true">
+                      <i th:each="i : ${#numbers.sequence(1,5)}" th:class="${i <= r.rating} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <a href="/reviews" class="btn btn-outline-primary btn-sm mt-2"><i class="bi bi-search"></i> Browse providers</a>
+          </div>
+
+          <!-- Providers (doctor/hospital/pharmacy/diagnostic/ambulance): reviews written about them -->
+          <div class="panel mb-4" th:if="${ratingSummary != null}">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Reviews &amp; ratings</p>
+                <h2 class="h6 fw-bold mb-0">What patients say about you</h2>
+              </div>
+            </div>
+            <div class="rating-hero-score mb-2">
+              <strong th:text="${#numbers.formatDecimal(ratingSummary.averageRating, 1, 1)}">0.0</strong>
+              <span class="star-display" aria-hidden="true">
+                <i th:each="i : ${#numbers.sequence(1,5)}"
+                   th:class="${i <= T(java.lang.Math).round(ratingSummary.averageRating)} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+              </span>
+              <span th:text="${ratingSummary.totalReviews} + ' review(s)'">0 review(s)</span>
+            </div>
+            <p class="text-secondary small mb-2" th:if="${#lists.isEmpty(reviewsAboutMe)}">No one has reviewed you yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(reviewsAboutMe)}">
+              <div class="review-card" th:each="r : ${reviewsAboutMe}">
+                <div class="review-card-header">
+                  <div>
+                    <strong th:text="${r.reviewerName}">Reviewer</strong>
+                    <span class="star-display" aria-hidden="true">
+                      <i th:each="i : ${#numbers.sequence(1,5)}" th:class="${i <= r.rating} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                    </span>
+                  </div>
+                </div>
+                <p th:if="${r.comment != null and !#strings.isEmpty(r.comment)}" th:text="${r.comment}">Comment</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -27,8 +27,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/logged-out", "/api/auth/login", "/css/**", "/img/**", "/images/**", "/error").permitAll()
+                        .requestMatchers(
+                                "/", "/logged-out", "/register",
+                                "/api/auth/login", "/api/auth/register", "/api/auth/token",
+                                "/css/**", "/img/**", "/images/**", "/error"
+                        ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Admin user-management panel (Sprint 2 - Nahian Mahmud) - ADMIN only.
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/dashboard").authenticated()
                         .requestMatchers("/api/doctors/search", "/api/hospitals", "/api/pharmacies").hasRole("PATIENT")
                         .requestMatchers("/api/pharmacy/**").hasRole("PHARMACY")

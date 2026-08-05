@@ -110,4 +110,43 @@ public class AuthUserJdbcRepository {
                 fullName, phone, id
         );
     }
+
+    // --- Everything below this line is for the Admin user-management panel ---
+    // (create/edit/delete ANY account) - same "no ORM" plain-JDBC style as the rest
+    // of this repository, just a few more hand-written queries.
+
+    public List<AuthUser> findAll() {
+        return jdbcTemplate.query(SELECT_COLUMNS + "ORDER BY id", ROW_MAPPER);
+    }
+
+    public int countByRole(UserRole role) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM users WHERE role = ?", Integer.class, role.name()
+        );
+        return count != null ? count : 0;
+    }
+
+    /** Full admin edit: name, email, phone, role, and active flag. Password is handled separately - see updatePasswordHash. */
+    public void updateAsAdmin(Long id, String fullName, String email, String phone, UserRole role, boolean active) {
+        jdbcTemplate.update(
+                "UPDATE users SET full_name = ?, email = ?, phone = ?, role = ?, is_active = ? WHERE id = ?",
+                fullName, email, phone, role.name(), active, id
+        );
+    }
+
+    public void updatePasswordHash(Long id, String passwordHash) {
+        jdbcTemplate.update("UPDATE users SET password_hash = ? WHERE id = ?", passwordHash, id);
+    }
+
+    /**
+     * Deletes the user row itself. Callers MUST remove any `reviews`/`ratings`
+     * rows referencing this id first (see ReviewJdbcRepository) - both have a
+     * foreign key on users.id, so this alone would fail with a constraint
+     * violation if the user has any review history. AdminUserService.deleteUser(...)
+     * handles that ordering.
+     */
+    public void deleteById(Long id) {
+        jdbcTemplate.update("DELETE FROM users WHERE id = ?", id);
+    }
+
 }
