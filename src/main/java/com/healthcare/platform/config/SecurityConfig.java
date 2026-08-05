@@ -16,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -24,11 +23,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/logged-out", "/api/auth/login", "/css/**", "/img/**", "/images/**", "/error").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+<<<<<<< HEAD
 <<<<<<< HEAD
                         .requestMatchers("/api/dashboard").authenticated()
 =======
@@ -46,6 +46,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/patients/**").hasAnyRole("ADMIN", "PATIENT")
                         .requestMatchers(HttpMethod.DELETE, "/api/patients/**").hasRole("ADMIN")
 >>>>>>> origin/sami-sprint1
+=======
+                        .requestMatchers("/api/dashboard").authenticated()
+>>>>>>> origin/sprint1-Mehedi
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -39,7 +39,13 @@ public class WebController {
     }
 
     @GetMapping("/logged-out")
+<<<<<<< HEAD
     public String loggedOut() { return "logged-out"; }
+=======
+    public String loggedOut() {
+        return "logged-out";
+    }
+>>>>>>> origin/sprint1-Mehedi
 
     private String dashboardTemplate(UserRole role) {
         return switch (role) {
