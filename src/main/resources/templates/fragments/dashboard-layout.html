@@ -13,11 +13,14 @@
     <link href="/css/sprint2.css" rel="stylesheet">
 </head>
 
-<nav th:fragment="navbar" class="navbar navbar-expand-lg bg-white border-bottom mb-0">
+<a th:fragment="brand-logo(link)" th:href="${link}" class="brand-logo" aria-label="SmartCare home">
+    <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="174" height="46">
+</a>
+
+<nav th:fragment="navbar" class="navbar navbar-expand-lg app-navbar sticky-top">
     <div class="container-fluid px-4">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
-            <img src="/img/smartcare-icon.svg" alt="" width="32" height="32" class="d-inline-block">
-            <span class="fw-bold" style="color: #0f7c90;">SmartCare</span>
+        <a class="brand-logo" href="/dashboard" aria-label="SmartCare home">
+            <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="174" height="46">
         </a>
         <!--
           Role-aware navigation. Every link here is one a user of that role can
@@ -26,59 +29,68 @@
           returns a doctor's own appointments and a patient's own, and /orders is
           patient-scoped - so the nav mirrors that rather than inventing new rules.
         -->
-        <div class="d-flex align-items-center gap-3" th:with="role=${user != null ? user.role.name() : ''}">
+        <div class="nav-actions" th:with="role=${user != null ? user.role.name() : ''}">
 
             <!-- Patients: the full set of things they can browse and buy. -->
-            <a href="/doctors" class="btn btn-outline-primary btn-sm"
+            <a href="/doctors" class="nav-pill"
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
-                <i class="bi bi-person-badge"></i> Doctors
+                <i class="bi bi-person-badge"></i><span>Doctors</span>
             </a>
-            <a href="/appointments" class="btn btn-outline-primary btn-sm"
+            <a href="/appointments" class="nav-pill"
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
-                <i class="bi bi-calendar-check"></i> Appointments
+                <i class="bi bi-calendar-check"></i><span>Appointments</span>
             </a>
-            <a href="/pharmacy-store" class="btn btn-outline-primary btn-sm"
+            <a href="/pharmacy-store" class="nav-pill"
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
-                <i class="bi bi-capsule"></i> Pharmacy
+                <i class="bi bi-capsule"></i><span>Pharmacy</span>
             </a>
-            <a href="/reviews" class="btn btn-outline-primary btn-sm"
+            <a href="/reviews" class="nav-pill"
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
-                <i class="bi bi-star"></i> Reviews
+                <i class="bi bi-star"></i><span>Reviews</span>
             </a>
 
             <!-- Doctors: their own schedule only. AppointmentController already
                  returns doctorHistory() for this role. -->
-            <a href="/appointments" class="btn btn-outline-primary btn-sm"
+            <a href="/appointments" class="nav-pill"
                th:if="${role == 'DOCTOR'}">
-                <i class="bi bi-calendar-check"></i> My Appointments
+                <i class="bi bi-calendar-check"></i><span>My Appointments</span>
             </a>
 
             <!-- Providers see the reviews written about them, not the directory
                  of everyone else. /reviews/{id} is that provider's own page. -->
-            <a class="btn btn-outline-primary btn-sm"
+            <a class="nav-pill"
                th:if="${role == 'DOCTOR' or role == 'HOSPITAL' or role == 'PHARMACY'
                         or role == 'DIAGNOSTIC' or role == 'AMBULANCE'}"
                th:href="@{'/reviews/' + ${user.id}}">
-                <i class="bi bi-star"></i> My Reviews
+                <i class="bi bi-star"></i><span>My Reviews</span>
             </a>
 
             <!-- Telemedicine (Sprint 3): consultations are between a patient
                  and a doctor, so only those two roles get the link. -->
-            <a href="/telemedicine/history" class="btn btn-outline-primary btn-sm"
+            <a href="/telemedicine/history" class="nav-pill"
                th:if="${role == 'PATIENT' or role == 'DOCTOR'}">
-                <i class="bi bi-camera-video"></i> Telemedicine
+                <i class="bi bi-camera-video"></i><span>Telemedicine</span>
             </a>
 
             <!-- Admin panel. -->
-            <a href="/admin" class="btn btn-outline-primary btn-sm" th:if="${role == 'ADMIN'}">
-                <i class="bi bi-shield-check"></i> Admin
+            <a href="/admin" class="nav-pill nav-pill-admin" th:if="${role == 'ADMIN'}">
+                <i class="bi bi-shield-check"></i><span>Admin</span>
             </a>
 
-            <span class="badge text-bg-primary text-capitalize"
-                  th:text="${user != null ? #strings.toLowerCase(user.role) : ''}">role</span>
-            <span class="text-secondary small" th:text="${user != null ? user.fullName : ''}">User</span>
-            <a class="btn btn-outline-secondary btn-sm" href="/logout">
-                <i class="bi bi-box-arrow-right"></i> Logout
+            <span class="nav-divider" aria-hidden="true"></span>
+
+            <a class="nav-user" href="/profile">
+                <span class="nav-user-avatar"
+                      th:text="${user != null and user.fullName != null and !user.fullName.isEmpty()
+                                ? #strings.toUpperCase(user.fullName.substring(0,1)) : '?'}">U</span>
+                <span class="nav-user-meta">
+                    <strong th:text="${user != null ? user.fullName : ''}">User</strong>
+                    <em th:text="${user != null ? #strings.toLowerCase(user.role) : ''}">role</em>
+                </span>
+            </a>
+
+            <a class="nav-pill nav-pill-logout" href="/logout">
+                <i class="bi bi-box-arrow-right"></i><span>Logout</span>
             </a>
         </div>
     </div>

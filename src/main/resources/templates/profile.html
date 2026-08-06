@@ -10,25 +10,32 @@
     <link href="/css/styles.css" rel="stylesheet">
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-expand-lg app-navbar sticky-top">
       <div class="container-fluid px-4">
         <a href="/profile" class="brand-logo" aria-label="SmartCare home">
-          <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="200" height="43">
+          <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="174" height="46">
         </a>
-        <div class="d-flex align-items-center gap-3">
+        <div class="nav-actions">
           <!-- Patients browse the provider directory; providers see only their own page. -->
-          <a href="/reviews" class="btn btn-outline-primary btn-sm"
+          <a href="/reviews" class="nav-pill"
              th:if="${user.role.name() == 'PATIENT' or user.role.name() == 'ADMIN'}">
             <i class="bi bi-star"></i> Providers &amp; Reviews
           </a>
-          <a class="btn btn-outline-primary btn-sm"
+          <a class="nav-pill"
              th:unless="${user.role.name() == 'PATIENT' or user.role.name() == 'ADMIN'}"
              th:href="@{'/reviews/' + ${user.id}}">
             <i class="bi bi-star"></i> My Reviews
           </a>
-          <span class="badge text-bg-primary text-capitalize" th:text="${#strings.toLowerCase(user.role)}">role</span>
-          <span class="small text-secondary" th:text="${user.fullName}">User</span>
-          <a class="btn btn-outline-secondary btn-sm" href="/logout">
+          <span class="nav-divider" aria-hidden="true"></span>
+          <a class="nav-user" href="/profile">
+            <span class="nav-user-avatar" th:text="${user.fullName != null and !user.fullName.isEmpty()
+                      ? #strings.toUpperCase(user.fullName.substring(0,1)) : '?'}">U</span>
+            <span class="nav-user-meta">
+              <strong th:text="${user.fullName}">User</strong>
+              <em th:text="${#strings.toLowerCase(user.role)}">role</em>
+            </span>
+          </a>
+          <a class="nav-pill nav-pill-logout" href="/logout">
             <i class="bi bi-box-arrow-right"></i> Logout
           </a>
         </div>
