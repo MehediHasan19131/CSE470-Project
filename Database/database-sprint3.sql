@@ -1,5 +1,5 @@
 -- ============================================================
--- SmartCare Healthcare Platform — Sprint 3 Database
+--Sprint-3 Database
 -- Medicine Reminder & Medicine History Module
 -- Member: Rony Miah (24141084)
 -- ============================================================
