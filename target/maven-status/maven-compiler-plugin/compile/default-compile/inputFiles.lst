@@ -5,6 +5,8 @@ C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healt
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\DoctorApiController.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\DoctorWebController.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\MedicineApiController.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\NotificationApiController.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\NotificationWebController.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\OrderApiController.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\PatientApiController.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\controller\PharmacyApiController.java
@@ -16,6 +18,7 @@ C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healt
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\LoginRequest.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\LoginResponse.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\MedicineResponse.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\NotificationResponse.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\OrderItemResponse.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\OrderResponse.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\dto\PatientRequest.java
@@ -32,6 +35,7 @@ C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healt
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\HospitalDoctorAvailability.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\HospitalService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\Medicine.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\Notification.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\Order.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\OrderItem.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\model\Profile.java
@@ -45,15 +49,19 @@ C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healt
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\HospitalDoctorAvailabilityRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\HospitalServiceRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\MedicineRepository.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\NotificationRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\OrderRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\ProfileRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\RatingRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\TestOfferRepository.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\repository\UserRepository.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\AppointmentReminderScheduler.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\CurrentUserService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\DashboardService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\DoctorService.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\EmailService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\ListingService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\MedicineService.java
+C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\NotificationService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\OrderService.java
 C:\Users\Lenovo\OneDrive\Documents\GitHub\CSE470-Project\src\main\java\com\healthcare\platform\service\PatientService.java

@@ -1,10 +1,11 @@
 package com.healthcare.platform.repository;
 
-import com.healthcare.platform.model.Rating;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.healthcare.platform.model.Rating;
 
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     long countByTargetUserId(Long targetUserId);

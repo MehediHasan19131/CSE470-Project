@@ -1,8 +1,9 @@
 package com.healthcare.platform.dto;
 
+import java.time.LocalDate;
+
 import com.healthcare.platform.model.Profile;
 import com.healthcare.platform.model.User;
-import java.time.LocalDate;
 
 /**
  * Doctor & Patient Module (Sprint 1) - Imtiaz Zaman Sami (23101551)

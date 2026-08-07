@@ -44,6 +44,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/orders").hasRole("PATIENT")
                         .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/pharmacy-store/*/order").hasRole("PATIENT")
+                        .requestMatchers(HttpMethod.POST, "/api/notifications/run-reminder-check").hasRole("ADMIN")
+                        .requestMatchers("/api/notifications/**").authenticated()
+                        .requestMatchers("/notifications/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

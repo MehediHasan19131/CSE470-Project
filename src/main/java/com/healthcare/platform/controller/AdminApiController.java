@@ -1,9 +1,9 @@
 package com.healthcare.platform.controller;
 
+import com.healthcare.platform.model.AppSetting;
 import com.healthcare.platform.dto.RoleUpdateRequest;
 import com.healthcare.platform.dto.SettingUpdateRequest;
 import com.healthcare.platform.dto.UserResponse;
-import com.healthcare.platform.model.AppSetting;
 import com.healthcare.platform.repository.AppSettingRepository;
 import com.healthcare.platform.repository.UserRepository;
 import jakarta.validation.Valid;

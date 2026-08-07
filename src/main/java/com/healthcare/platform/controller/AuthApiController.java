@@ -1,9 +1,9 @@
 package com.healthcare.platform.controller;
 
+import com.healthcare.platform.model.User;
 import com.healthcare.platform.dto.LoginRequest;
 import com.healthcare.platform.dto.LoginResponse;
 import com.healthcare.platform.dto.UserResponse;
-import com.healthcare.platform.model.User;
 import com.healthcare.platform.repository.UserRepository;
 import com.healthcare.platform.service.CurrentUserService;
 import jakarta.servlet.http.HttpServletRequest;

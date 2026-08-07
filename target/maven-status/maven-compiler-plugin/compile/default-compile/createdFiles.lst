@@ -1,6 +1,8 @@
 com\healthcare\platform\service\CurrentUserService.class
+com\healthcare\platform\service\AppointmentReminderScheduler.class
 com\healthcare\platform\model\HospitalAvailability.class
 com\healthcare\platform\config\SecurityConfig.class
+com\healthcare\platform\model\Notification.class
 com\healthcare\platform\service\ListingService.class
 com\healthcare\platform\controller\DashboardApiController.class
 com\healthcare\platform\service\DoctorService.class
@@ -18,6 +20,7 @@ com\healthcare\platform\repository\HospitalDoctorAvailabilityRepository.class
 com\healthcare\platform\repository\HospitalServiceRepository.class
 com\healthcare\platform\dto\DoctorResponse.class
 com\healthcare\platform\model\Order.class
+com\healthcare\platform\service\EmailService.class
 com\healthcare\platform\dto\OrderResponse.class
 com\healthcare\platform\dto\LoginRequest.class
 com\healthcare\platform\dto\LoginResponse.class
@@ -54,8 +57,13 @@ com\healthcare\platform\controller\OrderApiController.class
 com\healthcare\platform\dto\PlaceOrderRequest.class
 com\healthcare\platform\repository\ProfileRepository.class
 com\healthcare\platform\controller\PharmacyApiController.class
+com\healthcare\platform\dto\NotificationResponse.class
 com\healthcare\platform\model\HospitalDoctorAvailability.class
+com\healthcare\platform\controller\NotificationApiController.class
 com\healthcare\platform\model\Appointment.class
 com\healthcare\platform\dto\DoctorRequest.class
 com\healthcare\platform\model\OrderItem.class
+com\healthcare\platform\repository\NotificationRepository.class
 com\healthcare\platform\model\Rating.class
+com\healthcare\platform\controller\NotificationWebController.class
+com\healthcare\platform\service\NotificationService.class
