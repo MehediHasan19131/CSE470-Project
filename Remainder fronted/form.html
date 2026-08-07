@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/dashboard-layout :: head('Medicine Reminder')}">
+    <meta charset="UTF-8">
+    <title>SmartCare</title>
+</head>
+<body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+        <div th:replace="~{fragments/dashboard-layout :: page-heading(${reminder.id == null} ? 'New Medicine Reminder' : 'Edit Medicine Reminder', 'Schedule when to take your medicine', 'bi-capsule-pill')}"></div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="panel">
+                    <form th:action="${reminder.id == null} ? @{/reminders/new} : @{/reminders/{id}/edit(id=${reminder.id})}"
+                          th:method="post" class="vstack gap-4">
+
+                        <div>
+                            <label class="form-label fw-semibold">Medicine Name</label>
+                            <input class="form-control" type="text" name="medicineName"
+                                   th:value="${reminder.medicineName}"
+                                   placeholder="e.g. Paracetamol, Amoxicillin" required>
+                        </div>
+
+                        <div>
+                            <label class="form-label fw-semibold">Dosage</label>
+                            <input class="form-control" type="text" name="dosage"
+                                   th:value="${reminder.dosage}"
+                                   placeholder="e.g. 500mg, 2 tablets" required>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Frequency per day</label>
+                                <input class="form-control" type="number" name="frequencyPerDay"
+                                       min="1" max="10"
+                                       th:value="${reminder.frequencyPerDay != 0 ? reminder.frequencyPerDay : ''}"
+                                       placeholder="1–10" required>
+                                <small class="text-secondary">Must be between 1 and 10.</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Reminder Times</label>
+                                <input class="form-control" type="text" name="reminderTimes"
+                                       th:value="${reminder.reminderTimes}"
+                                       placeholder="e.g. 08:00, 14:00, 20:00" required>
+                                <small class="text-secondary">Comma-separated, 24-hour format.</small>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Start Date</label>
+                                <input class="form-control" type="date" name="startDate"
+                                       th:value="${reminder.startDate}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">End Date <span class="text-secondary fw-normal">(optional)</span></label>
+                                <input class="form-control" type="date" name="endDate"
+                                       th:value="${reminder.endDate}">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label fw-semibold">Notes <span class="text-secondary fw-normal">(optional)</span></label>
+                            <textarea class="form-control" name="notes" rows="3"
+                                      th:text="${reminder.notes}"
+                                      placeholder="e.g. Take with food, avoid dairy..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-primary px-4" type="submit">
+                                <i class="bi bi-check-lg"></i> Save Reminder
+                            </button>
+                            <a class="btn btn-outline-secondary px-4" href="/reminders">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
