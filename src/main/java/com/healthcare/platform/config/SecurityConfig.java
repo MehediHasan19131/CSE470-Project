@@ -47,6 +47,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/notifications/run-reminder-check").hasRole("ADMIN")
                         .requestMatchers("/api/notifications/**").authenticated()
                         .requestMatchers("/notifications/**").authenticated()
+                        // Crowdfunding & Payment Module (Sprint 4 - Imtiaz Zaman Sami):
+                        // anyone logged in can browse campaigns and donate; only admins
+                        // create/edit/close campaigns.
+                        .requestMatchers(HttpMethod.GET, "/api/campaigns/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/campaigns/*/donations").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/campaigns/*/close").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/campaigns").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/campaigns/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/donations").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/campaigns/*/donate").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -30,6 +30,9 @@
           <a href="/notifications" class="btn btn-outline-primary btn-sm">
             <i class="bi bi-bell"></i> Notifications
           </a>
+          <a href="/campaigns" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-heart-pulse"></i> Campaigns
+          </a>
           <span class="badge text-bg-primary text-capitalize" th:text="${#strings.toLowerCase(user.role)}">role</span>
           <span class="small text-secondary" th:text="${user.fullName}">User</span>
           <form method="post" action="/logout">

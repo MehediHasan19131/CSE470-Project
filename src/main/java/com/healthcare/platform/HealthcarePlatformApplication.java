@@ -2,6 +2,7 @@ package com.healthcare.platform;
 
 import com.healthcare.platform.model.AppSetting;
 import com.healthcare.platform.model.Appointment;
+import com.healthcare.platform.model.Campaign;
 import com.healthcare.platform.model.Medicine;
 import com.healthcare.platform.model.Profile;
 import com.healthcare.platform.model.Rating;
@@ -9,20 +10,23 @@ import com.healthcare.platform.model.User;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.repository.AppSettingRepository;
 import com.healthcare.platform.repository.AppointmentRepository;
+import com.healthcare.platform.repository.CampaignRepository;
+import com.healthcare.platform.repository.DonationRepository;
 import com.healthcare.platform.repository.MedicineRepository;
 import com.healthcare.platform.repository.ProfileRepository;
 import com.healthcare.platform.repository.RatingRepository;
 import com.healthcare.platform.repository.UserRepository;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 
 @SpringBootApplication
 @EnableScheduling
@@ -33,13 +37,15 @@ public class HealthcarePlatformApplication {
     }
 
     @Bean
-    CommandLineRunner seedData(
+    public CommandLineRunner seedData(
             UserRepository users,
             ProfileRepository profiles,
             RatingRepository ratings,
             AppSettingRepository settings,
             AppointmentRepository appointments,
             MedicineRepository medicines,
+            CampaignRepository campaigns,
+            DonationRepository donationsRepo,
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
@@ -51,9 +57,7 @@ public class HealthcarePlatformApplication {
             User diagnostic = createUser(users, passwordEncoder, "Prime Diagnostic Centre", "diagnostic@health.test", UserRole.DIAGNOSTIC, "+8801700000005");
             User ambulance = createUser(users, passwordEncoder, "Rapid Ambulance", "ambulance@health.test", UserRole.AMBULANCE, "+8801700000006");
 
-            // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami): a few more
-            // doctors across specialties and patients so /doctors and /doctors/search
-            // have real data to demo, on top of the single doctor/patient above.
+            // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami)
             User doctor2 = createUser(users, passwordEncoder, "Dr. Ayesha Rahman", "ayesha.rahman@health.test", UserRole.DOCTOR, "+8801700000010");
             User doctor3 = createUser(users, passwordEncoder, "Dr. Karim Hossain", "karim.hossain@health.test", UserRole.DOCTOR, "+8801700000011");
             User doctor4 = createUser(users, passwordEncoder, "Dr. Nusrat Jahan", "nusrat.jahan@health.test", UserRole.DOCTOR, "+8801700000012");
@@ -68,9 +72,6 @@ public class HealthcarePlatformApplication {
             createProfileIfMissing(profiles, diagnostic, "Road 6, Dhaka", "Dhaka", "Diagnostic centre service.", null, "DIAG-1001", "Diagnostics", false, 23.8603, 90.4625);
             createProfileIfMissing(profiles, ambulance, "Road 7, Dhaka", "Dhaka", "Emergency ambulance service.", null, "AMB-1001", "Emergency Ambulance", true, 23.8703, 90.4725);
 
-            // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami): dedicated
-            // doctor/patient profile seeding so /doctors and /doctors/search have
-            // real, varied data (different specialties/cities) to demo.
             createDoctorProfileIfMissing(profiles, doctor, "Road 3, Dhaka", "Dhaka",
                     "Senior cardiologist with 12 years of experience treating heart disease.",
                     "Cardiology", "DOC-1001", "MBBS, FCPS (Cardiology)", 12, 1200.0, 23.8303, 90.4325);
@@ -114,6 +115,30 @@ public class HealthcarePlatformApplication {
                 medicines.save(new Medicine("Cough Syrup", "Dry cough relief", new BigDecimal("6.75"), 30));
             }
 
+            if (campaigns.count() == 0) {
+                campaigns.save(new Campaign(
+                        "Help Rahim Fight Kidney Disease",
+                        "Rahim needs urgent dialysis treatment and cannot afford the ongoing cost. Every contribution helps.",
+                        "Medical",
+                        new BigDecimal("100000"),
+                        admin
+                ));
+                campaigns.save(new Campaign(
+                        "Flood Relief for Sylhet Families",
+                        "Providing food, clean water, and temporary shelter to families affected by recent flooding.",
+                        "Emergency",
+                        new BigDecimal("250000"),
+                        admin
+                ));
+                campaigns.save(new Campaign(
+                        "Free Health Camp for Underprivileged Children",
+                        "Funding a free health checkup and vaccination camp for children in underserved communities.",
+                        "Community",
+                        new BigDecimal("60000"),
+                        admin
+                ));
+            }
+
             createSettingIfMissing(settings, "appointment_reminders", "enabled");
             createSettingIfMissing(settings, "ai_agent_status", "planned");
             createSettingIfMissing(settings, "payment_gateway", "sandbox");
@@ -149,7 +174,6 @@ public class HealthcarePlatformApplication {
         }
     }
 
-    // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami)
     private void createDoctorProfileIfMissing(
             ProfileRepository profiles,
             User doctor,
@@ -174,7 +198,6 @@ public class HealthcarePlatformApplication {
         profiles.save(profile);
     }
 
-    // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami)
     private void createPatientProfileIfMissing(
             ProfileRepository profiles,
             User patient,
