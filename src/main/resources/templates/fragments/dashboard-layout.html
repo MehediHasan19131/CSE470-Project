@@ -87,6 +87,19 @@
                 <i class="bi bi-heart-pulse"></i><span>Campaigns</span>
             </a>
 
+            <!-- Health Profile (Sprint 3 - Nahian Mahmud): a patient's own medical
+                 history/allergies, so PATIENT only - matches SecurityConfig's
+                 "/health-profile/**" rule. -->
+            <a href="/health-profile" class="nav-pill" th:if="${role == 'PATIENT'}">
+                <i class="bi bi-file-earmark-medical"></i><span>Health Profile</span>
+            </a>
+
+            <!-- Health Blog (Sprint 4 - Nahian Mahmud): open to every logged-in
+                 role, same as BlogWebController (authenticated(), no role rule). -->
+            <a href="/blog" class="nav-pill" th:if="${user != null}">
+                <i class="bi bi-journal-richtext"></i><span>Health Blog</span>
+            </a>
+
             <span class="nav-divider" aria-hidden="true"></span>
 
             <a class="nav-user" href="/profile">

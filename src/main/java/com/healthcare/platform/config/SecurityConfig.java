@@ -70,6 +70,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/campaigns/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/donations").authenticated()
                         .requestMatchers(HttpMethod.POST, "/campaigns/*/donate").authenticated()
+                        // Health Profile (Sprint 3 - Nahian Mahmud) - PATIENT only. A health
+                        // profile (medical history, allergies) belongs to a patient, not a
+                        // provider or admin account, so this is restricted the same way
+                        // /admin/** is above.
+                        .requestMatchers("/health-profile/**", "/api/health/**").hasRole("PATIENT")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

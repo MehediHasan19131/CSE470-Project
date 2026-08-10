@@ -26,6 +26,7 @@
              th:href="@{'/reviews/' + ${user.id}}">
             <i class="bi bi-star"></i> My Reviews
           </a>
+          <a href="/blog" class="nav-pill"><i class="bi bi-journal-richtext"></i> Health Blog</a>
           <span class="nav-divider" aria-hidden="true"></span>
           <a class="nav-user" href="/profile">
             <span class="nav-user-avatar" th:text="${user.fullName != null and !user.fullName.isEmpty()
@@ -125,6 +126,27 @@
             </div>
             <p class="text-secondary small">Create, edit, or remove any account on the platform.</p>
             <a href="/admin" class="btn btn-primary btn-sm"><i class="bi bi-speedometer2"></i> Open admin panel</a>
+          </div>
+
+          <!-- Patient: Health Profile summary (Sprint 3) -->
+          <div class="panel mb-4" th:if="${user.role.name() == 'PATIENT'}">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Health</p>
+                <h2 class="h6 fw-bold mb-0">Your health profile</h2>
+              </div>
+            </div>
+            <div class="info-grid mb-3">
+              <div>
+                <span>Medical history</span>
+                <strong th:text="${historyCount} + ' entr' + (${historyCount == 1} ? 'y' : 'ies')">0 entries</strong>
+              </div>
+              <div>
+                <span>Allergies</span>
+                <strong th:text="${allergyCount} + ' recorded'">0 recorded</strong>
+              </div>
+            </div>
+            <a href="/health-profile" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-medical"></i> Open health profile</a>
           </div>
 
           <!-- Patient: reviews they've written -->

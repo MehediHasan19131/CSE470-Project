@@ -24,7 +24,7 @@ WHERE p.email = 'patient@health.test' AND ph.email = 'pharmacy@health.test';
 
 -- Keep the `ratings` aggregate table in sync with the demo reviews above, the
 -- same way ReviewJdbcRepository.refreshRatingSummary(...) does at runtime.
-INSERT INTO rating_summaries (target_id, average_rating, total_reviews)
+INSERT INTO ratings (target_id, average_rating, total_reviews)
 SELECT target_id, AVG(rating), COUNT(*) FROM reviews GROUP BY target_id
 ON DUPLICATE KEY UPDATE
     average_rating = VALUES(average_rating),

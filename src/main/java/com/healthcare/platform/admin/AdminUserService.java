@@ -2,6 +2,8 @@ package com.healthcare.platform.admin;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.blog.BlogService;
+import com.healthcare.platform.healthprofile.HealthProfileService;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.review.ReviewJdbcRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +27,16 @@ public class AdminUserService {
 
     private final AuthUserJdbcRepository authUsers;
     private final ReviewJdbcRepository reviews;
+    private final HealthProfileService healthProfile;
+    private final BlogService blog;
     private final PasswordEncoder passwordEncoder;
 
-    public AdminUserService(AuthUserJdbcRepository authUsers, ReviewJdbcRepository reviews, PasswordEncoder passwordEncoder) {
+    public AdminUserService(AuthUserJdbcRepository authUsers, ReviewJdbcRepository reviews,
+                             HealthProfileService healthProfile, BlogService blog, PasswordEncoder passwordEncoder) {
         this.authUsers = authUsers;
         this.reviews = reviews;
+        this.healthProfile = healthProfile;
+        this.blog = blog;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -105,9 +112,9 @@ public class AdminUserService {
             throw new IllegalStateException("Can't delete the last remaining admin account.");
         }
 
-        // Clean up review history first - `reviews`/`ratings` both have a foreign
-        // key on users.id, so the user row can't be deleted while either still
-        // references it.
+        // Clean up review history first - `reviews`/`rating_summaries` both have a
+        // foreign key on users.id, so the user row can't be deleted while either
+        // still references it.
         List<Long> targetsTheyReviewed = reviews.findDistinctTargetsReviewedBy(id);
         reviews.deleteReviewsInvolvingUser(id);
         for (Long reviewedTargetId : targetsTheyReviewed) {
@@ -116,6 +123,18 @@ public class AdminUserService {
             }
         }
         reviews.deleteRatingSummary(id);
+
+        // Same reason as above: `medical_history`/`allergies` also have a foreign
+        // key on users.id (Sprint 3 - Health Profile). A provider account never
+        // has any of these rows, but it's harmless (and simpler) to always call
+        // this rather than branch on role.
+        healthProfile.deleteAllForPatient(id);
+
+        // Same reason again: `posts`/`comments` have a foreign key on users.id
+        // (Sprint 4 - Health Blog & Community). Deletes their own posts (and
+        // every comment on those posts, including other people's replies) plus
+        // any comments they left on other people's posts.
+        blog.deleteAllForAuthor(id);
 
         authUsers.deleteById(id);
     }
