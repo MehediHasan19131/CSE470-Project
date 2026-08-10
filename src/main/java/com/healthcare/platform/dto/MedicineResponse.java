@@ -1,7 +1,8 @@
 package com.healthcare.platform.dto;
 
-import com.healthcare.platform.model.Medicine;
 import java.math.BigDecimal;
+
+import com.healthcare.platform.model.Medicine;
 
 /**
  * Pharmacy Service Module (Sprint 2) - Imtiaz Zaman Sami (23101551)

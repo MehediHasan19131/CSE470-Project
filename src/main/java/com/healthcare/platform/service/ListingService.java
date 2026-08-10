@@ -1,10 +1,10 @@
 package com.healthcare.platform.service;
 
-import com.healthcare.platform.dto.ServiceListingResponse;
 import com.healthcare.platform.model.Profile;
 import com.healthcare.platform.model.Rating;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.model.UserRole;
+import com.healthcare.platform.dto.ServiceListingResponse;
 import com.healthcare.platform.repository.ProfileRepository;
 import com.healthcare.platform.repository.RatingRepository;
 import com.healthcare.platform.repository.UserRepository;

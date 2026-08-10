@@ -77,6 +77,16 @@
                 <i class="bi bi-shield-check"></i><span>Admin</span>
             </a>
 
+            <!-- Notifications & Campaigns (Sprint 3/4 - Imtiaz Zaman Sami): open
+                 to every logged-in role, same as their controllers (authenticated(),
+                 no role restriction). -->
+            <a href="/notifications" class="nav-pill" th:if="${user != null}">
+                <i class="bi bi-bell"></i><span>Notifications</span>
+            </a>
+            <a href="/campaigns" class="nav-pill" th:if="${user != null}">
+                <i class="bi bi-heart-pulse"></i><span>Campaigns</span>
+            </a>
+
             <span class="nav-divider" aria-hidden="true"></span>
 
             <a class="nav-user" href="/profile">

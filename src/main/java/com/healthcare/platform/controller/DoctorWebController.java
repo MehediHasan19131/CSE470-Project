@@ -1,7 +1,7 @@
 package com.healthcare.platform.controller;
 
-import com.healthcare.platform.dto.DoctorResponse;
 import com.healthcare.platform.model.User;
+import com.healthcare.platform.dto.DoctorResponse;
 import com.healthcare.platform.service.CurrentUserService;
 import com.healthcare.platform.service.DoctorService;
 import java.util.Comparator;

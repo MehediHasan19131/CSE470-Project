@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Campaigns')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Campaigns', 'Support an active crowdfunding campaign', 'bi-heart-pulse')}"></div>
+
+      <div class="d-flex justify-content-end mb-3">
+        <a href="/donations" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-receipt"></i> My Donations
+        </a>
+      </div>
+
+      <div class="row g-4" th:if="${#lists.size(campaigns) > 0}">
+        <div class="col-12 col-md-6 col-xl-4" th:each="campaign : ${campaigns}">
+          <div class="panel h-100">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1" th:text="${campaign.category} ?: 'General'">Category</p>
+                <h2 class="h6 fw-bold mb-0" th:text="${campaign.title}">Campaign title</h2>
+              </div>
+            </div>
+
+            <p class="small text-muted" th:text="${#strings.abbreviate(campaign.description, 110)}">Description</p>
+
+            <div class="progress mb-2" style="height: 8px;">
+              <div class="progress-bar bg-success" role="progressbar"
+                   th:style="'width: ' + ${campaign.progressPercent} + '%'"
+                   th:attr="aria-valuenow=${campaign.progressPercent}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="d-flex justify-content-between small mb-3">
+              <span>৳<span th:text="${campaign.raisedAmount}">0</span> raised</span>
+              <span class="text-muted">Goal ৳<span th:text="${campaign.goalAmount}">0</span></span>
+            </div>
+
+            <a th:href="@{'/campaigns/' + ${campaign.id}}" class="btn btn-primary btn-sm w-100">View Campaign</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-warning" th:if="${#lists.size(campaigns) == 0}">
+        No active campaigns right now.
+      </div>
+    </main>
+  </body>
+</html>
