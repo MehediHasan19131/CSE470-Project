@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/dashboard-layout :: head('Medicine Reminders')}">
+    <meta charset="UTF-8">
+    <title>SmartCare</title>
+</head>
+<body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+
+        <div th:replace="~{fragments/dashboard-layout :: page-heading('Medicine Reminders', 'Track and manage your medication schedule', 'bi-capsule-pill')}"></div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <span th:text="${success}">Success</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <span class="text-secondary small">
+                Active reminders: <span class="badge bg-primary rounded-pill" th:text="${reminders.size()}">0</span>
+            </span>
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-primary" href="/reminders/history">
+                    <i class="bi bi-clock-history"></i> Medicine History
+                </a>
+                <a class="btn btn-primary" href="/reminders/new">
+                    <i class="bi bi-plus-lg"></i> Add Reminder
+                </a>
+            </div>
+        </div>
+
+        <div class="panel text-center py-5 mb-4" th:if="${#lists.isEmpty(reminders)}">
+            <i class="bi bi-capsule fs-1 text-secondary"></i>
+            <p class="mt-3 mb-1 text-secondary">You have no active medicine reminders.</p>
+            <p class="text-secondary small mb-4">Add a reminder to never miss your medication.</p>
+            <a class="btn btn-primary" href="/reminders/new">Create your first reminder</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(reminders)}" class="reminder-grid">
+            <div class="reminder-card" th:each="r : ${reminders}">
+                <div class="reminder-card-header">
+                    <div class="reminder-medicine">
+                        <span class="reminder-medicine-name" th:text="${r.medicineName}">Medicine</span>
+                        <span class="reminder-dosage" th:text="${r.dosage} + ' · ' + ${r.frequencyPerDay} + '×/day'">Dosage</span>
+                    </div>
+                    <span class="reminder-status reminder-status-active">Active</span>
+                </div>
+
+                <div class="reminder-meta">
+                    <div class="reminder-detail">
+                        <i class="bi bi-alarm"></i>
+                        <span th:text="${r.reminderTimes}">08:00, 14:00, 20:00</span>
+                    </div>
+                    <div class="reminder-detail">
+                        <i class="bi bi-calendar"></i>
+                        <span th:if="${r.endDate != null}"
+                              th:text="${#temporals.format(r.startDate, 'dd MMM')} + ' — ' + ${#temporals.format(r.endDate, 'dd MMM')}">Period</span>
+                        <span th:unless="${r.endDate != null}"
+                              th:text="'From ' + ${#temporals.format(r.startDate, 'dd MMM')}">From</span>
+                    </div>
+                    <div class="reminder-detail" th:if="${r.notes}">
+                        <i class="bi bi-chat-quote"></i>
+                        <span th:text="${r.notes}">Note</span>
+                    </div>
+                </div>
+
+                <div class="reminder-dose-actions">
+                    <div class="reminder-dose-row" th:each="t : ${r.timeList()}">
+                        <span class="reminder-dose-time">
+                            <i class="bi bi-clock"></i> <span th:text="${t}">08:00</span>
+                        </span>
+                        <div class="d-flex gap-2">
+                            <form method="post" th:action="@{/reminders/{id}/log(id=${r.id})}" class="d-inline">
+                                <input type="hidden" name="scheduledTime" th:value="${t}">
+                                <input type="hidden" name="status" value="TAKEN">
+                                <button class="btn btn-sm btn-success" type="submit">
+                                    <i class="bi bi-check-lg"></i> Mark as Taken
+                                </button>
+                            </form>
+                            <form method="post" th:action="@{/reminders/{id}/log(id=${r.id})}" class="d-inline">
+                                <input type="hidden" name="scheduledTime" th:value="${t}">
+                                <input type="hidden" name="status" value="MISSED">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">
+                                    <i class="bi bi-x-lg"></i> Mark as Missed
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reminder-card-actions">
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{/reminders/{id}/edit(id=${r.id})}">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <form method="post" th:action="@{/reminders/{id}/deactivate(id=${r.id})}" class="d-inline">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">
+                            <i class="bi bi-pause"></i> Deactivate
+                        </button>
+                    </form>
+                    <form method="post" th:action="@{/reminders/{id}/delete(id=${r.id})}" class="d-inline"
+                          onsubmit="return confirm('Delete this reminder? Its history will be kept.');">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
