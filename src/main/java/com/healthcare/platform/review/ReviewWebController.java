@@ -2,6 +2,7 @@ package com.healthcare.platform.review;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.service.CurrentUserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,16 +30,16 @@ public class ReviewWebController {
 
     private final ReviewService reviewService;
     private final AuthUserJdbcRepository authUsers;
+    private final CurrentUserService currentUserService;
 
-    public ReviewWebController(ReviewService reviewService, AuthUserJdbcRepository authUsers) {
+    public ReviewWebController(ReviewService reviewService, AuthUserJdbcRepository authUsers, CurrentUserService currentUserService) {
         this.reviewService = reviewService;
         this.authUsers = authUsers;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping("/reviews")
-    public String directory(Authentication authentication, Model model) {
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
-        model.addAttribute("user", me);
+    public String directory(Model model) {
         model.addAttribute("providers", reviewService.getProviders());
         return "reviews-directory";
     }
@@ -50,7 +51,7 @@ public class ReviewWebController {
             return "redirect:/reviews?error=Provider not found";
         }
 
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser me = currentUserService.get(authentication);
         loadPage(target, me, model);
         return "review-target";
     }
@@ -66,7 +67,7 @@ public class ReviewWebController {
             return "redirect:/reviews?error=Provider not found";
         }
 
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser me = currentUserService.get(authentication);
 
         try {
             var existing = reviewService.getMyReview(me.getId(), targetId);
@@ -86,7 +87,6 @@ public class ReviewWebController {
 
     private void loadPage(AuthUser target, AuthUser me, Model model) {
         model.addAttribute("me", me);
-        model.addAttribute("user", me);
         model.addAttribute("target", target);
         model.addAttribute("summary", reviewService.getRatingSummary(target.getId()));
         model.addAttribute("reviews", reviewService.getReviewsForTarget(target.getId()));

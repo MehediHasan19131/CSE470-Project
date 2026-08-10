@@ -2,6 +2,7 @@ package com.healthcare.platform.admin;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.blog.BlogService;
 import com.healthcare.platform.healthprofile.HealthProfileService;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.review.ReviewJdbcRepository;
@@ -27,13 +28,15 @@ public class AdminUserService {
     private final AuthUserJdbcRepository authUsers;
     private final ReviewJdbcRepository reviews;
     private final HealthProfileService healthProfile;
+    private final BlogService blog;
     private final PasswordEncoder passwordEncoder;
 
     public AdminUserService(AuthUserJdbcRepository authUsers, ReviewJdbcRepository reviews,
-                             HealthProfileService healthProfile, PasswordEncoder passwordEncoder) {
+                             HealthProfileService healthProfile, BlogService blog, PasswordEncoder passwordEncoder) {
         this.authUsers = authUsers;
         this.reviews = reviews;
         this.healthProfile = healthProfile;
+        this.blog = blog;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -126,6 +129,12 @@ public class AdminUserService {
         // has any of these rows, but it's harmless (and simpler) to always call
         // this rather than branch on role.
         healthProfile.deleteAllForPatient(id);
+
+        // Same reason again: `posts`/`comments` have a foreign key on users.id
+        // (Sprint 4 - Health Blog & Community). Deletes their own posts (and
+        // every comment on those posts, including other people's replies) plus
+        // any comments they left on other people's posts.
+        blog.deleteAllForAuthor(id);
 
         authUsers.deleteById(id);
     }

@@ -11,7 +11,7 @@
 --              change their opinion they update that row, they don't insert a
 --              second one. That's why the task has both "Create Review" and
 --              "Update Review" as separate backend items.
---   rating_summaries - one row per target: the running average + count, recomputed
+--   ratings  - one row per target: the running average + count, recomputed
 --              from `reviews` every time a review is created or updated. Kept
 --              as its own table (rather than computed on the fly on every page
 --              load) so the "Rating Display" frontend piece has a cheap,
@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS reviews (
     CONSTRAINT chk_reviews_rating_range CHECK (rating BETWEEN 1 AND 5)
 );
 
-CREATE TABLE IF NOT EXISTS rating_summaries (
+CREATE TABLE IF NOT EXISTS ratings (
     target_id       BIGINT        PRIMARY KEY,
     average_rating  DECIMAL(3,2)  NOT NULL DEFAULT 0.00,
     total_reviews   INT           NOT NULL DEFAULT 0,
     updated_at      TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_rating_summaries_target FOREIGN KEY (target_id) REFERENCES users (id)
+    CONSTRAINT fk_ratings_target FOREIGN KEY (target_id) REFERENCES users (id)
 );

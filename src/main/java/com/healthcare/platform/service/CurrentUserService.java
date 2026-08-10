@@ -1,20 +1,23 @@
 package com.healthcare.platform.service;
 
-import com.healthcare.platform.model.User;
-import com.healthcare.platform.repository.UserRepository;
+import com.healthcare.platform.auth.AuthUser;
+import com.healthcare.platform.auth.AuthUserJdbcRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+/**
+ * Looks up the logged-in user's full record from their Authentication.
+ * Uses AuthUserJdbcRepository (plain JDBC) - no ORM.
+ */
 @Service
 public class CurrentUserService {
-    private final UserRepository users;
+    private final AuthUserJdbcRepository authUsers;
 
-    public CurrentUserService(UserRepository users) {
-        this.users = users;
+    public CurrentUserService(AuthUserJdbcRepository authUsers) {
+        this.authUsers = authUsers;
     }
 
-    public User get(Authentication authentication) {
-        String email = authentication.getName();
-        return users.findByEmail(email).orElseThrow();
+    public AuthUser get(Authentication authentication) {
+        return authUsers.findByEmail(authentication.getName()).orElseThrow();
     }
 }

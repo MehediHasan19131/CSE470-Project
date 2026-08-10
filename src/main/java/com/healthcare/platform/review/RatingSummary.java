@@ -3,7 +3,7 @@ package com.healthcare.platform.review;
 import java.time.LocalDateTime;
 
 /**
- * Plain Java object for one row of the `rating_summaries` table - the running
+ * Plain Java object for one row of the `ratings` table - the running
  * average + count for a single target, kept in sync with `reviews` by
  * {@link ReviewJdbcRepository#refreshRatingSummary(Long)} every time a
  * review is created or updated.

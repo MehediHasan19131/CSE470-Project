@@ -20,7 +20,7 @@ import java.util.Optional;
  * @Entity, no Hibernate) - every query below is hand-written SQL, and every
  * row is mapped by hand. Same "no ORM" rule Member 1 used for
  * {@code AuthUserJdbcRepository}, applied to this sprint's `reviews` and
- * `rating_summaries` tables.
+ * `ratings` tables.
  */
 @Repository
 public class ReviewJdbcRepository {
@@ -126,7 +126,7 @@ public class ReviewJdbcRepository {
     /**
      * Deletes every review a user is involved in, either as reviewer or as
      * target. Only called from {@code AdminUserService.deleteUser(...)}
-     * before deleting the user row itself - `reviews`/`rating_summaries` both have a
+     * before deleting the user row itself - `reviews`/`ratings` both have a
      * foreign key on `users.id`, so this is required to avoid a constraint
      * violation when an admin deletes an account.
      */
@@ -136,7 +136,7 @@ public class ReviewJdbcRepository {
 
     /** Removes a target's aggregate row entirely - used when that target (a provider) is itself being deleted. */
     public void deleteRatingSummary(Long targetId) {
-        jdbcTemplate.update("DELETE FROM rating_summaries WHERE target_id = ?", targetId);
+        jdbcTemplate.update("DELETE FROM ratings WHERE target_id = ?", targetId);
     }
 
     /** Inserts a new row and returns the same object with its generated id set. */
@@ -170,7 +170,7 @@ public class ReviewJdbcRepository {
 
     public Optional<RatingSummary> findRatingSummary(Long targetId) {
         List<RatingSummary> results = jdbcTemplate.query(
-                "SELECT target_id, average_rating, total_reviews, updated_at FROM rating_summaries WHERE target_id = ?",
+                "SELECT target_id, average_rating, total_reviews, updated_at FROM ratings WHERE target_id = ?",
                 (rs, rowNum) -> {
                     RatingSummary summary = new RatingSummary();
                     summary.setTargetId(rs.getLong("target_id"));
@@ -189,14 +189,14 @@ public class ReviewJdbcRepository {
 
     /**
      * Recomputes the average rating + review count for a target directly from
-     * `reviews`, and upserts the result into `rating_summaries`. Called after every
-     * insert/update so `rating_summaries` never drifts out of sync - this is what
+     * `reviews`, and upserts the result into `ratings`. Called after every
+     * insert/update so `ratings` never drifts out of sync - this is what
      * powers the "Rating Display" frontend piece without it having to
      * aggregate the whole reviews table on every page load.
      */
     public void refreshRatingSummary(Long targetId) {
         jdbcTemplate.update(
-                "INSERT INTO rating_summaries (target_id, average_rating, total_reviews) " +
+                "INSERT INTO ratings (target_id, average_rating, total_reviews) " +
                         "SELECT ?, COALESCE(AVG(rating), 0), COUNT(*) FROM reviews WHERE target_id = ? " +
                         "ON DUPLICATE KEY UPDATE " +
                         "average_rating = VALUES(average_rating), total_reviews = VALUES(total_reviews)",
@@ -214,7 +214,7 @@ public class ReviewJdbcRepository {
                 "SELECT u.id, u.full_name, u.role, " +
                         "COALESCE(r.average_rating, 0) AS average_rating, " +
                         "COALESCE(r.total_reviews, 0) AS total_reviews " +
-                        "FROM users u LEFT JOIN rating_summaries r ON r.target_id = u.id " +
+                        "FROM users u LEFT JOIN ratings r ON r.target_id = u.id " +
                         "WHERE u.role NOT IN ('ADMIN', 'PATIENT') AND u.is_active = TRUE " +
                         "ORDER BY u.full_name",
                 (rs, rowNum) -> {

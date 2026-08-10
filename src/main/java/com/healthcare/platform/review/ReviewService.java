@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
- * Business rules for creating/updating reviews and keeping the `rating_summaries`
+ * Business rules for creating/updating reviews and keeping the `ratings`
  * aggregate in sync. Reuses {@link AuthUserJdbcRepository} (read-only) to
  * check that a review target actually exists and is a provider - doesn't
  * modify it, same pattern {@code CurrentUserService} already uses.

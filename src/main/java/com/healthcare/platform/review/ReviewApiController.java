@@ -1,7 +1,7 @@
 package com.healthcare.platform.review;
 
 import com.healthcare.platform.auth.AuthUser;
-import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.service.CurrentUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * JSON API for the Review & Rating System (Member 2, Sprint task: Create
  * Review, Update Review). Session or JWT auth both work here already - this
  * controller doesn't do anything auth-specific itself, it just reads the
- * logged-in user via {@link AuthUserJdbcRepository} the same way
+ * logged-in user via {@link CurrentUserService} the same way
  * {@code AuthApiController} does. All paths below fall under the existing
  * {@code anyRequest().authenticated()} rule in SecurityConfig, so no changes
  * were needed there.
@@ -29,16 +29,16 @@ import java.util.NoSuchElementException;
 public class ReviewApiController {
 
     private final ReviewService reviewService;
-    private final AuthUserJdbcRepository authUsers;
+    private final CurrentUserService currentUserService;
 
-    public ReviewApiController(ReviewService reviewService, AuthUserJdbcRepository authUsers) {
+    public ReviewApiController(ReviewService reviewService, CurrentUserService currentUserService) {
         this.reviewService = reviewService;
-        this.authUsers = authUsers;
+        this.currentUserService = currentUserService;
     }
 
     @PostMapping("/api/reviews")
     public ResponseEntity<?> create(@Valid @RequestBody ReviewCreateRequest request, Authentication authentication) {
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser me = currentUserService.get(authentication);
         try {
             Review saved = reviewService.createReview(me.getId(), request.targetId(), request.rating(), request.comment());
             return ResponseEntity.status(HttpStatus.CREATED).body(ReviewResponse.from(saved));
@@ -51,7 +51,7 @@ public class ReviewApiController {
 
     @PutMapping("/api/reviews/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody ReviewUpdateRequest request, Authentication authentication) {
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser me = currentUserService.get(authentication);
         try {
             Review updated = reviewService.updateReview(id, me.getId(), request.rating(), request.comment());
             return ResponseEntity.ok(ReviewResponse.from(updated));

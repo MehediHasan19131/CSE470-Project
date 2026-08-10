@@ -1,7 +1,6 @@
 package com.healthcare.platform.auth;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -59,7 +58,7 @@ public class JwtService {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (ExpiredJwtException | JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
     }
