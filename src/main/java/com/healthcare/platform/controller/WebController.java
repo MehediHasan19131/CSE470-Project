@@ -89,7 +89,7 @@ public class WebController {
             case HOSPITAL -> "dashboard-hospital";
             case PHARMACY -> "dashboard-pharmacy";
             case AMBULANCE -> "dashboard-ambulance";
-            case DIAGNOSTIC -> "dashboard-unavailable";
+            case DIAGNOSTIC -> "dashboard-diagnostic";
         };
     }
 }

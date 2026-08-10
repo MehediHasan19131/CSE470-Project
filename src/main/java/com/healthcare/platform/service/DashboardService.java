@@ -1,5 +1,6 @@
 package com.healthcare.platform.service;
 
+import com.healthcare.platform.model.BedAvailability;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.repository.AppSettingRepository;
@@ -19,17 +20,20 @@ public class DashboardService {
     private final AppointmentRepository appointments;
     private final MedicineRepository medicines;
     private final RatingRepository ratings;
+    private final FacilityManagementService facilityManagementService;
 
     public DashboardService(UserRepository users,
                             AppSettingRepository settings,
                             AppointmentRepository appointments,
                             MedicineRepository medicines,
-                            RatingRepository ratings) {
+                            RatingRepository ratings,
+                            FacilityManagementService facilityManagementService) {
         this.users = users;
         this.settings = settings;
         this.appointments = appointments;
         this.medicines = medicines;
         this.ratings = ratings;
+        this.facilityManagementService = facilityManagementService;
     }
 
     public Map<String, Object> dashboard(User currentUser) {
@@ -45,19 +49,40 @@ public class DashboardService {
                     "Schedule — Member 2 (Doctor & Patient Module)",
                     "Feedback — Member 2 (Doctor & Patient Module)"
             ));
-            case HOSPITAL -> roleDashboard(currentUser, List.of(
-                    "Bed availability — Member 3 (Hospital Module)",
-                    "Doctor availability — Member 3 (Hospital Module)",
-                    "Service availability — Member 3 (Hospital Module)",
-                    "Test offers — Member 3 (Diagnostic Center Module)"
-            ));
+            case HOSPITAL -> hospitalDashboard(currentUser);
             case PHARMACY -> roleDashboard(currentUser, List.of(
                     "Stock management — Member 3 (Pharmacy Module)",
                     "Sell medicine — Member 3 (Pharmacy Module)",
                     "Discount advertisements — Member 3 (Pharmacy Module)"
             ));
-            case DIAGNOSTIC, AMBULANCE -> unavailableDashboard(currentUser);
+            case DIAGNOSTIC -> diagnosticDashboard(currentUser);
+            case AMBULANCE -> unavailableDashboard(currentUser);
         };
+    }
+
+    private Map<String, Object> hospitalDashboard(User currentUser) {
+        Map<String, Object> data = basePayload(currentUser);
+        List<BedAvailability> beds = facilityManagementService.getBeds(currentUser.getId());
+
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        metrics.put("wardTypes", beds.size());
+        metrics.put("totalBeds", beds.stream().mapToInt(BedAvailability::getTotalBeds).sum());
+        metrics.put("availableBeds", beds.stream().mapToInt(BedAvailability::getAvailableBeds).sum());
+        metrics.put("doctorSlots", facilityManagementService.getDoctorAvailability(currentUser.getId()).size());
+        metrics.put("services", facilityManagementService.getServices(currentUser.getId()).size());
+        data.put("metrics", metrics);
+        return data;
+    }
+
+    private Map<String, Object> diagnosticDashboard(User currentUser) {
+        Map<String, Object> data = basePayload(currentUser);
+        var offers = facilityManagementService.getTestOffers(currentUser.getId());
+
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        metrics.put("totalTests", offers.size());
+        metrics.put("availableTests", offers.stream().filter(o -> o.isAvailable()).count());
+        data.put("metrics", metrics);
+        return data;
     }
 
     private Map<String, Object> adminDashboard(User currentUser) {

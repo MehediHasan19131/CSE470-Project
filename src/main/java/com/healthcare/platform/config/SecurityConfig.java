@@ -75,6 +75,12 @@ public class SecurityConfig {
                         // provider or admin account, so this is restricted the same way
                         // /admin/** is above.
                         .requestMatchers("/health-profile/**", "/api/health/**").hasRole("PATIENT")
+                        // Hospital & Diagnostic Module (Member 3): bed/doctor/service
+                        // availability is the hospital's own to manage, test offers are the
+                        // diagnostic centre's own - same ownership pattern as /health-profile,
+                        // and FacilityManagementService double-checks ownership per row too.
+                        .requestMatchers("/hospital/**").hasRole("HOSPITAL")
+                        .requestMatchers("/diagnostic/**").hasRole("DIAGNOSTIC")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

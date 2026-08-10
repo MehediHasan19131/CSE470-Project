@@ -2,24 +2,33 @@ package com.healthcare.platform;
 
 import com.healthcare.platform.model.AppSetting;
 import com.healthcare.platform.model.Appointment;
+import com.healthcare.platform.model.BedAvailability;
 import com.healthcare.platform.model.Campaign;
+import com.healthcare.platform.model.HospitalDoctorAvailability;
+import com.healthcare.platform.model.HospitalServiceOffering;
 import com.healthcare.platform.model.Medicine;
 import com.healthcare.platform.model.Profile;
 import com.healthcare.platform.model.Rating;
+import com.healthcare.platform.model.TestOffer;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.repository.AppSettingRepository;
 import com.healthcare.platform.repository.AppointmentRepository;
+import com.healthcare.platform.repository.BedAvailabilityRepository;
 import com.healthcare.platform.repository.CampaignRepository;
 import com.healthcare.platform.repository.DonationRepository;
+import com.healthcare.platform.repository.HospitalDoctorAvailabilityRepository;
+import com.healthcare.platform.repository.HospitalServiceOfferingRepository;
 import com.healthcare.platform.repository.MedicineRepository;
 import com.healthcare.platform.repository.ProfileRepository;
 import com.healthcare.platform.repository.RatingRepository;
+import com.healthcare.platform.repository.TestOfferRepository;
 import com.healthcare.platform.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -46,6 +55,10 @@ public class HealthcarePlatformApplication {
             MedicineRepository medicines,
             CampaignRepository campaigns,
             DonationRepository donationsRepo,
+            BedAvailabilityRepository beds,
+            HospitalDoctorAvailabilityRepository doctorAvailabilities,
+            HospitalServiceOfferingRepository hospitalServices,
+            TestOfferRepository testOffers,
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
@@ -137,6 +150,36 @@ public class HealthcarePlatformApplication {
                         new BigDecimal("60000"),
                         admin
                 ));
+            }
+
+            // Hospital & Diagnostic Module (Member 3): Bed / Doctor / Service
+            // availability for the seeded hospital, and Test offers for the
+            // seeded diagnostic centre.
+            if (beds.findByHospitalIdOrderByWardType(hospital.getId()).isEmpty()) {
+                beds.save(new BedAvailability(hospital, "General Ward", 60, 22));
+                beds.save(new BedAvailability(hospital, "ICU", 12, 3));
+                beds.save(new BedAvailability(hospital, "Cabin", 20, 8));
+            }
+
+            if (doctorAvailabilities.findByHospitalIdOrderByDayOfWeekAscStartTimeAsc(hospital.getId()).isEmpty()) {
+                doctorAvailabilities.save(new HospitalDoctorAvailability(hospital, doctor, "MON",
+                        LocalTime.of(9, 0), LocalTime.of(13, 0), "Cardiology - Room 204"));
+                doctorAvailabilities.save(new HospitalDoctorAvailability(hospital, doctor, "WED",
+                        LocalTime.of(9, 0), LocalTime.of(13, 0), "Cardiology - Room 204"));
+                doctorAvailabilities.save(new HospitalDoctorAvailability(hospital, doctor2, "TUE",
+                        LocalTime.of(14, 0), LocalTime.of(18, 0), "Neurology - Room 118"));
+            }
+
+            if (hospitalServices.findByHospitalIdOrderByServiceName(hospital.getId()).isEmpty()) {
+                hospitalServices.save(new HospitalServiceOffering(hospital, "Emergency Care", "24/7 emergency department.", null));
+                hospitalServices.save(new HospitalServiceOffering(hospital, "Surgery", "General and specialist surgery.", new BigDecimal("15000.00")));
+                hospitalServices.save(new HospitalServiceOffering(hospital, "Maternity Ward", "Prenatal, delivery, and postnatal care.", new BigDecimal("25000.00")));
+            }
+
+            if (testOffers.findByDiagnosticCenterIdOrderByTestName(diagnostic.getId()).isEmpty()) {
+                testOffers.save(new TestOffer(diagnostic, "Complete Blood Count (CBC)", "Full blood panel.", new BigDecimal("500.00"), "6 hours"));
+                testOffers.save(new TestOffer(diagnostic, "X-Ray", "Digital X-ray imaging.", new BigDecimal("800.00"), "1 hour"));
+                testOffers.save(new TestOffer(diagnostic, "MRI Scan", "Full-body or targeted MRI.", new BigDecimal("8000.00"), "24 hours"));
             }
 
             createSettingIfMissing(settings, "appointment_reminders", "enabled");

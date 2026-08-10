@@ -9,6 +9,7 @@ import com.healthcare.platform.repository.ProfileRepository;
 import com.healthcare.platform.repository.RatingRepository;
 import com.healthcare.platform.repository.UserRepository;
 import com.healthcare.platform.service.CurrentUserService;
+import com.healthcare.platform.service.FacilityManagementService;
 import com.healthcare.platform.service.ListingService;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,17 +31,20 @@ public class FacilityController {
     private final ProfileRepository profiles;
     private final RatingRepository ratings;
     private final CurrentUserService currentUserService;
+    private final FacilityManagementService facilityManagementService;
 
     public FacilityController(ListingService listingService,
                                UserRepository users,
                                ProfileRepository profiles,
                                RatingRepository ratings,
-                               CurrentUserService currentUserService) {
+                               CurrentUserService currentUserService,
+                               FacilityManagementService facilityManagementService) {
         this.listingService = listingService;
         this.users = users;
         this.profiles = profiles;
         this.ratings = ratings;
         this.currentUserService = currentUserService;
+        this.facilityManagementService = facilityManagementService;
     }
 
     @GetMapping
@@ -161,6 +165,21 @@ public class FacilityController {
         model.addAttribute("ratings", ratingList);
         model.addAttribute("averageRating", Math.round(avgRating * 10.0) / 10.0);
         model.addAttribute("totalReviews", ratingList.size());
+
+        // Hospital & Diagnostic Module (Member 3): what a hospital/diagnostic
+        // centre has published about itself, shown here for patients browsing
+        // facilities - the same data the owner edits at /hospital/manage or
+        // /diagnostic/manage.
+        if (expectedRole == UserRole.HOSPITAL) {
+            model.addAttribute("beds", facilityManagementService.getBeds(facility.getId()));
+            model.addAttribute("doctorAvailability", facilityManagementService.getDoctorAvailability(facility.getId()));
+            model.addAttribute("hospitalServices", facilityManagementService.getServices(facility.getId()).stream()
+                    .filter(s -> s.isAvailable()).toList());
+        } else if (expectedRole == UserRole.DIAGNOSTIC) {
+            model.addAttribute("testOffers", facilityManagementService.getTestOffers(facility.getId()).stream()
+                    .filter(t -> t.isAvailable()).toList());
+        }
+
         return "sprint1/facilities/profile";
     }
 }

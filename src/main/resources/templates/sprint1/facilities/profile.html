@@ -65,6 +65,72 @@
             </div>
           </div>
 
+          <!-- Hospital & Diagnostic Module (Member 3): published bed/doctor/
+               service availability, or test offers, depending on facility type. -->
+          <div class="panel mt-4" th:if="${facilityType == 'HOSPITAL'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Bed Availability</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(beds)}">No bed information published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(beds)}">
+              <div class="data-row" th:each="bed : ${beds}">
+                <div>
+                  <strong th:text="${bed.wardType}">Ward</strong>
+                  <span th:text="${bed.availableBeds} + ' of ' + ${bed.totalBeds} + ' beds available'">0 of 0 beds available</span>
+                </div>
+                <span class="badge" th:classappend="${bed.availableBeds > 0} ? 'text-bg-success' : 'text-bg-secondary'"
+                      th:text="${bed.availableBeds > 0} ? 'Available' : 'Full'">Status</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${facilityType == 'HOSPITAL'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Doctor Availability</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(doctorAvailability)}">No doctor availability published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(doctorAvailability)}">
+              <div class="data-row" th:each="entry : ${doctorAvailability}">
+                <div>
+                  <strong th:text="${entry.doctor.fullName}">Dr. Name</strong>
+                  <span th:text="${entry.dayOfWeek} + ' · ' + ${#temporals.format(entry.startTime, 'hh:mm a')} + ' – ' + ${#temporals.format(entry.endTime, 'hh:mm a')}">MON · 9:00 AM – 5:00 PM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${facilityType == 'HOSPITAL'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Services Offered</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(hospitalServices)}">No services published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(hospitalServices)}">
+              <div class="data-row" th:each="service : ${hospitalServices}">
+                <div>
+                  <strong th:text="${service.serviceName}">Service</strong>
+                  <span th:if="${service.description}" th:text="${service.description}">Description</span>
+                </div>
+                <span th:if="${service.price != null}" th:text="'৳' + ${service.price}">Price</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${facilityType == 'DIAGNOSTIC'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Test Offers</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(testOffers)}">No test offers published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(testOffers)}">
+              <div class="data-row" th:each="offer : ${testOffers}">
+                <div>
+                  <strong th:text="${offer.testName}">Test</strong>
+                  <span th:text="(${offer.description != null} ? ${offer.description} + ' · ' : '') + (${offer.turnaroundTime != null} ? ${offer.turnaroundTime} : '')">Description</span>
+                </div>
+                <span th:text="'৳' + ${offer.price}">Price</span>
+              </div>
+            </div>
+          </div>
+
           <div class="panel mt-4" th:if="${!#lists.isEmpty(ratings)}">
             <div class="section-title">
               <div>

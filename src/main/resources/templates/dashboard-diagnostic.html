@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Diagnostic Center Dashboard')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Diagnostic centre dashboard', 'Manage the tests your centre offers', 'bi-clipboard2-pulse')}"></div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-clipboard2-data"></i></div>
+            <span>Tests Listed</span>
+            <strong th:text="${data.metrics.totalTests}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-check-circle"></i></div>
+            <span>Available Now</span>
+            <strong th:text="${data.metrics.availableTests}">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Test Offers</p>
+            <h2 class="h6 fw-bold mb-0">Diagnostic tests your centre offers</h2>
+          </div>
+          <a href="/diagnostic/manage" class="btn btn-primary btn-sm">
+            <i class="bi bi-gear"></i> Manage test offers
+          </a>
+        </div>
+        <p class="text-secondary small mb-0">
+          Add, price, and update the tests your centre runs - patients see this on your
+          public facility page.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
