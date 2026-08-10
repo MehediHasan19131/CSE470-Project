@@ -1,85 +1,73 @@
 package com.healthcare.platform.config;
 
-import com.healthcare.platform.repository.UserRepository;
-import com.healthcare.platform.security.JwtAuthenticationFilter;
+import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.auth.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+/**
+ * Auth + role-based access control (Member 1).
+ * UserDetailsService below reads through AuthUserJdbcRepository (plain JDBC) - no ORM.
+ */
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/logged-out", "/register",
                                 "/api/auth/login", "/api/auth/register", "/api/auth/token",
-                                "/css/**", "/img/**", "/images/**", "/error"
+                                "/css/**", "/img/**", "/error"
                         ).permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        // Admin user-management panel (Sprint 2 - Nahian Mahmud) - ADMIN only.
+                        // Admin user-management panel (Sprint 2 addition) - ADMIN only.
+                        // .roles(...) in the UserDetailsService bean below grants "ROLE_<NAME>",
+                        // so hasRole("ADMIN") here (Spring adds the "ROLE_" prefix automatically)
+                        // matches both session login AND the JwtAuthFilter path, which grants the
+                        // same "ROLE_" + role name format.
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/dashboard").authenticated()
-                        .requestMatchers("/api/doctors/search", "/api/hospitals", "/api/pharmacies").hasRole("PATIENT")
-                        .requestMatchers("/api/pharmacy/**").hasRole("PHARMACY")
-                        .requestMatchers("/pharmacy/**").hasRole("PHARMACY")
-                        // Doctor & Patient Module (Sprint 1 - Imtiaz Zaman Sami):
-                        // anyone logged in can browse/search doctors; only admins manage records.
-                        .requestMatchers(HttpMethod.GET, "/api/doctors/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/doctors/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/doctors/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/doctors/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/patients/**").hasAnyRole("ADMIN", "DOCTOR")
-                        .requestMatchers(HttpMethod.POST, "/api/patients/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/patients/**").hasAnyRole("ADMIN", "PATIENT")
-                        .requestMatchers(HttpMethod.DELETE, "/api/patients/**").hasRole("ADMIN")
-                        // Pharmacy Service Module (Sprint 2 - Imtiaz Zaman Sami):
-                        // anyone logged in can browse/search medicines; only patients place orders,
-                        // and an order can only ever be viewed by its owner (or admin/pharmacy staff),
-                        // which OrderService enforces at the data level.
-                        .requestMatchers(HttpMethod.GET, "/api/medicines/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/orders").hasRole("PATIENT")
-                        .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/pharmacy-store/*/order").hasRole("PATIENT")
+                        // Health Profile (Sprint 3 addition) - PATIENT only. A health profile
+                        // (medical history, allergies) belongs to a patient, not a provider or
+                        // admin account, so this is restricted the same way /admin/** is above.
+                        .requestMatchers("/health-profile/**", "/api/health/**").hasRole("PATIENT")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
                         .loginPage("/")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .defaultSuccessUrl("/profile", true)
                         .failureUrl("/?error=Invalid email or password")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                        .logoutSuccessUrl("/")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/logged-out")
                         .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
                         .permitAll()
-                );
+                )
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                // Lets API clients authenticate with "Authorization: Bearer <jwt>" instead
+                // of a session cookie. Does nothing if there's no Bearer header, so the
+                // formLogin/session flow above is unaffected.
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    UserDetailsService userDetailsService(UserRepository users) {
-        return email -> users.findByEmail(email)
+    UserDetailsService userDetailsService(AuthUserJdbcRepository authUsers) {
+        return email -> authUsers.findByEmail(email.trim().toLowerCase())
                 .map(user -> org.springframework.security.core.userdetails.User
                         .withUsername(user.getEmail())
                         .password(user.getPasswordHash())
@@ -98,7 +86,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

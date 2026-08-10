@@ -4,6 +4,7 @@ import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.review.ReviewService;
+import com.healthcare.platform.service.CurrentUserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,17 +38,19 @@ public class AdminController {
     private final AdminUserService adminUserService;
     private final AuthUserJdbcRepository authUsers;
     private final ReviewService reviewService;
+    private final CurrentUserService currentUserService;
 
     public AdminController(AdminUserService adminUserService, AuthUserJdbcRepository authUsers,
-                            ReviewService reviewService) {
+                            ReviewService reviewService, CurrentUserService currentUserService) {
         this.adminUserService = adminUserService;
         this.authUsers = authUsers;
         this.reviewService = reviewService;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
     public String dashboard(Authentication authentication, Model model) {
-        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        model.addAttribute("me", currentUserService.get(authentication));
 
         List<AuthUser> allUsers = adminUserService.listUsers();
         Map<UserRole, Long> roleCounts = allUsers.stream()
@@ -62,14 +65,14 @@ public class AdminController {
 
     @GetMapping("/users")
     public String listUsers(Authentication authentication, Model model) {
-        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        model.addAttribute("me", currentUserService.get(authentication));
         model.addAttribute("users", adminUserService.listUsers());
         return "admin-users";
     }
 
     @GetMapping("/users/new")
     public String newUserForm(Authentication authentication, Model model) {
-        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        model.addAttribute("me", currentUserService.get(authentication));
         model.addAttribute("mode", "create");
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("formAction", "/admin/users");
@@ -93,7 +96,7 @@ public class AdminController {
             adminUserService.createUser(fullName, email, password, role, phone);
             return "redirect:/admin/users?created=true";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+            model.addAttribute("me", currentUserService.get(authentication));
             model.addAttribute("mode", "create");
             model.addAttribute("roles", UserRole.values());
             model.addAttribute("formAction", "/admin/users");
@@ -113,7 +116,7 @@ public class AdminController {
         if (target == null) {
             return "redirect:/admin/users?error=User not found";
         }
-        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        model.addAttribute("me", currentUserService.get(authentication));
         model.addAttribute("mode", "edit");
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("formAction", "/admin/users/" + target.getId());
@@ -135,7 +138,7 @@ public class AdminController {
                               @RequestParam(required = false) String active,
                               @RequestParam(required = false) String newPassword,
                               Model model) {
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser me = currentUserService.get(authentication);
         boolean isActive = "on".equals(active);
 
         try {
@@ -158,7 +161,7 @@ public class AdminController {
 
     @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable Long id, Authentication authentication) {
-        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser me = currentUserService.get(authentication);
         try {
             adminUserService.deleteUser(id, me.getId());
             return "redirect:/admin/users?deleted=true";

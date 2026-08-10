@@ -5,6 +5,7 @@ import com.healthcare.platform.auth.AuthUserJdbcRepository;
 import com.healthcare.platform.dto.LoginRequest;
 import com.healthcare.platform.dto.LoginResponse;
 import com.healthcare.platform.dto.UserResponse;
+import com.healthcare.platform.service.CurrentUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class AuthApiController {
+    private final CurrentUserService currentUserService;
     private final AuthenticationManager authenticationManager;
     private final AuthUserJdbcRepository authUsers;
 
-    public AuthApiController(AuthenticationManager authenticationManager, AuthUserJdbcRepository authUsers) {
+    public AuthApiController(CurrentUserService currentUserService, AuthenticationManager authenticationManager, AuthUserJdbcRepository authUsers) {
+        this.currentUserService = currentUserService;
         this.authenticationManager = authenticationManager;
         this.authUsers = authUsers;
     }
@@ -50,10 +53,7 @@ public class AuthApiController {
 
     @GetMapping("/api/me")
     public UserResponse me(Authentication authentication) {
-        // Read through the JDBC repository, matching the session login above.
-        // CurrentUserService returns the JPA model.User, which is a different
-        // representation of the same `users` row and does not fit UserResponse.
-        AuthUser user = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        AuthUser user = currentUserService.get(authentication);
         return UserResponse.from(user);
     }
 }

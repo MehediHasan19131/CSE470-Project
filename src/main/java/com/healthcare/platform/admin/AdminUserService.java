@@ -2,6 +2,7 @@ package com.healthcare.platform.admin;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.healthprofile.HealthProfileService;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.review.ReviewJdbcRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +26,14 @@ public class AdminUserService {
 
     private final AuthUserJdbcRepository authUsers;
     private final ReviewJdbcRepository reviews;
+    private final HealthProfileService healthProfile;
     private final PasswordEncoder passwordEncoder;
 
-    public AdminUserService(AuthUserJdbcRepository authUsers, ReviewJdbcRepository reviews, PasswordEncoder passwordEncoder) {
+    public AdminUserService(AuthUserJdbcRepository authUsers, ReviewJdbcRepository reviews,
+                             HealthProfileService healthProfile, PasswordEncoder passwordEncoder) {
         this.authUsers = authUsers;
         this.reviews = reviews;
+        this.healthProfile = healthProfile;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -116,6 +120,12 @@ public class AdminUserService {
             }
         }
         reviews.deleteRatingSummary(id);
+
+        // Same reason as above: `medical_history`/`allergies` also have a foreign
+        // key on users.id (Sprint 3 - Health Profile). A provider account never
+        // has any of these rows, but it's harmless (and simpler) to always call
+        // this rather than branch on role.
+        healthProfile.deleteAllForPatient(id);
 
         authUsers.deleteById(id);
     }

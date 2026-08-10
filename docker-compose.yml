@@ -7,7 +7,7 @@ services:
       MYSQL_DATABASE: healthcare_platform
       MYSQL_USER: health_user
       MYSQL_PASSWORD: health_password
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root_password
     ports:
       - "3306:3306"
     volumes:

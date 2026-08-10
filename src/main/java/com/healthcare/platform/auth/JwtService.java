@@ -1,29 +1,28 @@
 package com.healthcare.platform.auth;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
 
-// Named explicitly: com.healthcare.platform.security.JwtService has the same simple
-// name, and two beans sharing the default name "jwtService" break context startup.
-@Service("authJwtService")
+@Service
 public class JwtService {
 
-    private final SecretKey signingKey;
+    private final Key signingKey;
     private final long expirationMs;
 
     public JwtService(
             @Value("${app.jwt.secret:ChangeThisToASecureRandomSecretKeyThatIsAtLeast256BitsLong}") String secret,
             @Value("${app.jwt.expiration-ms:86400000}") long expirationMs
     ) {
-        this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.signingKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMs = expirationMs;
     }
 
@@ -36,11 +35,11 @@ public class JwtService {
         Date expiry = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .subject(email)
+                .setSubject(email)
                 .claim("role", role)
-                .issuedAt(now)
-                .expiration(expiry)
-                .signWith(signingKey)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -55,13 +54,12 @@ public class JwtService {
 
     private Claims parseClaims(String token) {
         try {
-            return Jwts.parser()
-                    .verifyWith(signingKey)
+            return Jwts.parserBuilder()
+                    .setSigningKey(signingKey)
                     .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-        } catch (JwtException | IllegalArgumentException e) {
-            // JwtException already covers ExpiredJwtException.
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException | JwtException | IllegalArgumentException e) {
             return null;
         }
     }
