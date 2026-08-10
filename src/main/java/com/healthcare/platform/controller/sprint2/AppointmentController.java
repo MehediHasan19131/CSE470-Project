@@ -1,9 +1,11 @@
 package com.healthcare.platform.controller.sprint2;
 
+import com.healthcare.platform.dto.ConsultationResponse;
 import com.healthcare.platform.model.Appointment;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.repository.UserRepository;
+import com.healthcare.platform.service.ConsultationService;
 import com.healthcare.platform.service.CurrentUserService;
 import com.healthcare.platform.service.ListingService;
 import com.healthcare.platform.service.sprint2.AppointmentService;
@@ -26,15 +28,18 @@ public class AppointmentController {
     private final CurrentUserService currentUserService;
     private final UserRepository users;
     private final ListingService listingService;
+    private final ConsultationService consultationService;
 
     public AppointmentController(AppointmentService appointmentService,
                                   CurrentUserService currentUserService,
                                   UserRepository users,
-                                  ListingService listingService) {
+                                  ListingService listingService,
+                                  ConsultationService consultationService) {
         this.appointmentService = appointmentService;
         this.currentUserService = currentUserService;
         this.users = users;
         this.listingService = listingService;
+        this.consultationService = consultationService;
     }
 
     @GetMapping
@@ -86,5 +91,16 @@ public class AppointmentController {
         User user = currentUserService.get(authentication);
         appointmentService.confirm(id, user);
         return "redirect:/appointments";
+    }
+
+    // Telemedicine (Sprint 3 - Mehedi Hasan). Creates (or reuses) the Consultation
+    // room for a confirmed appointment and sends whoever clicked straight into the
+    // call. Idempotent - both the patient and the doctor can click their own
+    // "Start video call" button and land in the same room.
+    @PostMapping("/{id}/start-call")
+    public String startCall(@PathVariable Long id, Authentication authentication) {
+        User user = currentUserService.get(authentication);
+        ConsultationResponse consultation = consultationService.start(user, id);
+        return "redirect:/telemedicine/call/" + consultation.id();
     }
 }
