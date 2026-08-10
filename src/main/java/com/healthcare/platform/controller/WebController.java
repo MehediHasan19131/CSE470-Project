@@ -73,6 +73,14 @@ public class WebController {
         return "video-call";
     }
 
+    // AI Chat / Symptom Checker Module (Sprint 4 - Mehedi Hasan).
+
+    @GetMapping("/ai/chat")
+    public String aiChat(Authentication authentication, Model model) {
+        model.addAttribute("user", currentUserService.get(authentication));
+        return "ai-chat";
+    }
+
     private String dashboardTemplate(UserRole role) {
         return switch (role) {
             case ADMIN -> "dashboard-admin";

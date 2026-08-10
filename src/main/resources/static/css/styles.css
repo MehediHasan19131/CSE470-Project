@@ -11,6 +11,8 @@
   --mint: #e8f6f1;
   --sky: #eaf3fb;
   --rose: #fff1ed;
+  --violet: #7c3aed;
+  --violet-100: #ede9fe;
 }
 
 body {
@@ -498,7 +500,26 @@ body {
   color: var(--blue);
   background: rgba(37, 99, 184, 0.1);
   font-size: 1.1rem;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+.action-tile:hover i { transform: scale(1.1) rotate(-4deg); }
+
+/* Cycle a distinct accent per tile so a grid of quick actions reads as
+   colourful and organised rather than one flat blue repeated everywhere. */
+.action-grid .action-tile:nth-child(6n+1) i { color: var(--blue-500); background: var(--blue-100); }
+.action-grid .action-tile:nth-child(6n+2) i { color: var(--cyan-500); background: var(--cyan-100); }
+.action-grid .action-tile:nth-child(6n+3) i { color: var(--coral-500); background: var(--coral-100); }
+.action-grid .action-tile:nth-child(6n+4) i { color: var(--green-500); background: var(--green-100); }
+.action-grid .action-tile:nth-child(6n+5) i { color: var(--gold-500); background: var(--gold-100); }
+.action-grid .action-tile:nth-child(6n+6) i { color: var(--violet); background: var(--violet-100); }
+
+.action-grid .action-tile:nth-child(6n+1):hover { border-color: rgba(37, 99, 184, 0.35); box-shadow: 0 20px 40px rgba(37, 99, 184, 0.15); }
+.action-grid .action-tile:nth-child(6n+2):hover { border-color: rgba(15, 124, 144, 0.35); box-shadow: 0 20px 40px rgba(15, 124, 144, 0.15); }
+.action-grid .action-tile:nth-child(6n+3):hover { border-color: rgba(217, 101, 79, 0.35); box-shadow: 0 20px 40px rgba(217, 101, 79, 0.15); }
+.action-grid .action-tile:nth-child(6n+4):hover { border-color: rgba(35, 131, 111, 0.35); box-shadow: 0 20px 40px rgba(35, 131, 111, 0.15); }
+.action-grid .action-tile:nth-child(6n+5):hover { border-color: rgba(167, 119, 0, 0.35); box-shadow: 0 20px 40px rgba(167, 119, 0, 0.15); }
+.action-grid .action-tile:nth-child(6n+6):hover { border-color: rgba(124, 58, 237, 0.35); box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15); }
 
 .data-list {
   display: flex;
@@ -524,13 +545,97 @@ body {
 .sprint-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid rgba(37, 99, 184, 0.2);
-  border-radius: 8px;
-  color: #084298;
-  background: var(--sky);
+  gap: 12px;
+  padding: 8px 18px 8px 8px;
+  border: 1px solid rgba(37, 99, 184, 0.18);
+  border-radius: 999px;
+  color: #0b3d78;
+  background: linear-gradient(135deg, rgba(37, 99, 184, 0.09), rgba(15, 124, 144, 0.07)), #ffffff;
+  box-shadow: var(--shadow-sm);
   font-size: 0.88rem;
+  font-weight: 500;
+  animation: dashboardFadeIn 420ms ease both;
+}
+
+.sprint-badge i {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--blue-500), var(--cyan-500));
+  font-size: 1rem;
+  box-shadow: 0 6px 14px rgba(37, 99, 184, 0.28);
+}
+
+/* ── Info banner: richer alternative to a flat alert, used for callouts
+      like the AI disclaimer — icon badge + soft gradient card. ── */
+.info-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  animation: dashboardFadeIn 420ms ease both;
+}
+
+.info-banner p,
+.info-banner span { margin: 0; }
+
+.info-banner-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+.info-banner-warning {
+  color: #805b00;
+  background: linear-gradient(135deg, #fff7df, #ffffff);
+  border-color: rgba(167, 119, 0, 0.22);
+}
+
+.info-banner-warning .info-banner-icon {
+  background: linear-gradient(135deg, var(--gold-500), #d99a1f);
+  box-shadow: 0 8px 18px rgba(167, 119, 0, 0.28);
+}
+
+.info-banner-warning a { color: #6a4a00; font-weight: 700; }
+
+.info-banner-info {
+  color: #0b3d78;
+  background: linear-gradient(135deg, var(--sky), #ffffff);
+  border-color: rgba(37, 99, 184, 0.2);
+}
+
+.info-banner-info .info-banner-icon {
+  background: linear-gradient(135deg, var(--blue-500), var(--cyan-500));
+  box-shadow: 0 8px 18px rgba(37, 99, 184, 0.24);
+}
+
+.info-banner-danger {
+  color: #8a3b2d;
+  background: linear-gradient(135deg, var(--rose), #ffffff);
+  border-color: rgba(217, 101, 79, 0.28);
+  font-weight: 600;
+}
+
+.info-banner-danger .info-banner-icon {
+  background: linear-gradient(135deg, var(--coral-500), #e07862);
+  box-shadow: 0 8px 18px rgba(217, 101, 79, 0.32);
+}
+
+.info-banner-danger a {
+  color: var(--coral-600);
+  font-weight: 700;
 }
 
 /* ── Responsive ── */

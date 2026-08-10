@@ -36,7 +36,9 @@ public class ReviewWebController {
     }
 
     @GetMapping("/reviews")
-    public String directory(Model model) {
+    public String directory(Authentication authentication, Model model) {
+        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        model.addAttribute("user", me);
         model.addAttribute("providers", reviewService.getProviders());
         return "reviews-directory";
     }
@@ -84,6 +86,7 @@ public class ReviewWebController {
 
     private void loadPage(AuthUser target, AuthUser me, Model model) {
         model.addAttribute("me", me);
+        model.addAttribute("user", me);
         model.addAttribute("target", target);
         model.addAttribute("summary", reviewService.getRatingSummary(target.getId()));
         model.addAttribute("reviews", reviewService.getReviewsForTarget(target.getId()));
