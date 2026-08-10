@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Server-rendered pages for the Review & Rating System (Member 2, Sprint
@@ -55,12 +56,19 @@ public class ReviewWebController {
         return "review-target";
     }
 
+    // Post-Redirect-Get: this used to render "review-target" directly from the
+    // POST response, which left the review submission as the browser's last
+    // history entry. Hitting Back (or refreshing) after that either resubmitted
+    // the review or popped up "Confirm Form Resubmission" - the page never felt
+    // in sync with where the user actually was. Redirecting back to the GET
+    // page fixes both: Back now lands on a normal page, and a refresh can't
+    // resubmit the form.
     @PostMapping("/reviews/{targetId}")
     public String submit(@PathVariable Long targetId,
                           @RequestParam int rating,
                           @RequestParam(required = false) String comment,
                           Authentication authentication,
-                          Model model) {
+                          RedirectAttributes redirectAttributes) {
         AuthUser target = authUsers.findById(targetId).orElse(null);
         if (target == null) {
             return "redirect:/reviews?error=Provider not found";
@@ -75,13 +83,12 @@ public class ReviewWebController {
             } else {
                 reviewService.createReview(me.getId(), targetId, rating, comment);
             }
-            model.addAttribute("saved", true);
+            redirectAttributes.addFlashAttribute("saved", true);
         } catch (IllegalArgumentException | IllegalStateException e) {
-            model.addAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
-        loadPage(target, me, model);
-        return "review-target";
+        return "redirect:/reviews/" + targetId;
     }
 
     private void loadPage(AuthUser target, AuthUser me, Model model) {
