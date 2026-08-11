@@ -57,7 +57,20 @@ public class AdminController {
         model.addAttribute("roleCounts", roleCounts);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("providers", reviewService.getProviders());
+        model.addAttribute("pendingApprovals", adminUserService.listPendingApproval());
         return "admin-dashboard";
+    }
+
+    // One-click approve for a Doctor/Hospital/Pharmacy/Diagnostic/Ambulance
+    // sign-up - just flips is_active to true so they can log in.
+    @PostMapping("/users/{id}/approve")
+    public String approveUser(@PathVariable Long id, @RequestParam(required = false) String from) {
+        try {
+            adminUserService.approveUser(id);
+        } catch (NoSuchElementException e) {
+            return "redirect:/admin?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+        return "redirect:" + ("users".equals(from) ? "/admin/users?approved=true" : "/admin?approved=true");
     }
 
     @GetMapping("/users")

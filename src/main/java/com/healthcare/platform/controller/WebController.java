@@ -23,11 +23,16 @@ public class WebController {
     }
 
     @GetMapping("/")
-    public String login(@RequestParam(required = false) String error, Authentication authentication, Model model) {
+    public String login(@RequestParam(required = false) String error,
+                         @RequestParam(required = false) String registered,
+                         @RequestParam(required = false) String pending,
+                         Authentication authentication, Model model) {
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
             return "redirect:/dashboard";
         }
         model.addAttribute("error", error);
+        model.addAttribute("registered", registered != null);
+        model.addAttribute("pending", pending != null);
         return "login";
     }
 

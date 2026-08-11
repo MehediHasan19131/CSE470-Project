@@ -4,6 +4,7 @@ import com.healthcare.platform.dto.NotificationResponse;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.service.AppointmentReminderScheduler;
 import com.healthcare.platform.service.CurrentUserService;
+import com.healthcare.platform.service.MedicineReminderScheduler;
 import com.healthcare.platform.service.NotificationService;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +24,18 @@ public class NotificationApiController {
     private final NotificationService notificationService;
     private final CurrentUserService currentUserService;
     private final AppointmentReminderScheduler reminderScheduler;
+    private final MedicineReminderScheduler medicineReminderScheduler;
 
     public NotificationApiController(
             NotificationService notificationService,
             CurrentUserService currentUserService,
-            AppointmentReminderScheduler reminderScheduler
+            AppointmentReminderScheduler reminderScheduler,
+            MedicineReminderScheduler medicineReminderScheduler
     ) {
         this.notificationService = notificationService;
         this.currentUserService = currentUserService;
         this.reminderScheduler = reminderScheduler;
+        this.medicineReminderScheduler = medicineReminderScheduler;
     }
 
     @GetMapping
@@ -65,6 +69,13 @@ public class NotificationApiController {
     @PostMapping("/run-reminder-check")
     public Map<String, Integer> runReminderCheck() {
         int sent = reminderScheduler.runReminderCheck();
+        return Map.of("remindersSent", sent);
+    }
+
+    // Same idea, for Medicine Reminders. Admin only.
+    @PostMapping("/run-medicine-reminder-check")
+    public Map<String, Integer> runMedicineReminderCheck() {
+        int sent = medicineReminderScheduler.runReminderCheck();
         return Map.of("remindersSent", sent);
     }
 }

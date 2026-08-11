@@ -79,7 +79,15 @@ public class AuthUserJdbcRepository {
         return results.stream().findFirst();
     }
 
-    /** Inserts a new row and returns the same object with its generated id set. */
+    /**
+     * Inserts a new row and returns the same object with its generated id set.
+     * Respects whatever {@code user.isActive()} was set to by the caller -
+     * RegistrationService sets this to false for roles that need admin
+     * approval (Doctor/Hospital/Pharmacy/Diagnostic/Ambulance) before they can
+     * log in, and true for everything else (Patient, or the Admin panel's
+     * "create user" form). Login itself is blocked for inactive accounts by
+     * SecurityConfig's UserDetailsService (.disabled(!user.isActive())).
+     */
     public AuthUser insert(AuthUser user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -94,13 +102,12 @@ public class AuthUserJdbcRepository {
             ps.setString(3, user.getPasswordHash());
             ps.setString(4, user.getRole().name());
             ps.setString(5, user.getPhone());
-            ps.setBoolean(6, true);
+            ps.setBoolean(6, user.isActive());
             return ps;
         }, keyHolder);
 
         Number generatedId = keyHolder.getKey();
         user.setId(generatedId != null ? generatedId.longValue() : null);
-        user.setActive(true);
         return user;
     }
 

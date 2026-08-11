@@ -2,10 +2,13 @@ package com.healthcare.platform.config;
 
 import com.healthcare.platform.repository.UserRepository;
 import com.healthcare.platform.security.JwtAuthenticationFilter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -58,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/pharmacy-store/*/order").hasRole("PATIENT")
                         .requestMatchers(HttpMethod.POST, "/api/notifications/run-reminder-check").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/notifications/run-medicine-reminder-check").hasRole("ADMIN")
                         .requestMatchers("/api/notifications/**").authenticated()
                         .requestMatchers("/notifications/**").authenticated()
                         // Crowdfunding & Payment Module (Sprint 4 - Imtiaz Zaman Sami):
@@ -81,6 +86,15 @@ public class SecurityConfig {
                         // and FacilityManagementService double-checks ownership per row too.
                         .requestMatchers("/hospital/**").hasRole("HOSPITAL")
                         .requestMatchers("/diagnostic/**").hasRole("DIAGNOSTIC")
+                        // Medical Records Sharing (patient grants/revokes a specific
+                        // doctor access to their health profile): the grant/revoke
+                        // UI is on the patient's own health profile page (PATIENT-only,
+                        // covered by "/health-profile/**" above); this is the doctor's
+                        // side - viewing patients who currently have an active grant.
+                        .requestMatchers("/doctor/patients/**").hasRole("DOCTOR")
+                        // Medicine Reminder: a patient's own reminders, same ownership
+                        // pattern as /health-profile.
+                        .requestMatchers("/medicine-reminders/**").hasRole("PATIENT")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -88,7 +102,7 @@ public class SecurityConfig {
                         .loginPage("/")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/dashboard", true)
-                        .failureUrl("/?error=Invalid email or password")
+                        .failureHandler(authenticationFailureHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -99,6 +113,21 @@ public class SecurityConfig {
                         .permitAll()
                 );
         return http.build();
+    }
+
+    // Distinguishes "wrong email/password" from "account not approved yet" so
+    // the login page can show the right message - a Doctor/Hospital/Pharmacy/
+    // Diagnostic/Ambulance account is disabled (is_active = false) until an
+    // admin approves it from Admin > Manage Users, and DaoAuthenticationProvider
+    // throws DisabledException for those before it ever checks the password.
+    @Bean
+    AuthenticationFailureHandler authenticationFailureHandler() {
+        return (request, response, exception) -> {
+            String message = exception instanceof DisabledException
+                    ? "Your account is pending admin approval. You'll be able to log in once an admin approves it."
+                    : "Invalid email or password";
+            response.sendRedirect("/?error=" + URLEncoder.encode(message, StandardCharsets.UTF_8));
+        };
     }
 
     @Bean

@@ -40,6 +40,9 @@ public class RegistrationController {
             return "register";
         }
 
+        if (RegistrationService.requiresApproval(registerRequest.getRole())) {
+            return "redirect:/?registered&pending=true";
+        }
         return "redirect:/?registered";
     }
 }

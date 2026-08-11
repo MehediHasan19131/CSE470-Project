@@ -6,6 +6,8 @@ import com.healthcare.platform.blog.BlogService;
 import com.healthcare.platform.healthprofile.HealthProfileService;
 import com.healthcare.platform.model.UserRole;
 import com.healthcare.platform.review.ReviewJdbcRepository;
+import com.healthcare.platform.service.MedicineReminderService;
+import com.healthcare.platform.service.RecordAccessService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,19 +31,38 @@ public class AdminUserService {
     private final ReviewJdbcRepository reviews;
     private final HealthProfileService healthProfile;
     private final BlogService blog;
+    private final RecordAccessService recordAccess;
+    private final MedicineReminderService medicineReminders;
     private final PasswordEncoder passwordEncoder;
 
     public AdminUserService(AuthUserJdbcRepository authUsers, ReviewJdbcRepository reviews,
-                             HealthProfileService healthProfile, BlogService blog, PasswordEncoder passwordEncoder) {
+                             HealthProfileService healthProfile, BlogService blog,
+                             RecordAccessService recordAccess, MedicineReminderService medicineReminders,
+                             PasswordEncoder passwordEncoder) {
         this.authUsers = authUsers;
         this.reviews = reviews;
         this.healthProfile = healthProfile;
         this.blog = blog;
+        this.recordAccess = recordAccess;
+        this.medicineReminders = medicineReminders;
         this.passwordEncoder = passwordEncoder;
     }
 
     public List<AuthUser> listUsers() {
         return authUsers.findAll();
+    }
+
+    /** Accounts still waiting on admin approval (Doctor/Hospital/Pharmacy/Diagnostic/Ambulance sign-ups). */
+    public List<AuthUser> listPendingApproval() {
+        return authUsers.findAll().stream()
+                .filter(u -> !u.isActive() && u.getRole() != UserRole.PATIENT && u.getRole() != UserRole.ADMIN)
+                .toList();
+    }
+
+    /** One-click approve from the Admin dashboard/user list - just flips the account active, nothing else changes. */
+    public void approveUser(Long id) {
+        AuthUser target = authUsers.findById(id).orElseThrow(() -> new NoSuchElementException("User not found."));
+        authUsers.updateAsAdmin(target.getId(), target.getFullName(), target.getEmail(), target.getPhone(), target.getRole(), true);
     }
 
     public AuthUser createUser(String fullName, String email, String password, UserRole role, String phone) {
@@ -60,6 +81,9 @@ public class AdminUserService {
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setRole(role);
         user.setPhone(phone);
+        // An admin creating an account directly is itself the approval - no
+        // pending state needed, unlike public self-registration below.
+        user.setActive(true);
 
         return authUsers.insert(user);
     }
@@ -135,6 +159,12 @@ public class AdminUserService {
         // every comment on those posts, including other people's replies) plus
         // any comments they left on other people's posts.
         blog.deleteAllForAuthor(id);
+
+        // Same reason again: `record_access_grants` has a foreign key on users.id
+        // for BOTH patient_id and doctor_id (Medical Records Sharing), and
+        // `medicine_reminders` has one for patient_id.
+        recordAccess.deleteAllForUser(id);
+        medicineReminders.deleteAllForPatient(id);
 
         authUsers.deleteById(id);
     }

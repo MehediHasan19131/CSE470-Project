@@ -40,6 +40,13 @@
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-calendar-check"></i><span>Appointments</span>
             </a>
+            <!-- Hospital & Diagnostic Module (Member 3): patients browse
+                 hospitals/diagnostic centres/pharmacies here to see bed
+                 availability, doctor availability, services, and test offers. -->
+            <a href="/facilities" class="nav-pill"
+               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
+                <i class="bi bi-hospital"></i><span>Hospitals &amp; Labs</span>
+            </a>
             <a href="/pharmacy-store" class="nav-pill"
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-capsule"></i><span>Pharmacy</span>
@@ -48,12 +55,22 @@
                th:if="${role == 'PATIENT' or role == 'ADMIN'}">
                 <i class="bi bi-star"></i><span>Reviews</span>
             </a>
+            <a href="/medicine-reminders" class="nav-pill"
+               th:if="${role == 'PATIENT'}">
+                <i class="bi bi-alarm"></i><span>Medicine Reminders</span>
+            </a>
 
             <!-- Doctors: their own schedule only. AppointmentController already
                  returns doctorHistory() for this role. -->
             <a href="/appointments" class="nav-pill"
                th:if="${role == 'DOCTOR'}">
                 <i class="bi bi-calendar-check"></i><span>My Appointments</span>
+            </a>
+
+            <!-- Medical Records Sharing: patients who've granted this doctor
+                 access to their medical history/allergies. -->
+            <a href="/doctor/patients" class="nav-pill" th:if="${role == 'DOCTOR'}">
+                <i class="bi bi-file-earmark-medical"></i><span>My Patients</span>
             </a>
 
             <!-- Providers see the reviews written about them, not the directory

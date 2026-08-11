@@ -39,6 +39,10 @@
             <p class="text-secondary mb-0">Sign in to continue to your role-based dashboard.</p>
           </div>
           <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Invalid email or password</div>
+          <div class="alert alert-warning py-2" th:if="${registered and pending}">
+            Account created! Doctor, Hospital, Pharmacy, Diagnostic Centre, and Ambulance accounts need admin approval first — you'll be able to log in once that's done.
+          </div>
+          <div class="alert alert-success py-2" th:if="${registered and !pending}">Account created! You can log in now.</div>
           <form method="post" action="/login" class="vstack gap-3">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div>

@@ -2,6 +2,7 @@ package com.healthcare.platform.healthprofile;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.service.RecordAccessService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -36,10 +37,13 @@ public class HealthProfileWebController {
 
     private final HealthProfileService healthProfileService;
     private final AuthUserJdbcRepository authUsers;
+    private final RecordAccessService recordAccessService;
 
-    public HealthProfileWebController(HealthProfileService healthProfileService, AuthUserJdbcRepository authUsers) {
+    public HealthProfileWebController(HealthProfileService healthProfileService, AuthUserJdbcRepository authUsers,
+                                       RecordAccessService recordAccessService) {
         this.healthProfileService = healthProfileService;
         this.authUsers = authUsers;
+        this.recordAccessService = recordAccessService;
     }
 
     @GetMapping("/health-profile")
@@ -152,10 +156,40 @@ public class HealthProfileWebController {
         }
     }
 
+    // ---------------------------------------------------------------------
+    // Medical Records Sharing - grant/revoke a specific doctor's access to
+    // this patient's medical history & allergies. See RecordAccessService and
+    // DoctorPatientRecordsController (the doctor's side of this feature).
+    // ---------------------------------------------------------------------
+
+    @PostMapping("/health-profile/share")
+    public String share(@RequestParam Long doctorId, Authentication authentication) {
+        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        try {
+            recordAccessService.grant(me.getId(), doctorId);
+            return "redirect:/health-profile?shareSaved=true";
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return "redirect:/health-profile?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
+
+    @PostMapping("/health-profile/share/{doctorId}/revoke")
+    public String revokeShare(@PathVariable Long doctorId, Authentication authentication) {
+        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        try {
+            recordAccessService.revoke(me.getId(), doctorId);
+            return "redirect:/health-profile?shareRevoked=true";
+        } catch (NoSuchElementException e) {
+            return "redirect:/health-profile?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
+
     private void loadPage(AuthUser me, Model model) {
         model.addAttribute("me", me);
         model.addAttribute("history", healthProfileService.getHistory(me.getId()));
         model.addAttribute("allergies", healthProfileService.getAllergies(me.getId()));
         model.addAttribute("severities", AllergySeverity.values());
+        model.addAttribute("doctors", recordAccessService.listDoctors());
+        model.addAttribute("grants", recordAccessService.listGrantsForPatient(me.getId()));
     }
 }

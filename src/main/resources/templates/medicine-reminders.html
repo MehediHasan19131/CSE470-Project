@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Medicine Reminders')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Medicine reminders', 'Get a notification when it\'s time to take your medicine', 'bi-alarm')}"></div>
+
+      <div class="alert alert-success py-2" th:if="${param.saved}">Reminder saved.</div>
+      <div class="alert alert-success py-2" th:if="${param.deleted}">Reminder deleted.</div>
+      <div class="alert alert-danger py-2" th:if="${param.error != null}" th:text="${param.error[0]}">Error</div>
+
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="panel">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Add a reminder</h2>
+            </div>
+            <form method="post" action="/medicine-reminders" class="vstack gap-3">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <div>
+                <label class="form-label">Medicine name</label>
+                <input class="form-control" type="text" name="medicineName" maxlength="150" required placeholder="e.g. Metformin">
+              </div>
+              <div>
+                <label class="form-label">Dosage (optional)</label>
+                <input class="form-control" type="text" name="dosage" maxlength="80" placeholder="e.g. 500mg, 1 tablet">
+              </div>
+              <div>
+                <label class="form-label">Time to take it, every day</label>
+                <input class="form-control" type="time" name="reminderTime" required>
+              </div>
+              <div>
+                <label class="form-label">Notes (optional)</label>
+                <textarea class="form-control" name="notes" rows="2" maxlength="300" placeholder="e.g. Take with food"></textarea>
+              </div>
+              <button class="btn btn-primary" type="submit" style="width:fit-content; padding-left:28px; padding-right:28px;">
+                Add reminder
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="panel">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Your reminders</p>
+                <h2 class="h6 fw-bold mb-0" th:text="${#lists.size(reminders)} + ' reminder(s)'">0 reminders</h2>
+              </div>
+            </div>
+
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(reminders)}">
+              No reminders yet — add one using the form.
+            </p>
+
+            <div class="data-list" th:unless="${#lists.isEmpty(reminders)}">
+              <div class="review-card" th:each="r : ${reminders}">
+                <div class="review-card-header">
+                  <div>
+                    <strong th:text="${r.medicineName}">Medicine</strong>
+                    <span th:if="${r.dosage}" th:text="${r.dosage}">Dosage</span>
+                    <span th:text="${#temporals.format(r.reminderTime, 'hh:mm a')}">Time</span>
+                    <span class="badge" th:classappend="${r.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                          th:text="${r.active} ? 'Active' : 'Paused'">Status</span>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <form th:action="@{'/medicine-reminders/' + ${r.id} + '/toggle'}" method="post">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                      <input type="hidden" name="active" th:value="${!r.active}">
+                      <button class="btn btn-outline-secondary btn-sm" type="submit"
+                              th:text="${r.active} ? 'Pause' : 'Resume'">Pause</button>
+                    </form>
+                    <form th:action="@{'/medicine-reminders/' + ${r.id} + '/delete'}" method="post"
+                          onsubmit="return confirm('Delete this reminder?');">
+                      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                      <button class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+                    </form>
+                  </div>
+                </div>
+                <p th:if="${r.notes != null and !#strings.isEmpty(r.notes)}" th:text="${r.notes}">Notes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
