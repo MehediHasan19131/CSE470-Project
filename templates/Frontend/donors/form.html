@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/dashboard-layout :: head('Donor Registration')}"></head>
+<body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+        <div th:replace="~{fragments/dashboard-layout :: page-heading('Donor Registration', 'Register as a blood donor', 'bi-person-plus')}"></div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="panel">
+                    <form method="post" action="/blood/donors/new" class="vstack gap-4">
+                        <input type="hidden" name="userId" th:value="${user.id}">
+                        
+                        <div>
+                            <label class="form-label fw-semibold">Full Name</label>
+                            <input class="form-control" type="text" name="fullName" placeholder="e.g. Ahmed Khan" required>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Blood Group</label>
+                                <select class="form-select" name="bloodGroup" required>
+                                    <option value="" disabled>— Select blood group —</option>
+                                    <option value="A+" th:selected="${donor.bloodGroup == 'A+'}">A+</option>
+                                    <option value="A-" th:selected="${donor.bloodGroup == 'A-'}">A-</option>
+                                    <option value="B+" th:selected="${donor.bloodGroup == 'B+'}">B+</option>
+                                    <option value="B-" th:selected="${donor.bloodGroup == 'B-'}">B-</option>
+                                    <option value="AB+" th:selected="${donor.bloodGroup == 'AB+'}">AB+</option>
+                                    <option value="AB-" th:selected="${donor.bloodGroup == 'AB-'}">AB-</option>
+                                    <option value="O+" th:selected="${donor.bloodGroup == 'O+'}">O+</option>
+                                    <option value="O-" th:selected="${donor.bloodGroup == 'O-'}">O-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone</label>
+                                <input class="form-control" type="tel" name="phone" placeholder="+880-17xxxxxxxx" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">City</label>
+                                <input class="form-control" type="text" name="city" placeholder="Dhaka, Chittagong...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Last Donation Date</label>
+                                <input class="form-control" type="date" name="lastDonationDate">
+                                <small class="text-secondary">Leave blank if never donated.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="isAvailable" id="isAvailable" checked>
+                            <label class="form-check-label" for="isAvailable">
+                                <i class="bi bi-shield-check"></i> I am currently available to donate
+                            </label>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-primary px-4" type="submit">
+                                <i class="bi bi-check-lg"></i> Register Donor
+                            </button>
+                            <a class="btn btn-outline-secondary px-4" href="/blood/donors">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/jsbootstrap.bundle.min.js"></script>
