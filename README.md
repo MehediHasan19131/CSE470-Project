@@ -1,51 +1,75 @@
-# Sprint 3 — Medicine Reminder & Medicine History
-**Member:** Rony Miah (24141084)
+# 🏥 SmartCare — Integrated Healthcare Management & Telemedicine System
 
-## Features
-- Create / Edit / Deactivate / Delete Medicine Reminders
-- List active reminders for the logged-in patient (Reminder Dashboard)
-- Mark a scheduled dose as TAKEN / MISSED / SKIPPED (dose logging)
-- Medicine History: all logged doses joined with reminder info, most recent first
-- Validation: `endDate` must be after `startDate`; `frequencyPerDay` between 1 and 10
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## Routes
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/reminders` | Reminder dashboard (active reminders) |
-| GET | `/reminders/new` | Create form |
-| POST | `/reminders/new` | Create reminder |
-| GET | `/reminders/{id}/edit` | Edit form |
-| POST | `/reminders/{id}/edit` | Update reminder |
-| POST | `/reminders/{id}/deactivate` | Soft-delete / pause reminder |
-| POST | `/reminders/{id}/delete` | Hard-delete reminder (+ its logs) |
-| POST | `/reminders/{id}/log` | Log a dose (status=TAKEN/MISSED/SKIPPED, scheduledTime) |
-| GET | `/reminders/history` | Medicine history table |
+**SmartCare** is a full-stack healthcare platform that connects patients, doctors, and administrators in one place — from booking appointments and video consultations to medicine reminders, pharmacy, ambulance booking, and an AI-powered symptom checker.
 
-## Files
-| File | Purpose |
-|------|---------|
-| `model/MedicineReminder.java` | Reminder entity (reminder times stored as comma-separated string) |
-| `model/MedicineLog.java` | History log entity |
-| `model/MedicineLogStatus.java` | Enum: TAKEN, MISSED, SKIPPED |
-| `repository/MedicineReminderRepository.java` | DAO with hand-written JPQL queries |
-| `repository/MedicineLogRepository.java` | DAO with hand-written JPQL queries |
-| `service/sprint3/ReminderService.java` | CRUD, dose logging, validation |
-| `controller/sprint3/ReminderController.java` | All reminder routes |
-| `templates/sprint3/reminders/dashboard.html` | Reminder card dashboard |
-| `templates/sprint3/reminders/form.html` | Create/Edit form |
-| `templates/sprint3/reminders/history.html` | History table |
-| `static/css/sprint3.css` | Card + badge styles |
+> Course project for **CSE470 (Software Engineering)** at **BRAC University**, built with an Agile, sprint-based workflow across four sprints.
 
-## Design note
-Reminder times are stored as a comma-separated list in a single column
-(`reminder_times`), e.g. `08:00,14:00,20:00`. This keeps the module simple —
-the form uses one text input with helper text and parsing is trivial. A child
-`MedicineReminderTime` entity would be cleaner for production scheduling but
-adds complexity not needed for this sprint.
+## ✨ Features
 
-## Dependencies (shared with main project)
-- `model/User.java`, `model/UserRole.java`
-- `repository/UserRepository.java`
-- `service/CurrentUserService.java`
-- `templates/fragments/dashboard-layout.html`
-- `static/css/styles.css`
+**Accounts & Access**
+- 🔐 Role-Based Access Control (RBAC)
+- 👤 User Profile & Health Profile management
+- 🧭 Role-specific dashboards (patient, doctor, admin)
+
+**Care & Consultation**
+- 🔎 Search doctors by specialty
+- 📅 Online appointment booking with reminders
+- 🎥 Telemedicine — video/audio consultation
+- 🤖 AI-powered symptom checker (self-hosted Ollama model)
+
+**Services**
+- 💊 Pharmacy service, medicine reminder & medicine history
+- 🚑 Ambulance booking (ride-sharing model)
+- 💳 Online payment
+- 🗺️ Map integration
+
+**Community & Content**
+- 📝 Health articles & blogs
+- ⭐ Ratings & reviews (doctors, hospitals, ambulance, pharmacy)
+- 🤝 Donation & crowdfunding
+- ❓ FAQ
+
+## 🛠️ Tech Stack
+
+- **Backend:** Java, Spring Boot — layered MVC (controller / service / repository / model)
+- **Frontend:** HTML, Bootstrap
+- **Database:** MySQL (Spring Data JPA + plain JDBC modules)
+- **AI:** Self-hosted Ollama model powering the symptom checker
+- **Infrastructure:** Docker Compose (MySQL)
+
+## 🏗️ Project Structure
+
+- **controller/** — request handling and view/REST controllers
+- **service/** — business logic
+- **repository/** — data access (JPA + JDBC)
+- **model/** — entities and DTOs
+- **src/main/resources/** — templates, static assets, and SQL init scripts
+
+## 🚀 Getting Started
+
+**Prerequisites:** JDK 17+, Maven, and Docker.
+
+1. Start the MySQL database: **docker compose up -d**
+2. Run the application: **./mvnw spring-boot:run**
+3. Open **http://localhost:8080**
+
+Local database configuration lives in **src/main/resources/application.properties** (local dev credentials only — no production secrets).
+
+## 👥 Team
+
+| Name | GitHub |
+|------|--------|
+| Mehedi Hasan | [@MehediHasan19131](https://github.com/MehediHasan19131) |
+| Rony Miah | [@Saiful101](https://github.com/Saiful101) |
+| Nahian Mahmud | [@nahianmahmud-2k1](https://github.com/nahianmahmud-2k1) |
+| Imtiaz Zaman Sami | [@imtiazzamansami-arch](https://github.com/imtiazzamansami-arch) |
+
+## 📌 Status
+
+Actively developed across Sprints 1–4 using an Agile workflow. Browse the branches and commit history for module-by-module progress.
