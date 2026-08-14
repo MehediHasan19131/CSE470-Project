@@ -1,0 +1,135 @@
+/* ── Sprint 4: Blood Donation & Crowdfunding Module ── */
+/* Rony Miah (24141084) — isolated styles, no conflict with other sprints */
+
+.donor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.donor-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+  box-shadow: 0 12px 26px rgba(24, 34, 42, 0.04);
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 280ms ease, box-shadow 280ms ease;
+  will-change: transform;
+}
+
+.donor-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(15, 124, 144, 0.28);
+  box-shadow: 0 24px 48px rgba(24, 34, 42, 0.12);
+}
+
+.donor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px 0;
+}
+
+.donor-name {
+  display: block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.donor-blood {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.donor-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 16px 20px;
+}
+
+.donor-meta i {
+  width: 18px;
+  color: var(--cyan);
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+.donor-available {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.donor-available.available {
+  color: #0f5132;
+  background: var(--mint);
+}
+
+.donor-available.unavailable {
+  color: #8a3b2d;
+  background: var(--rose);
+}
+
+.request-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.request-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+  box-shadow: 0 12px 26px rgba(24, 34, 42, 0.04);
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 280ms ease, box-shadow 280ms ease;
+  will-change: transform;
+}
+
+.request-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(15, 124, 144, 0.28);
+  box-shadow: 0 24px 48px rgba(24, 34, 42, 0.12);
+}
+
+.request-card .urgency-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.request-card .donor-actions {
+  padding: 0 20px 16px;
+}
+
+.urgency-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.urgency-badge.bg-danger { color: #fff; background: #dc3545; }
+.urgency-bg.warning { color: #000; background: #ffc107; }
+.urgency-bg.secondary { color: #fff; background: #6c757d; }
+.urgency-bg.light { color: #000; background: #f8f9fa; }
+
+@media (max-width: 576px) {
+  .donor-meta {
+    grid-template-columns: 1fr;
+  }
+  .request-card .urgency-badge {
+    position: static;
+    margin-top: 10px;
+  }
+}

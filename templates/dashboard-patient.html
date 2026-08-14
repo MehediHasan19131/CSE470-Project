@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/dashboard-layout :: head('Patient Dashboard')">
+    <meta charset="UTF-8">
+    <title>SmartCare</title>
+</head>
+<body>
+    <nav th:replace="fragments/dashboard-layout :: navbar"></nav>
+
+    <div class="container-fluid px-4 py-3">
+
+        <!-- Hero -->
+        <div class="dashboard-hero">
+            <div>
+                <div class="text-uppercase small fw-semibold mb-1" style="color: #0f7c90;">
+                    <i class="bi bi-person-hearts"></i> Patient Portal
+                </div>
+                <h1 class="h3 fw-bold mb-1">
+                    Welcome back, <span th:text="${user.fullName}">Patient</span>
+                </h1>
+                <p class="mb-0">Manage your appointments, find nearby facilities, and access healthcare services all in one place.</p>
+            </div>
+            <div class="hero-graphic">
+                <div class="pulse-ring"></div>
+                <i class="bi bi-person-heart"></i>
+            </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div>
+                        <div class="metric-icon mb-2"><i class="bi bi-calendar-check"></i></div>
+                        <small class="text-secondary">Total Appointments</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <span class="h3 fw-bold mb-0" th:text="${data.totalAppointments}">0</span>
+                        <span class="badge bg-primary bg-opacity-10 text-primary small" th:text="${data.upcomingAppointments} + ' upcoming'">0 upcoming</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <a href="/facilities?type=HOSPITAL" class="metric-card metric-card-link">
+                    <div>
+                        <div class="metric-icon mb-2" style="color: var(--green); background: rgba(35, 131, 111, 0.1);"><i class="bi bi-building"></i></div>
+                        <small class="text-secondary">Hospitals <i class="bi bi-arrow-right"></i></small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <span class="h3 fw-bold mb-0" th:text="${data.totalHospitals}">0</span>
+                        <span class="small text-secondary">Browse</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a class="metric-card" href="/facilities?type=PHARMACY">
+                    <div>
+                        <div class="metric-icon mb-2" style="color: var(--gold); background: rgba(167, 119, 0, 0.1);"><i class="bi bi-droplet"></i></div>
+                        <small class="text-secondary">Pharmacies <i class="bi bi-arrow-right"></i></small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <span class="h3 fw-bold mb-0" th:text="${data.totalPharmacies}">0</span>
+                        <span class="small text-secondary">Browse</span>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a class="metric-card" href="/facilities/search">
+                    <div>
+                        <div class="metric-icon mb-2" style="color: var(--blue); background: rgba(37, 99, 184, 0.1);"><i class="bi bi-person-badge"></i></div>
+                        <small class="text-secondary">Doctors <i class="bi bi-arrow-right"></i></small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end">
+                        <span class="h3 fw-bold mb-0" th:text="${data.totalDoctors}">0</span>
+                        <span class="small text-secondary">Find</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3">
+
+            <!-- Quick Actions -->
+            <div class="col-lg-4">
+                <div class="panel">
+                    <div class="section-title">
+                        <div>
+                            <p class="text-uppercase small fw-semibold text-primary mb-0"><i class="bi bi-lightning"></i> Quick Actions</p>
+                            <h2 class="h5 fw-bold mb-0">Get Started</h2>
+                        </div>
+                    </div>
+                    <div class="action-grid">
+                        <a href="/appointments/book" class="action-tile">
+                            <i class="bi bi-plus-circle" style="color: var(--cyan); background: rgba(15, 124, 144, 0.1);"></i>
+                            <span class="fw-semibold small">Book Appointment</span>
+                        </a>
+                        <a href="/facilities" class="action-tile">
+                            <i class="bi bi-building" style="color: var(--green); background: rgba(35, 131, 111, 0.1);"></i>
+                            <span class="fw-semibold small">Find Facilities</span>
+                        </a>
+                        <a href="/facilities/search" class="action-tile">
+                            <i class="bi bi-search" style="color: var(--blue); background: rgba(37, 99, 184, 0.1);"></i>
+                            <span class="fw-semibold small">Search</span>
+                        </a>
+                        <a href="/appointments" class="action-tile">
+                            <i class="bi bi-clock-history" style="color: var(--gold); background: rgba(167, 119, 0, 0.1);"></i>
+                            <span class="fw-semibold small">My History</span>
+                        </a>
+                        <a href="/reminders" class="action-tile">
+                            <i class="bi bi-capsule-pill" style="color: var(--coral); background: rgba(217, 101, 79, 0.1);"></i>
+                            <span class="fw-semibold small">Medicine Reminders</span>
+                        </a>
+<a href="/reminders/history" class="action-tile">
+<i class="bi bi-journal-medical" style="color: var(--green); background: rgba(35, 131, 111, 0.1);"></i>
+<span class="fw-semibold small">Medicine History</span>
+</a>
+<a href="/blood/donors" class="action-tile">
+<i class="bi bi-person-plus" style="color: var(--cyan); background: rgba(0, 150, 136, 0.1);"></i>
+<span class="fw-semibold small">Blood Donors</span>
+</a>
+<a href="/blood/requests" class="action-tile">
+<i class="bi bi-droplet" style="color: var(--cyan); background: rgba(0, 150, 136, 0.1);"></i>
+<span class="fw-semibold small">Blood Requests</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
