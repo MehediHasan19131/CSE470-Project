@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('AI Health Assistant')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4 ai-chat-shell">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('AI health assistant', 'Ask general health questions or run a symptom check, powered by a locally hosted medical AI model', 'bi-robot')}"></div>
+
+      <div class="info-banner info-banner-danger mb-3">
+        <div class="info-banner-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+        <p><strong>Trust AI for guidance, doctors for care.</strong> Emergency? Use <a th:href="@{/ambulance/book}">Ambulance Booking</a> or call emergency services.</p>
+      </div>
+
+      <div class="row g-3 ai-chat-row">
+        <div class="col-lg-3 d-flex flex-column gap-3">
+          <div class="panel">
+            <div class="btn-group w-100 mb-3" role="group">
+              <button type="button" id="modeChat" class="btn btn-primary btn-sm">
+                <i class="bi bi-chat-dots"></i> Chat
+              </button>
+              <button type="button" id="modeSymptom" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-clipboard2-pulse"></i> Symptom checker
+              </button>
+            </div>
+            <button type="button" class="btn btn-outline-secondary btn-sm w-100" id="newChatBtn">
+              <i class="bi bi-plus-lg"></i> New conversation
+            </button>
+          </div>
+
+          <div class="panel d-flex flex-column flex-grow-1 ai-history-panel">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">History</p>
+                <h2 class="h6 fw-bold mb-0">Past conversations</h2>
+              </div>
+              <button type="button" class="btn btn-outline-danger btn-sm" id="clearAllBtn" title="Delete all AI chat history">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div class="data-list ai-session-list flex-grow-1" id="sessionList">
+              <div class="data-row"><span class="text-secondary">Loading…</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-9 d-flex flex-column">
+          <div class="panel d-flex flex-column flex-grow-1 ai-chat-panel">
+            <div id="messages" class="flex-grow-1 overflow-auto mb-3 d-flex flex-column gap-3"></div>
+            <form id="chatForm" class="d-flex gap-2">
+              <input type="text" class="form-control" id="messageInput" placeholder="Ask a health question…" autocomplete="off" required>
+              <button type="submit" class="btn btn-primary" id="sendBtn"><i class="bi bi-send"></i></button>
+            </form>
+            <div class="alert alert-danger py-2 mt-2 d-none" id="chatError"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <style>
+      /* Keep the whole workspace inside one viewport instead of forcing a
+         page scroll — only the messages list and the history list scroll
+         internally. 84px approximates the sticky navbar's rendered height. */
+      .ai-chat-shell { display: flex; flex-direction: column; min-height: calc(100vh - 84px); }
+      .ai-chat-row { flex: 1 1 auto; min-height: 0; }
+      .ai-chat-row > div { min-height: 0; }
+      .ai-chat-panel { min-height: 420px; height: 100%; }
+      .ai-history-panel { min-height: 0; }
+      .ai-session-list { overflow-y: auto; max-height: 320px; padding-right: 2px; }
+
+      .chat-bubble { max-width: 78%; padding: 12px 16px; border-radius: 14px; line-height: 1.45; white-space: pre-wrap; box-shadow: var(--shadow-xs); }
+      .chat-bubble.user { align-self: flex-end; background: linear-gradient(135deg, var(--cyan-500), var(--blue-500)); color: #fff; border-bottom-right-radius: 4px; }
+      .chat-bubble.assistant { align-self: flex-start; background: linear-gradient(145deg, #ffffff, #f1f7f8); color: var(--ink); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+      .doctor-card { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-top: 8px; background: #fff; }
+
+      .ai-session-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .ai-session-row .ai-session-main { min-width: 0; cursor: pointer; flex: 1; }
+      .ai-session-row .ai-session-main strong { display: block; }
+      .ai-session-row .ai-session-main span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .ai-session-delete { border: 0; background: none; color: var(--muted); padding: 4px 6px; border-radius: 6px; flex-shrink: 0; }
+      .ai-session-delete:hover { color: var(--coral-500); background: var(--coral-100); }
+    </style>
+
+    <script>
+      let mode = 'chat';
+      let currentSessionId = null;
+
+      function setMode(next) {
+        mode = next;
+        document.getElementById('modeChat').classList.toggle('btn-primary', mode === 'chat');
+        document.getElementById('modeChat').classList.toggle('btn-outline-primary', mode !== 'chat');
+        document.getElementById('modeSymptom').classList.toggle('btn-primary', mode === 'symptom');
+        document.getElementById('modeSymptom').classList.toggle('btn-outline-primary', mode !== 'symptom');
+        document.getElementById('messageInput').placeholder =
+          mode === 'chat' ? 'Ask a health question…' : 'Describe your symptoms (e.g. "fever and sore throat for 2 days")…';
+      }
+      document.getElementById('modeChat').addEventListener('click', () => setMode('chat'));
+      document.getElementById('modeSymptom').addEventListener('click', () => setMode('symptom'));
+
+      document.getElementById('newChatBtn').addEventListener('click', () => {
+        currentSessionId = null;
+        document.getElementById('messages').innerHTML = '';
+      });
+
+      function appendBubble(role, text) {
+        const box = document.getElementById('messages');
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' + (role === 'user' ? 'user' : 'assistant');
+        bubble.textContent = text;
+        box.appendChild(bubble);
+        box.scrollTop = box.scrollHeight;
+        return bubble;
+      }
+
+      function appendDoctorCards(specialty, doctors) {
+        const box = document.getElementById('messages');
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-bubble assistant';
+        if (!doctors.length) {
+          wrap.innerHTML = `<strong>Suggested specialty: ${specialty}</strong><br><span class="text-secondary">No matching doctors found in our directory yet.</span>`;
+        } else {
+          wrap.innerHTML = `<strong>Suggested specialty: ${specialty}</strong><br>Top-rated doctors for this:` +
+            doctors.map(d => `
+              <div class="doctor-card">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div><strong>${d.name}</strong><br><span class="small text-secondary">${d.specialization || specialty} · ${d.city || ''}</span></div>
+                  <span class="badge text-bg-light">★ ${d.averageRating} (${d.totalReviews})</span>
+                </div>
+                <a href="/appointments/book" class="btn btn-sm btn-outline-primary mt-2">Book appointment</a>
+              </div>
+            `).join('');
+        }
+        box.appendChild(wrap);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      document.getElementById('chatForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const errorBox = document.getElementById('chatError');
+        errorBox.classList.add('d-none');
+
+        appendBubble('user', text);
+        input.value = '';
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+        const thinking = appendBubble('assistant', 'Thinking…');
+
+        try {
+          const endpoint = mode === 'chat' ? '/api/ai/chat' : '/api/ai/symptom-check';
+          const payload = mode === 'chat'
+            ? { sessionId: currentSessionId, message: text }
+            : { sessionId: currentSessionId, symptoms: text };
+
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'The AI assistant is unavailable. Make sure your local Ollama server is running.');
+          }
+          const data = await res.json();
+          currentSessionId = data.sessionId;
+          thinking.remove();
+
+          if (mode === 'chat') {
+            appendBubble('assistant', data.reply);
+          } else {
+            appendBubble('assistant', data.assessment);
+            appendDoctorCards(data.recommendedSpecialty, data.recommendedDoctors);
+          }
+          loadSessions();
+        } catch (err) {
+          thinking.remove();
+          errorBox.textContent = err.message;
+          errorBox.classList.remove('d-none');
+        } finally {
+          sendBtn.disabled = false;
+        }
+      });
+
+      async function loadSessions() {
+        const list = document.getElementById('sessionList');
+        try {
+          const res = await fetch('/api/ai/sessions', { credentials: 'same-origin' });
+          const items = await res.json();
+          if (!items.length) {
+            list.innerHTML = '<div class="data-row"><span class="text-secondary">No conversations yet.</span></div>';
+            return;
+          }
+          list.innerHTML = items.map(s => `
+            <div class="data-row ai-session-row">
+              <div class="ai-session-main" onclick="loadSession('${s.sessionId}')">
+                <strong>${s.mode === 'symptom_check' ? 'Symptom check' : 'Chat'}</strong>
+                <span>${s.preview}</span>
+              </div>
+              <button type="button" class="ai-session-delete" title="Delete this conversation" onclick="deleteSession(event, '${s.sessionId}')">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          `).join('');
+        } catch (e) {
+          list.innerHTML = '<div class="data-row"><span class="text-secondary">Could not load history.</span></div>';
+        }
+      }
+
+      async function loadSession(sessionId) {
+        currentSessionId = sessionId;
+        const res = await fetch(`/api/ai/sessions/${sessionId}/messages`, { credentials: 'same-origin' });
+        const items = await res.json();
+        const box = document.getElementById('messages');
+        box.innerHTML = '';
+        items.forEach(m => appendBubble(m.role, m.content));
+      }
+
+      async function deleteSession(event, sessionId) {
+        event.stopPropagation();
+        if (!confirm('Delete this conversation? This cannot be undone.')) return;
+        await fetch(`/api/ai/sessions/${sessionId}`, { method: 'DELETE', credentials: 'same-origin' });
+        if (currentSessionId === sessionId) {
+          currentSessionId = null;
+          document.getElementById('messages').innerHTML = '';
+        }
+        loadSessions();
+      }
+
+      document.getElementById('clearAllBtn').addEventListener('click', async () => {
+        if (!confirm('Delete ALL of your AI chat history? This cannot be undone.')) return;
+        await fetch('/api/ai/sessions', { method: 'DELETE', credentials: 'same-origin' });
+        currentSessionId = null;
+        document.getElementById('messages').innerHTML = '';
+        loadSessions();
+      });
+
+      setMode('chat');
+      loadSessions();
+    </script>
+  </body>
+</html>

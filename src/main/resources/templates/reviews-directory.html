@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Providers')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div class="page-heading">
+        <a href="/dashboard" class="small text-secondary text-decoration-none"><i class="bi bi-arrow-left"></i> Back to dashboard</a>
+      </div>
+
+      <div class="dashboard-hero mb-4">
+        <div>
+          <p class="text-uppercase text-primary small fw-semibold mb-1">Reviews &amp; ratings</p>
+          <h1 class="h3 fw-bold mb-2">Browse providers</h1>
+          <p class="mb-0">Doctors, hospitals, pharmacies, diagnostic centres, and ambulance services — pick one to read or leave a review.</p>
+        </div>
+        <div class="hero-graphic" aria-hidden="true">
+          <div class="pulse-ring"></div>
+          <i class="bi bi-star-fill"></i>
+        </div>
+      </div>
+
+      <div class="alert alert-warning py-2" th:if="${param.error != null}" th:text="${param.error[0]}">Error</div>
+
+      <div class="panel">
+        <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(providers)}">No providers registered yet.</p>
+
+        <div class="provider-grid" th:unless="${#lists.isEmpty(providers)}">
+          <a class="provider-card text-decoration-none" th:each="provider : ${providers}" th:href="@{'/reviews/' + ${provider.id}}">
+            <span class="badge text-bg-light text-capitalize" style="width:fit-content;" th:text="${#strings.toLowerCase(provider.role)}">role</span>
+            <strong class="text-dark" th:text="${provider.fullName}">Provider name</strong>
+            <div class="provider-card-rating">
+              <span class="star-display" aria-hidden="true">
+                <i th:each="i : ${#numbers.sequence(1,5)}"
+                   th:class="${i <= T(java.lang.Math).round(provider.averageRating)} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+              </span>
+              <span th:text="${#numbers.formatDecimal(provider.averageRating, 1, 1)} + ' (' + ${provider.totalReviews} + ')'">0.0 (0)</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

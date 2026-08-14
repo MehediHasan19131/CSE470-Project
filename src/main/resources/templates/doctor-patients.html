@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('My Patients')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('My patients', 'Patients who have shared their medical records with you', 'bi-people')}"></div>
+
+      <div class="panel">
+        <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(grants)}">
+          No patients have shared their records with you yet. A patient grants access from their own Health Profile page.
+        </p>
+
+        <div class="data-list" th:unless="${#lists.isEmpty(grants)}">
+          <div class="data-row" th:each="g : ${grants}">
+            <div>
+              <strong th:text="${g.patient.fullName}">Patient name</strong>
+              <span class="text-secondary small" th:text="${g.patient.email}">email</span>
+            </div>
+            <a class="btn btn-primary btn-sm" th:href="@{'/doctor/patients/' + ${g.patient.id}}">
+              View records <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Pharmacy Dashboard')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Pharmacy dashboard', 'Stock, sales, and incoming medicine orders', 'bi-capsule')}"></div>
+
+      <div class="sprint-badge mb-4">
+        <i class="bi bi-info-circle"></i>
+        <span>Sprint 2: manage incoming medicine orders and view patient reviews.</span>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Quick actions</p>
+            <h2 class="h6 fw-bold mb-0">Sprint 2 features</h2>
+          </div>
+        </div>
+        <div class="action-grid">
+          <a href="/pharmacy-store" class="action-tile">
+            <i class="bi bi-capsule"></i>
+            <span>Medicine catalogue</span>
+          </a>
+          <a class="action-tile" th:href="@{'/reviews/' + ${user.id}}">
+            <i class="bi bi-star-half"></i>
+            <span>Reviews about me</span>
+          </a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

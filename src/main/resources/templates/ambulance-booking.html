@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ambulance Booking | SmartCare</title>
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  </head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Book an ambulance', 'Ride-sharing style ambulance request with live map tracking — Member 4 (Ambulance Service + Map)', 'bi-truck-front')}"></div>
+
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="panel mb-4">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Step 1</p>
+                <h2 class="h6 fw-bold mb-0">Set pickup &amp; drop location</h2>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="button" id="modePickup" class="btn btn-primary">Pickup</button>
+                <button type="button" id="modeDrop" class="btn btn-outline-primary">Drop</button>
+              </div>
+            </div>
+            <div id="map" style="height:380px;border-radius:8px;overflow:hidden;border:1px solid var(--border);"></div>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <button type="button" id="useMyLocation" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-crosshair"></i> Use my current location
+              </button>
+              <span class="small text-secondary align-self-center">Click the map to drop a pin, or use your GPS location.</span>
+            </div>
+          </div>
+
+          <div class="panel mb-4">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Step 2</p>
+                <h2 class="h6 fw-bold mb-0">Request details</h2>
+              </div>
+            </div>
+            <form id="bookingForm" class="vstack gap-3">
+              <div>
+                <label class="form-label">Pickup address</label>
+                <input type="text" class="form-control" id="pickupAddress" placeholder="Set by clicking the map, or type manually" required>
+              </div>
+              <div>
+                <label class="form-label">Drop address (optional)</label>
+                <input type="text" class="form-control" id="dropAddress" placeholder="Destination hospital / address">
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label class="form-label">Emergency type</label>
+                  <select class="form-select" id="emergencyType">
+                    <option value="General">General</option>
+                    <option value="Accident">Accident</option>
+                    <option value="Cardiac">Cardiac</option>
+                    <option value="Maternity">Maternity</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label">Notes for the driver</label>
+                  <input type="text" class="form-control" id="notes" placeholder="Optional">
+                </div>
+              </div>
+              <div class="alert alert-danger py-2 d-none" id="bookingError"></div>
+              <button type="submit" class="btn btn-primary" id="bookButton">
+                <i class="bi bi-send"></i> Request ambulance
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="panel mb-4">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Nearby fleet</p>
+                <h2 class="h6 fw-bold mb-0">Available ambulances</h2>
+              </div>
+            </div>
+            <div class="data-list" id="ambulanceList">
+              <div class="data-row"><span class="text-secondary">Set a pickup point to see nearby ambulances.</span></div>
+            </div>
+          </div>
+
+          <div class="panel mb-4 d-none" id="trackingPanel">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">Live tracking</p>
+                <h2 class="h6 fw-bold mb-0">Your active request</h2>
+              </div>
+              <span class="badge text-bg-primary" id="trackingStatus">REQUESTED</span>
+            </div>
+            <div id="trackMap" style="height:220px;border-radius:8px;overflow:hidden;border:1px solid var(--border);" class="mb-3"></div>
+            <div class="info-grid mb-3">
+              <div><span>Ambulance</span><strong id="trackVehicle">—</strong></div>
+              <div><span>Driver</span><strong id="trackDriver">—</strong></div>
+              <div><span>Fare estimate</span><strong id="trackFare">—</strong></div>
+              <div><span>Requested at</span><strong id="trackRequestedAt">—</strong></div>
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm" id="cancelRequestBtn">Cancel request</button>
+          </div>
+
+          <div class="panel">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1">History</p>
+                <h2 class="h6 fw-bold mb-0">My past requests</h2>
+              </div>
+            </div>
+            <div class="data-list" id="myRequestsList">
+              <div class="data-row"><span class="text-secondary">Loading…</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      const DHAKA = [23.8103, 90.4125];
+      const map = L.map('map').setView(DHAKA, 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      let mode = 'pickup';
+      let pickup = null;
+      let drop = null;
+      let pickupMarker = null;
+      let dropMarker = null;
+      const ambulanceMarkers = [];
+
+      document.getElementById('modePickup').addEventListener('click', () => setMode('pickup'));
+      document.getElementById('modeDrop').addEventListener('click', () => setMode('drop'));
+
+      function setMode(next) {
+        mode = next;
+        document.getElementById('modePickup').classList.toggle('btn-primary', mode === 'pickup');
+        document.getElementById('modePickup').classList.toggle('btn-outline-primary', mode !== 'pickup');
+        document.getElementById('modeDrop').classList.toggle('btn-primary', mode === 'drop');
+        document.getElementById('modeDrop').classList.toggle('btn-outline-primary', mode !== 'drop');
+      }
+
+      map.on('click', (e) => {
+        if (mode === 'pickup') {
+          setPickup(e.latlng.lat, e.latlng.lng);
+        } else {
+          setDrop(e.latlng.lat, e.latlng.lng);
+        }
+      });
+
+      function setPickup(lat, lng) {
+        pickup = { lat, lng };
+        if (pickupMarker) map.removeLayer(pickupMarker);
+        pickupMarker = L.marker([lat, lng], { title: 'Pickup' }).addTo(map).bindPopup('Pickup').openPopup();
+        reverseGeocode(lat, lng, 'pickupAddress');
+        loadNearbyAmbulances();
+      }
+
+      function setDrop(lat, lng) {
+        drop = { lat, lng };
+        if (dropMarker) map.removeLayer(dropMarker);
+        dropMarker = L.marker([lat, lng], { title: 'Drop' }).addTo(map).bindPopup('Drop-off').openPopup();
+        reverseGeocode(lat, lng, 'dropAddress');
+      }
+
+      async function reverseGeocode(lat, lng, inputId) {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.display_name) {
+            document.getElementById(inputId).value = data.display_name;
+          }
+        } catch (e) {
+          // Reverse geocoding is best-effort; ignore failures and let the user type the address.
+        }
+      }
+
+      document.getElementById('useMyLocation').addEventListener('click', () => {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition((pos) => {
+          const { latitude, longitude } = pos.coords;
+          map.setView([latitude, longitude], 15);
+          setMode('pickup');
+          setPickup(latitude, longitude);
+        }, () => alert('Could not read your location. Please click the map instead.'));
+      });
+
+      async function loadNearbyAmbulances() {
+        if (!pickup) return;
+        const list = document.getElementById('ambulanceList');
+        list.innerHTML = '<div class="data-row"><span class="text-secondary">Loading…</span></div>';
+        try {
+          const res = await fetch(`/api/ambulances?lat=${pickup.lat}&lng=${pickup.lng}`, { credentials: 'same-origin' });
+          const items = await res.json();
+          ambulanceMarkers.forEach(m => map.removeLayer(m));
+          ambulanceMarkers.length = 0;
+          if (!items.length) {
+            list.innerHTML = '<div class="data-row"><span class="text-secondary">No ambulances registered yet.</span></div>';
+            return;
+          }
+          list.innerHTML = items.map(a => `
+            <div class="data-row">
+              <div>
+                <strong>${a.vehicleNumber} · ${a.vehicleType}</strong>
+                <span>${a.providerName} · ${a.distanceKm != null ? a.distanceKm + ' km away' : 'distance unknown'}</span>
+              </div>
+              <span class="badge ${a.available ? 'text-bg-success' : 'text-bg-secondary'}">${a.available ? 'Available' : 'Busy'}</span>
+            </div>
+          `).join('');
+          items.forEach(a => {
+            if (a.latitude != null && a.longitude != null) {
+              const marker = L.marker([a.latitude, a.longitude], {
+                icon: L.divIcon({ className: '', html: '<i class="bi bi-truck-front-fill" style="font-size:1.4rem;color:' + (a.available ? '#23836f' : '#adb5bd') + '"></i>' })
+              }).addTo(map).bindPopup(`${a.vehicleNumber} (${a.vehicleType})`);
+              ambulanceMarkers.push(marker);
+            }
+          });
+        } catch (e) {
+          list.innerHTML = '<div class="data-row"><span class="text-secondary">Could not load ambulances.</span></div>';
+        }
+      }
+
+      document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errorBox = document.getElementById('bookingError');
+        errorBox.classList.add('d-none');
+        if (!pickup) {
+          errorBox.textContent = 'Please set a pickup location on the map first.';
+          errorBox.classList.remove('d-none');
+          return;
+        }
+        const payload = {
+          pickupAddress: document.getElementById('pickupAddress').value || 'Pinned on map',
+          pickupLatitude: pickup.lat,
+          pickupLongitude: pickup.lng,
+          dropAddress: document.getElementById('dropAddress').value || null,
+          dropLatitude: drop ? drop.lat : null,
+          dropLongitude: drop ? drop.lng : null,
+          emergencyType: document.getElementById('emergencyType').value,
+          notes: document.getElementById('notes').value
+        };
+        const btn = document.getElementById('bookButton');
+        btn.disabled = true;
+        try {
+          const res = await fetch('/api/ambulance-requests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || 'Could not create the request.');
+          }
+          const created = await res.json();
+          activeRequestId = created.id;
+          showTracking(created);
+          loadMyRequests();
+        } catch (err) {
+          errorBox.textContent = err.message;
+          errorBox.classList.remove('d-none');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      let activeRequestId = null;
+      let trackMapInstance = null;
+      let trackAmbulanceMarker = null;
+      let trackPickupMarker = null;
+      let pollTimer = null;
+
+      function showTracking(request) {
+        document.getElementById('trackingPanel').classList.remove('d-none');
+        document.getElementById('trackingStatus').textContent = request.status;
+        document.getElementById('trackVehicle').textContent = request.vehicleNumber ? `${request.vehicleNumber}` : 'Awaiting assignment';
+        document.getElementById('trackDriver').textContent = request.driverName || '—';
+        document.getElementById('trackFare').textContent = request.fareEstimate ? ('৳' + request.fareEstimate) : '—';
+        document.getElementById('trackRequestedAt').textContent = new Date(request.requestedAt).toLocaleString();
+
+        if (!trackMapInstance) {
+          trackMapInstance = L.map('trackMap').setView([request.pickupLatitude, request.pickupLongitude], 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(trackMapInstance);
+        }
+        if (!trackPickupMarker) {
+          trackPickupMarker = L.marker([request.pickupLatitude, request.pickupLongitude]).addTo(trackMapInstance).bindPopup('Pickup');
+        }
+        if (request.ambulanceLatitude != null && request.ambulanceLongitude != null) {
+          if (!trackAmbulanceMarker) {
+            trackAmbulanceMarker = L.marker([request.ambulanceLatitude, request.ambulanceLongitude], {
+              icon: L.divIcon({ className: '', html: '<i class="bi bi-truck-front-fill" style="font-size:1.6rem;color:#2563b8"></i>' })
+            }).addTo(trackMapInstance);
+          } else {
+            trackAmbulanceMarker.setLatLng([request.ambulanceLatitude, request.ambulanceLongitude]);
+          }
+        }
+
+        if (pollTimer) clearInterval(pollTimer);
+        if (!['COMPLETED', 'CANCELLED'].includes(request.status)) {
+          pollTimer = setInterval(pollTracking, 5000);
+        }
+      }
+
+      async function pollTracking() {
+        if (!activeRequestId) return;
+        try {
+          const res = await fetch(`/api/ambulance-requests/${activeRequestId}`, { credentials: 'same-origin' });
+          if (!res.ok) return;
+          const data = await res.json();
+          showTracking(data);
+        } catch (e) { /* ignore transient errors while polling */ }
+      }
+
+      document.getElementById('cancelRequestBtn').addEventListener('click', async () => {
+        if (!activeRequestId) return;
+        await fetch(`/api/ambulance-requests/${activeRequestId}/cancel`, { method: 'PATCH', credentials: 'same-origin' });
+        pollTracking();
+        loadMyRequests();
+      });
+
+      async function loadMyRequests() {
+        const list = document.getElementById('myRequestsList');
+        try {
+          const res = await fetch('/api/ambulance-requests/me', { credentials: 'same-origin' });
+          const items = await res.json();
+          if (!items.length) {
+            list.innerHTML = '<div class="data-row"><span class="text-secondary">No requests yet.</span></div>';
+            return;
+          }
+          list.innerHTML = items.map(r => `
+            <div class="data-row">
+              <div>
+                <strong>${r.pickupAddress}</strong>
+                <span>${new Date(r.requestedAt).toLocaleString()} ${r.vehicleNumber ? '· ' + r.vehicleNumber : ''}</span>
+              </div>
+              <span class="badge text-bg-light">${r.status}</span>
+            </div>
+          `).join('');
+          const active = items.find(r => !['COMPLETED', 'CANCELLED'].includes(r.status));
+          if (active && !activeRequestId) {
+            activeRequestId = active.id;
+            showTracking(active);
+          }
+        } catch (e) {
+          list.innerHTML = '<div class="data-row"><span class="text-secondary">Could not load history.</span></div>';
+        }
+      }
+
+      setMode('pickup');
+      loadMyRequests();
+    </script>
+  </body>
+</html>

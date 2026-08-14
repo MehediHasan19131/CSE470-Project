@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Hospital Dashboard')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Hospital dashboard', 'Manage beds, doctor availability, and services', 'bi-hospital')}"></div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+            <span>Ward Types Tracked</span>
+            <strong th:text="${data.metrics.wardTypes}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-hospital"></i></div>
+            <span>Total Beds</span>
+            <strong th:text="${data.metrics.totalBeds}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-door-open"></i></div>
+            <span>Beds Available</span>
+            <strong th:text="${data.metrics.availableBeds}">0</strong>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="metric-card">
+            <div class="metric-icon"><i class="bi bi-person-badge"></i></div>
+            <span>Doctor Slots</span>
+            <strong th:text="${data.metrics.doctorSlots}">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <div>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Facility Management</p>
+            <h2 class="h6 fw-bold mb-0">Beds, doctors &amp; services</h2>
+          </div>
+          <a href="/hospital/manage" class="btn btn-primary btn-sm">
+            <i class="bi bi-gear"></i> Manage facility
+          </a>
+        </div>
+        <p class="text-secondary small mb-0">
+          Keep bed counts, on-site doctor availability, and the services your hospital offers
+          up to date - patients see this on your public facility page.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>

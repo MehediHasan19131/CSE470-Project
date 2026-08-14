@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head(${patient.fullName} + ' — Records')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div class="page-heading">
+        <a href="/doctor/patients" class="small text-secondary text-decoration-none"><i class="bi bi-arrow-left"></i> Back to my patients</a>
+      </div>
+
+      <div class="dashboard-hero mb-4">
+        <div>
+          <p class="text-uppercase text-primary small fw-semibold mb-1">Shared medical records</p>
+          <h1 class="h3 fw-bold mb-2" th:text="${patient.fullName}">Patient name</h1>
+          <p class="mb-0" th:text="${patient.email}">email</p>
+        </div>
+        <div class="hero-graphic" aria-hidden="true">
+          <div class="pulse-ring"></div>
+          <i class="bi bi-file-earmark-medical"></i>
+        </div>
+      </div>
+
+      <div class="alert alert-warning py-2">
+        <i class="bi bi-shield-lock"></i>
+        Read-only, and only visible while this patient's sharing permission is active — they can revoke it at any time from their Health Profile page.
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="panel">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Medical history</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(history)}">No medical history recorded.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(history)}">
+              <div class="review-card" th:each="h : ${history}">
+                <div class="review-card-header">
+                  <div>
+                    <strong th:text="${h.condition}">Condition</strong>
+                    <span th:text="${h.diagnosedOn != null} ? ${#temporals.format(h.diagnosedOn, 'dd MMM yyyy')} : 'Date not recorded'">Date</span>
+                  </div>
+                </div>
+                <p th:if="${h.notes != null and !#strings.isEmpty(h.notes)}" th:text="${h.notes}">Notes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="panel">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Allergies</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(allergies)}">No allergies recorded.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(allergies)}">
+              <div class="review-card" th:each="a : ${allergies}">
+                <div class="review-card-header">
+                  <div>
+                    <strong th:text="${a.allergen}">Allergen</strong>
+                    <span th:switch="${a.severity.name()}">
+                      <span th:case="'SEVERE'" class="badge text-bg-danger">Severe</span>
+                      <span th:case="'MODERATE'" class="badge text-bg-warning">Moderate</span>
+                      <span th:case="*" class="badge text-bg-info">Mild</span>
+                    </span>
+                  </div>
+                </div>
+                <p th:if="${a.reaction != null and !#strings.isEmpty(a.reaction)}" th:text="${a.reaction}">Reaction</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('My Donations')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('My donations', 'Your crowdfunding donation history', 'bi-receipt-cutoff')}"></div>
+
+      <div class="alert alert-success" th:if="${donationPlaced}">
+        <i class="bi bi-check-circle"></i> Thank you - your donation was processed successfully.
+      </div>
+
+      <div class="d-flex justify-content-end mb-3">
+        <a href="/campaigns" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-heart-pulse"></i> Back to Campaigns
+        </a>
+      </div>
+
+      <div class="row g-4" th:if="${#lists.size(donations) > 0}">
+        <div class="col-12 col-lg-6" th:each="donation : ${donations}">
+          <div class="panel h-100">
+            <div class="section-title">
+              <div>
+                <p class="text-uppercase text-primary small fw-semibold mb-1" th:text="${donation.campaignTitle}">Campaign</p>
+                <h2 class="h6 fw-bold mb-0">৳<span th:text="${donation.amount}">0</span></h2>
+              </div>
+              <span class="badge text-bg-success" th:if="${donation.paymentStatus} == 'SUCCESS'">Paid</span>
+              <span class="badge text-bg-secondary" th:unless="${donation.paymentStatus} == 'SUCCESS'" th:text="${donation.paymentStatus}">Status</span>
+            </div>
+
+            <div class="data-list">
+              <div class="data-row">
+                <div>
+                  <strong>Payment Method</strong>
+                  <span th:text="${donation.paymentMethod}">Card</span>
+                </div>
+              </div>
+              <div class="data-row">
+                <div>
+                  <strong>Transaction ID</strong>
+                  <span th:text="${donation.transactionId}">TXN-XXXX</span>
+                </div>
+              </div>
+              <div class="data-row">
+                <div>
+                  <strong>Date</strong>
+                  <span th:text="${#temporals.format(donation.createdAt, 'dd MMM yyyy, HH:mm')}">date</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="small text-muted mt-2 mb-0" th:if="${donation.message}">
+              <i class="bi bi-chat-quote"></i> "<span th:text="${donation.message}">Message</span>"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-secondary" th:if="${#lists.size(donations) == 0}">
+        You haven't made any donations yet. <a href="/campaigns">Browse active campaigns</a> to support one.
+      </div>
+    </main>
+  </body>
+</html>

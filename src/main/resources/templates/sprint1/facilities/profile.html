@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Facility Profile')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/facilities">Facilities</a></li>
+          <li class="breadcrumb-item active" th:text="${facilityTypeName}">Type</li>
+        </ol>
+      </nav>
+
+      <div class="profile-hero">
+        <div>
+          <span class="profile-hero-type" th:classappend="${#strings.toLowerCase(facilityType)}" th:text="${facilityTypeName}">Type</span>
+          <h1 class="profile-hero-name" th:text="${facility.fullName}">Facility Name</h1>
+          <p class="text-secondary mt-2 mb-0" th:if="${profile?.serviceName}" th:text="${profile.serviceName}">Service description</p>
+        </div>
+        <div class="profile-hero-stats">
+          <div class="profile-stat">
+            <strong th:text="${averageRating}">0.0</strong>
+            <span>Rating</span>
+          </div>
+          <div class="profile-stat">
+            <strong th:text="${totalReviews}">0</strong>
+            <span>Reviews</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="panel">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Facility Information</h2>
+            </div>
+            <div class="profile-info-grid">
+              <div class="profile-info-item" th:if="${facility.email}">
+                <label>Email</label>
+                <span th:text="${facility.email}">email@example.com</span>
+              </div>
+              <div class="profile-info-item" th:if="${facility.phone}">
+                <label>Phone</label>
+                <span th:text="${facility.phone}">+880-xxx-xxxxxx</span>
+              </div>
+              <div class="profile-info-item" th:if="${profile?.city}">
+                <label>City</label>
+                <span th:text="${profile.city}">City</span>
+              </div>
+              <div class="profile-info-item" th:if="${profile?.address}">
+                <label>Address</label>
+                <span th:text="${profile.address}">Address</span>
+              </div>
+              <div class="profile-info-item" th:if="${profile?.serviceName}">
+                <label>Service Name</label>
+                <span th:text="${profile.serviceName}">Service</span>
+              </div>
+              <div class="profile-info-item" th:if="${profile?.specialization}">
+                <label>Specialization</label>
+                <span th:text="${profile.specialization}">Specialization</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hospital & Diagnostic Module (Member 3): published bed/doctor/
+               service availability, or test offers, depending on facility type. -->
+          <div class="panel mt-4" th:if="${facilityType == 'HOSPITAL'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Bed Availability</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(beds)}">No bed information published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(beds)}">
+              <div class="data-row" th:each="bed : ${beds}">
+                <div>
+                  <strong th:text="${bed.wardType}">Ward</strong>
+                  <span th:text="${bed.availableBeds} + ' of ' + ${bed.totalBeds} + ' beds available'">0 of 0 beds available</span>
+                </div>
+                <span class="badge" th:classappend="${bed.availableBeds > 0} ? 'text-bg-success' : 'text-bg-secondary'"
+                      th:text="${bed.availableBeds > 0} ? 'Available' : 'Full'">Status</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${facilityType == 'HOSPITAL'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Doctor Availability</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(doctorAvailability)}">No doctor availability published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(doctorAvailability)}">
+              <div class="data-row" th:each="entry : ${doctorAvailability}">
+                <div>
+                  <strong th:text="${entry.doctor.fullName}">Dr. Name</strong>
+                  <span th:text="${entry.dayOfWeek} + ' · ' + ${#temporals.format(entry.startTime, 'hh:mm a')} + ' – ' + ${#temporals.format(entry.endTime, 'hh:mm a')}">MON · 9:00 AM – 5:00 PM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${facilityType == 'HOSPITAL'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Services Offered</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(hospitalServices)}">No services published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(hospitalServices)}">
+              <div class="data-row" th:each="service : ${hospitalServices}">
+                <div>
+                  <strong th:text="${service.serviceName}">Service</strong>
+                  <span th:if="${service.description}" th:text="${service.description}">Description</span>
+                </div>
+                <span th:if="${service.price != null}" th:text="'৳' + ${service.price}">Price</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${facilityType == 'DIAGNOSTIC'}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Test Offers</h2>
+            </div>
+            <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(testOffers)}">No test offers published yet.</p>
+            <div class="data-list" th:unless="${#lists.isEmpty(testOffers)}">
+              <div class="data-row" th:each="offer : ${testOffers}">
+                <div>
+                  <strong th:text="${offer.testName}">Test</strong>
+                  <span th:text="(${offer.description != null} ? ${offer.description} + ' · ' : '') + (${offer.turnaroundTime != null} ? ${offer.turnaroundTime} : '')">Description</span>
+                </div>
+                <span th:text="'৳' + ${offer.price}">Price</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${!#lists.isEmpty(ratings)}">
+            <div class="section-title">
+              <div>
+                <h2 class="h6 fw-bold mb-0">Patient Reviews</h2>
+                <p class="text-secondary small mb-0" th:text="${totalReviews} + ' review(s)'">0 reviews</p>
+              </div>
+            </div>
+            <div class="vstack gap-3">
+              <div class="review-card" th:each="r : ${ratings}">
+                <div class="review-header">
+                  <span class="review-author" th:text="${r.reviewerUser != null ? r.reviewerUser.fullName : 'Anonymous'}">Reviewer</span>
+                  <div class="review-stars">
+                    <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= r.score ? '' : 'empty'}"></i>
+                  </div>
+                </div>
+                <p class="review-comment" th:if="${r.comment}" th:text="${r.comment}">Comment text</p>
+                <span class="review-date" th:if="${r.createdAt}" th:text="${#temporals.format(r.createdAt, 'dd MMM yyyy')}">Date</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="panel">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Quick Actions</h2>
+            </div>
+            <div class="vstack gap-2">
+              <a class="action-tile" th:href="@{/facilities(type=${facilityType})}">
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to <span th:text="${#strings.capitalize(#strings.toLowerCase(facilityType)) + 's'}">Type</span></span>
+              </a>
+              <a class="action-tile" href="/facilities">
+                <i class="bi bi-grid-3x3-gap"></i>
+                <span>All Facilities</span>
+              </a>
+              <a class="action-tile" href="/facilities/search">
+                <i class="bi bi-search"></i>
+                <span>Search</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="panel mt-4" th:if="${profile != null and profile.latitude != null and profile.longitude != null}">
+            <div class="section-title">
+              <h2 class="h6 fw-bold mb-0">Location</h2>
+            </div>
+            <p class="text-secondary small mb-0">
+              <i class="bi bi-geo-alt"></i>
+              <span th:text="${profile.latitude} + ', ' + ${profile.longitude}">Coordinates</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </body>
+</html>

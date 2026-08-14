@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head(${doctor.fullName})}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <a href="/doctors" class="btn btn-sm btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Back to Doctor Directory
+      </a>
+
+      <div class="panel">
+        <div class="section-title flex-wrap">
+          <div>
+            <p class="text-uppercase text-primary small fw-semibold mb-1" th:text="${doctor.specialization} ?: 'General'">Specialty</p>
+            <h1 class="h3 fw-bold mb-1" th:text="${doctor.fullName}">Dr. Name</h1>
+            <span class="badge text-bg-light" th:if="${doctor.totalReviews} > 0">
+              <i class="bi bi-star-fill text-warning"></i>
+              <span th:text="${doctor.averageRating}">0</span> (<span th:text="${doctor.totalReviews}">0</span> reviews)
+            </span>
+          </div>
+          <div class="text-md-end">
+            <h3 class="text-primary mb-0" th:if="${doctor.consultationFee} != null">
+              ৳<span th:text="${doctor.consultationFee}">500</span>
+              <small class="text-muted fs-6">/ consultation</small>
+            </h3>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="health-section">
+              <h3 class="health-section-title"><i class="bi bi-person-vcard"></i> Details</h3>
+              <div class="info-grid">
+                <div>
+                  <span>Qualification</span>
+                  <strong th:text="${doctor.qualification} ?: '—'">MBBS</strong>
+                </div>
+                <div>
+                  <span>Experience</span>
+                  <strong th:text="${doctor.experienceYears} != null ? ${doctor.experienceYears} + ' years' : '—'">—</strong>
+                </div>
+                <div>
+                  <span>License No.</span>
+                  <strong th:text="${doctor.licenseNumber} ?: '—'">—</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="health-section">
+              <h3 class="health-section-title"><i class="bi bi-geo-alt"></i> Location &amp; Contact</h3>
+              <div class="info-grid">
+                <div>
+                  <span>City</span>
+                  <strong th:text="${doctor.city} ?: '—'">—</strong>
+                </div>
+                <div>
+                  <span>Email</span>
+                  <strong th:text="${doctor.email}">email@example.com</strong>
+                </div>
+                <div>
+                  <span>Phone</span>
+                  <strong th:text="${doctor.phone} ?: '—'">—</strong>
+                </div>
+              </div>
+              <p class="small text-muted mt-2 mb-0" th:text="${doctor.address}"></p>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <h3 class="health-section-title"><i class="bi bi-file-text"></i> About</h3>
+        <p th:text="${doctor.bio} ?: 'No bio provided yet.'">Doctor biography goes here.</p>
+
+        <button class="btn btn-success mt-2" disabled>
+          <i class="bi bi-calendar-plus"></i> Book Appointment (Sprint 2)
+        </button>
+      </div>
+    </main>
+  </body>
+</html>
