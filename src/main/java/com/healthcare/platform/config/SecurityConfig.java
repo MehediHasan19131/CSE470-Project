@@ -33,8 +33,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/logged-out", "/register",
+                                "/faq", "/map", "/api/map/providers",
                                 "/api/auth/login", "/api/auth/register", "/api/auth/token",
-                                "/css/**", "/img/**", "/images/**", "/error"
+                                "/css/**", "/img/**", "/images/**", "/js/**", "/error"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Admin user-management panel (Sprint 2 - Nahian Mahmud) - ADMIN only.

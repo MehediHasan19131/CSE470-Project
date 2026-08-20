@@ -122,10 +122,16 @@ public class HealthcarePlatformApplication {
             }
 
             if (medicines.count() == 0) {
-                medicines.save(new Medicine("Paracetamol 500mg", "Pain relief and fever reducer", new BigDecimal("2.50"), 120));
-                medicines.save(new Medicine("Amoxicillin 250mg", "Antibiotic capsules", new BigDecimal("8.00"), 45));
-                medicines.save(new Medicine("Vitamin C 1000mg", "Immune support tablets", new BigDecimal("5.50"), 8));
-                medicines.save(new Medicine("Cough Syrup", "Dry cough relief", new BigDecimal("6.75"), 30));
+                Medicine[] seededMedicines = {
+                        new Medicine("Paracetamol 500mg", "Pain relief and fever reducer", new BigDecimal("2.50"), 120),
+                        new Medicine("Amoxicillin 250mg", "Antibiotic capsules", new BigDecimal("8.00"), 45),
+                        new Medicine("Vitamin C 1000mg", "Immune support tablets", new BigDecimal("5.50"), 8),
+                        new Medicine("Cough Syrup", "Dry cough relief", new BigDecimal("6.75"), 30)
+                };
+                for (Medicine medicine : seededMedicines) {
+                    medicine.setPharmacy(pharmacy);   // per-pharmacy catalogue
+                    medicines.save(medicine);
+                }
             }
 
             if (campaigns.count() == 0) {

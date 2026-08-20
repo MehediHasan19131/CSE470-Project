@@ -10,4 +10,7 @@ public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
     // Pharmacy Service Module (Sprint 2 - Imtiaz Zaman Sami): Medicine Search
     List<Medicine> findByActiveTrueAndNameContainingIgnoreCaseOrderByNameAsc(String name);
+
+    // A single pharmacy's own catalogue (per-facility products).
+    List<Medicine> findByPharmacyIdOrderByNameAsc(Long pharmacyId);
 }

@@ -14,11 +14,11 @@
     <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
 
     <main class="container-fluid p-4">
-      <div th:replace="~{fragments/dashboard-layout :: page-heading('Ambulance dashboard', 'Fleet, incoming requests, and live location — Member 4 (Ambulance Service + Map)', 'bi-truck-front')}"></div>
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Ambulance dashboard', 'Fleet, incoming requests, and live location', 'bi-truck-front')}"></div>
 
       <div class="sprint-badge mb-4">
         <i class="bi bi-info-circle"></i>
-        <span>Sprint 2: request/track ambulance backend, ride-sharing style booking, and OpenStreetMap + Leaflet.js map integration.</span>
+        <span>Request and track ambulances in real time with live OpenStreetMap tracking.</span>
       </div>
 
       <div class="row g-3 mb-4" id="fleetCards"></div>

@@ -110,7 +110,14 @@
                   <strong th:text="${service.serviceName}">Service</strong>
                   <span th:if="${service.description}" th:text="${service.description}">Description</span>
                 </div>
-                <span th:if="${service.price != null}" th:text="'৳' + ${service.price}">Price</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span th:if="${service.price != null}" th:text="'৳' + ${service.price}">Price</span>
+                  <a th:if="${service.price != null and user != null and user.role.name() == 'PATIENT'}"
+                     class="btn btn-sm btn-success"
+                     th:href="@{/payment(intent='service', providerId=${facility.id}, itemName=${service.serviceName}, amount=${service.price})}">
+                    <i class="bi bi-wallet2"></i> Book &amp; Pay
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -126,7 +133,14 @@
                   <strong th:text="${offer.testName}">Test</strong>
                   <span th:text="(${offer.description != null} ? ${offer.description} + ' · ' : '') + (${offer.turnaroundTime != null} ? ${offer.turnaroundTime} : '')">Description</span>
                 </div>
-                <span th:text="'৳' + ${offer.price}">Price</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span th:text="'৳' + ${offer.price}">Price</span>
+                  <a th:if="${offer.price != null and user != null and user.role.name() == 'PATIENT'}"
+                     class="btn btn-sm btn-success"
+                     th:href="@{/payment(intent='service', providerId=${facility.id}, itemName=${offer.testName}, amount=${offer.price})}">
+                    <i class="bi bi-wallet2"></i> Book &amp; Pay
+                  </a>
+                </div>
               </div>
             </div>
           </div>

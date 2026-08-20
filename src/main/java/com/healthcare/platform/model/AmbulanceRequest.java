@@ -62,6 +62,9 @@ public class AmbulanceRequest {
     @Column(name = "fare_estimate", precision = 10, scale = 2)
     private BigDecimal fareEstimate;
 
+    @Column(name = "paid", nullable = false)
+    private boolean paid = false;
+
     @Column(name = "requested_at", nullable = false)
     private LocalDateTime requestedAt = LocalDateTime.now();
 
@@ -167,6 +170,14 @@ public class AmbulanceRequest {
 
     public void setFareEstimate(BigDecimal fareEstimate) {
         this.fareEstimate = fareEstimate;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
     }
 
     public LocalDateTime getRequestedAt() {

@@ -14,3 +14,6 @@ logs/
 out/
 build/
 bin/
+_to_delete/
+build-export.tgz
+changes.tar

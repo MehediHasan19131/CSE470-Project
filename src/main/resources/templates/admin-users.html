@@ -12,11 +12,13 @@
   <body>
     <nav class="navbar navbar-expand-lg app-navbar sticky-top">
       <div class="container-fluid px-4">
-        <a href="/profile" class="brand-logo" aria-label="SmartCare home">
+        <a href="/dashboard" class="brand-logo" aria-label="SmartCare home">
           <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="174" height="46">
         </a>
         <div class="nav-actions">
-          <a href="/admin" class="nav-pill nav-pill-muted"><i class="bi bi-arrow-left"></i> Dashboard</a>
+          <a href="/admin" class="nav-pill nav-pill-muted"><i class="bi bi-arrow-left"></i> Admin panel</a>
+          <a href="/admin/reports" class="nav-pill nav-pill-muted"><i class="bi bi-inbox"></i> Reports</a>
+          <a href="/dashboard" class="nav-pill nav-pill-muted"><i class="bi bi-speedometer2"></i> Dashboard</a>
         </div>
       </div>
     </nav>
@@ -38,6 +40,8 @@
       <div class="alert alert-success py-2" th:if="${param.updated}">User updated.</div>
       <div class="alert alert-success py-2" th:if="${param.deleted}">User deleted.</div>
       <div class="alert alert-success py-2" th:if="${param.approved}">Account approved — they can now log in.</div>
+      <div class="alert alert-success py-2" th:if="${param.blocked}">Account blocked — they can no longer log in.</div>
+      <div class="alert alert-success py-2" th:if="${param.unblocked}">Account unblocked — they can log in again.</div>
       <div class="alert alert-danger py-2" th:if="${param.error != null}" th:text="${param.error[0]}">Error</div>
 
       <div class="panel">
@@ -70,7 +74,7 @@
                 <td>
                   <span class="badge text-bg-success" th:if="${u.active}">Active</span>
                   <span class="badge text-bg-warning" th:if="${!u.active and u.role.name() != 'PATIENT' and u.role.name() != 'ADMIN'}">Pending approval</span>
-                  <span class="badge text-bg-secondary" th:if="${!u.active and (u.role.name() == 'PATIENT' or u.role.name() == 'ADMIN')}">Inactive</span>
+                  <span class="badge text-bg-danger" th:if="${!u.active and (u.role.name() == 'PATIENT' or u.role.name() == 'ADMIN')}">Blocked</span>
                 </td>
                 <td class="text-end">
                   <form th:action="@{'/admin/users/' + ${u.id} + '/approve'}" method="post" class="d-inline"
@@ -79,7 +83,18 @@
                     <input type="hidden" name="from" value="users">
                     <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-check-lg"></i> Approve</button>
                   </form>
+                  <form th:action="@{'/admin/users/' + ${u.id} + '/unblock'}" method="post" class="d-inline"
+                        th:if="${!u.active and (u.role.name() == 'PATIENT' or u.role.name() == 'ADMIN')}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button class="btn btn-outline-success btn-sm" type="submit"><i class="bi bi-arrow-counterclockwise"></i> Unblock</button>
+                  </form>
                   <a th:href="@{'/admin/users/' + ${u.id} + '/edit'}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                  <form th:action="@{'/admin/users/' + ${u.id} + '/block'}" method="post" class="d-inline"
+                        th:if="${u.active and u.id != me.id}"
+                        onsubmit="return confirm('Block this account? They will not be able to log in until you unblock them.');">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button class="btn btn-outline-warning btn-sm" type="submit"><i class="bi bi-slash-circle"></i> Block</button>
+                  </form>
                   <form th:action="@{'/admin/users/' + ${u.id} + '/delete'}" method="post" class="d-inline"
                         th:if="${u.id != me.id}"
                         onsubmit="return confirm('Delete this account? This also deletes any reviews they wrote or received. This can\'t be undone.');">

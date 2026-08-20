@@ -46,6 +46,11 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<OrderItem> items = new ArrayList<>();
 
+    // The pharmacy this order is for (derived from the ordered medicine's owner).
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pharmacy_id")
+    private User pharmacy;
+
     public Order() {
     }
 
@@ -59,6 +64,14 @@ public class Order {
 
     public void setPatient(User patient) {
         this.patient = patient;
+    }
+
+    public User getPharmacy() {
+        return pharmacy;
+    }
+
+    public void setPharmacy(User pharmacy) {
+        this.pharmacy = pharmacy;
     }
 
     public String getStatus() {

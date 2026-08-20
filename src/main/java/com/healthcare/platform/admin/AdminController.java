@@ -179,4 +179,29 @@ public class AdminController {
             return "redirect:/admin/users?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
     }
+
+    // Block (suspend/hide) an account with one click - flips is_active to false
+    // so the user can no longer log in and, for providers, disappears from the
+    // patient-facing directories. Reversible via unblock below.
+    @PostMapping("/users/{id}/block")
+    public String blockUser(@PathVariable Long id, Authentication authentication) {
+        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        try {
+            adminUserService.setActive(id, me.getId(), false);
+            return "redirect:/admin/users?blocked=true";
+        } catch (IllegalStateException | NoSuchElementException e) {
+            return "redirect:/admin/users?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
+
+    @PostMapping("/users/{id}/unblock")
+    public String unblockUser(@PathVariable Long id, Authentication authentication) {
+        AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        try {
+            adminUserService.setActive(id, me.getId(), true);
+            return "redirect:/admin/users?unblocked=true";
+        } catch (IllegalStateException | NoSuchElementException e) {
+            return "redirect:/admin/users?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
 }

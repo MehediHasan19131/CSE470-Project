@@ -3,6 +3,7 @@ package com.healthcare.platform.controller;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.service.CurrentUserService;
 import com.healthcare.platform.service.FacilityManagementService;
+import com.healthcare.platform.service.ServiceBookingService;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -27,11 +28,14 @@ public class HospitalManagementController {
 
     private final FacilityManagementService facilityManagementService;
     private final CurrentUserService currentUserService;
+    private final ServiceBookingService serviceBookingService;
 
     public HospitalManagementController(FacilityManagementService facilityManagementService,
-                                         CurrentUserService currentUserService) {
+                                         CurrentUserService currentUserService,
+                                         ServiceBookingService serviceBookingService) {
         this.facilityManagementService = facilityManagementService;
         this.currentUserService = currentUserService;
+        this.serviceBookingService = serviceBookingService;
     }
 
     @GetMapping("/hospital/manage")
@@ -42,6 +46,7 @@ public class HospitalManagementController {
         model.addAttribute("doctorAvailability", facilityManagementService.getDoctorAvailability(user.getId()));
         model.addAttribute("services", facilityManagementService.getServices(user.getId()));
         model.addAttribute("assignableDoctors", facilityManagementService.availableDoctorsToAssign());
+        model.addAttribute("bookings", serviceBookingService.forProvider(user.getId()));
         return "hospital-management";
     }
 

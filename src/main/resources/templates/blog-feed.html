@@ -44,10 +44,11 @@
       <div class="alert alert-success py-2" th:if="${param.postDeleted}">Post deleted.</div>
       <div class="alert alert-danger py-2" th:if="${param.error != null}" th:text="${param.error[0]}">Error</div>
 
-      <div class="panel mb-4" id="compose-form">
+      <div class="panel mb-4" id="compose-form"
+           th:if="${me.role.name() == 'PATIENT' or me.role.name() == 'DOCTOR' or me.role.name() == 'HOSPITAL' or me.role.name() == 'DIAGNOSTIC'}">
         <div class="section-title">
           <div>
-            <p class="text-uppercase text-primary small fw-semibold mb-1">Backend: Create Post</p>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Write an article</p>
             <h2 class="h6 fw-bold mb-0" th:text="${editPostEntry != null} ? 'Edit your post' : 'Share something with the community'">Share something with the community</h2>
           </div>
         </div>
@@ -85,7 +86,7 @@
       <div class="panel">
         <div class="section-title">
           <div>
-            <p class="text-uppercase text-primary small fw-semibold mb-1">Frontend: Blog Feed</p>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Latest posts</p>
             <h2 class="h6 fw-bold mb-0" th:text="${#lists.size(posts)} + ' post' + (${#lists.size(posts) == 1} ? '' : 's')">0 posts</h2>
           </div>
         </div>
@@ -109,12 +110,12 @@
               <a class="small text-decoration-none" th:href="@{'/blog/posts/' + ${post.id}}">
                 <i class="bi bi-chat-left-text"></i> <span th:text="${post.commentCount} + ' comment' + (${post.commentCount == 1} ? '' : 's')">0 comments</span>
               </a>
-              <div class="d-flex gap-2" th:if="${post.authorId == me.id}">
-                <a th:href="@{'/blog?editPost=' + ${post.id} + '#compose-form'}" class="btn btn-outline-secondary btn-sm">Edit</a>
+              <div class="d-flex gap-2" th:if="${post.authorId == me.id or me.role.name() == 'ADMIN'}">
+                <a th:if="${post.authorId == me.id}" th:href="@{'/blog?editPost=' + ${post.id} + '#compose-form'}" class="btn btn-outline-secondary btn-sm">Edit</a>
                 <form th:action="@{'/blog/posts/' + ${post.id} + '/delete'}" method="post"
                       onsubmit="return confirm('Delete this post? This also deletes all its comments and can\'t be undone.');">
                   <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                  <button class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+                  <button class="btn btn-outline-danger btn-sm" type="submit" th:text="${post.authorId == me.id} ? 'Delete' : 'Remove'">Delete</button>
                 </form>
               </div>
             </div>

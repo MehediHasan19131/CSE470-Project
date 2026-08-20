@@ -24,14 +24,16 @@
         <hr>
 
         <p th:text="${medicine.description}">Medicine description goes here.</p>
-        <p class="small text-muted">Available quantity: <strong th:text="${medicine.stockQuantity}">0</strong></p>
+        <p class="small text-muted mb-1">Available quantity: <strong th:text="${medicine.stockQuantity}">0</strong></p>
+        <p class="small text-muted">Sold by <strong th:text="${medicine.pharmacy != null ? medicine.pharmacy.fullName : 'SmartCare Pharmacy'}">Pharmacy</strong></p>
 
         <hr>
 
         <h3 class="health-section-title"><i class="bi bi-bag-plus"></i> Order this medicine</h3>
 
-        <form method="post" th:action="@{'/pharmacy-store/' + ${medicine.id} + '/order'}" class="row g-3" th:if="${medicine.stockQuantity} > 0">
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <form method="get" action="/payment" class="row g-3" th:if="${medicine.stockQuantity} > 0">
+          <input type="hidden" name="intent" value="medicine">
+          <input type="hidden" name="medicineId" th:value="${medicine.id}">
           <div class="col-md-3">
             <label class="form-label">Quantity</label>
             <input type="number" name="quantity" class="form-control" value="1" min="1" th:max="${medicine.stockQuantity}" required>
@@ -42,7 +44,7 @@
           </div>
           <div class="col-md-3 d-flex align-items-end">
             <button type="submit" class="btn btn-success w-100">
-              <i class="bi bi-cart-check"></i> Place Order
+              <i class="bi bi-wallet2"></i> Order &amp; Pay
             </button>
           </div>
         </form>

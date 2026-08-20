@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head(${type == 'REPORT' ? 'Report a problem' : 'Contact us'})}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container py-4" style="max-width: 640px;">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading(
+              ${type == 'REPORT' ? 'Report a problem' : 'Contact us'},
+              ${type == 'REPORT' ? 'Tell us what went wrong — an admin will review it' : 'Send us a message and an admin will get back to you'},
+              ${type == 'REPORT' ? 'bi-flag' : 'bi-envelope'})}"></div>
+
+      <div class="alert alert-success py-2" th:if="${param.sent}">Thanks! Your message has been sent to the admins.</div>
+      <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Error</div>
+
+      <div class="panel">
+        <form method="post" action="/support" class="vstack gap-3">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+          <input type="hidden" name="type" th:value="${type}">
+          <div>
+            <label class="form-label">Subject</label>
+            <input class="form-control" name="subject" maxlength="160"
+                   th:placeholder="${type == 'REPORT' ? 'e.g. A page is not loading' : 'e.g. Question about my account'}">
+          </div>
+          <div>
+            <label class="form-label">Message</label>
+            <textarea class="form-control" name="message" rows="5" maxlength="4000" required
+                      th:placeholder="${type == 'REPORT' ? 'Describe the problem and how to reproduce it...' : 'How can we help?'}"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit" style="width:fit-content; padding-left:28px; padding-right:28px;">
+            <i class="bi bi-send"></i> Send
+          </button>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

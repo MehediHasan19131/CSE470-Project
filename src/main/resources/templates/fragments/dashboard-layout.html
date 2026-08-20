@@ -11,6 +11,7 @@
     <link href="/css/styles.css" rel="stylesheet">
     <link href="/css/sprint1.css" rel="stylesheet">
     <link href="/css/sprint2.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <a th:fragment="brand-logo(link)" th:href="${link}" class="brand-logo" aria-label="SmartCare home">
@@ -33,26 +34,26 @@
 
             <!-- Patients: the full set of things they can browse and buy. -->
             <a href="/doctors" class="nav-pill"
-               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
+               th:if="${role == 'PATIENT'}">
                 <i class="bi bi-person-badge"></i><span>Doctors</span>
             </a>
             <a href="/appointments" class="nav-pill"
-               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
+               th:if="${role == 'PATIENT'}">
                 <i class="bi bi-calendar-check"></i><span>Appointments</span>
             </a>
             <!-- Hospital & Diagnostic Module (Member 3): patients browse
                  hospitals/diagnostic centres/pharmacies here to see bed
                  availability, doctor availability, services, and test offers. -->
             <a href="/facilities" class="nav-pill"
-               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
+               th:if="${role == 'PATIENT'}">
                 <i class="bi bi-hospital"></i><span>Hospitals &amp; Labs</span>
             </a>
             <a href="/pharmacy-store" class="nav-pill"
-               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
+               th:if="${role == 'PATIENT'}">
                 <i class="bi bi-capsule"></i><span>Pharmacy</span>
             </a>
             <a href="/reviews" class="nav-pill"
-               th:if="${role == 'PATIENT' or role == 'ADMIN'}">
+               th:if="${role == 'PATIENT'}">
                 <i class="bi bi-star"></i><span>Reviews</span>
             </a>
             <a href="/medicine-reminders" class="nav-pill"
@@ -104,14 +105,14 @@
                 <i class="bi bi-clipboard2-pulse"></i><span>Manage Tests</span>
             </a>
 
-            <!-- Notifications & Campaigns (Sprint 3/4 - Imtiaz Zaman Sami): open
-                 to every logged-in role, same as their controllers (authenticated(),
-                 no role restriction). -->
-            <a href="/notifications" class="nav-pill" th:if="${user != null}">
-                <i class="bi bi-bell"></i><span>Notifications</span>
+            <!-- Crowdfunding: patients & care providers (not pharmacy/ambulance).
+                 Payments ledger: everyone; admin sees an audit of all payments. -->
+            <a href="/campaigns" class="nav-pill"
+               th:if="${role == 'PATIENT' or role == 'DOCTOR' or role == 'HOSPITAL' or role == 'DIAGNOSTIC' or role == 'ADMIN'}">
+                <i class="bi bi-heart-pulse"></i><span>Crowdfunding</span>
             </a>
-            <a href="/campaigns" class="nav-pill" th:if="${user != null}">
-                <i class="bi bi-heart-pulse"></i><span>Campaigns</span>
+            <a href="/payments" class="nav-pill" th:if="${user != null}">
+                <i class="bi bi-receipt"></i><span th:text="${role == 'ADMIN'} ? 'Payments (audit)' : 'Payments'">Payments</span>
             </a>
 
             <!-- Health Profile (Sprint 3 - Nahian Mahmud): a patient's own medical
@@ -121,10 +122,16 @@
                 <i class="bi bi-file-earmark-medical"></i><span>Health Profile</span>
             </a>
 
-            <!-- Health Blog (Sprint 4 - Nahian Mahmud): open to every logged-in
-                 role, same as BlogWebController (authenticated(), no role rule). -->
-            <a href="/blog" class="nav-pill" th:if="${user != null}">
+            <!-- Health Blog: patients & care providers can post; admin moderates.
+                 Pharmacy/ambulance don't get the community blog. -->
+            <a href="/blog" class="nav-pill"
+               th:if="${role == 'PATIENT' or role == 'DOCTOR' or role == 'HOSPITAL' or role == 'DIAGNOSTIC' or role == 'ADMIN'}">
                 <i class="bi bi-journal-richtext"></i><span>Health Blog</span>
+            </a>
+
+            <!-- Find care map: available to every logged-in role. -->
+            <a href="/map" class="nav-pill" th:if="${user != null}">
+                <i class="bi bi-geo-alt"></i><span>Find Care</span>
             </a>
 
             <span class="nav-divider" aria-hidden="true"></span>
@@ -139,9 +146,23 @@
                 </span>
             </a>
 
-            <a class="nav-pill nav-pill-logout" href="/logout">
-                <i class="bi bi-box-arrow-right"></i><span>Logout</span>
-            </a>
+            <!-- Overflow menu (three dots): notifications, help, contact/report, logout. -->
+            <div class="dropdown nav-kebab">
+                <button class="nav-pill nav-pill-kebab" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" aria-label="More">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li><a class="dropdown-item" href="/notifications"><i class="bi bi-bell"></i> Notifications</a></li>
+                    <li><a class="dropdown-item" href="/faq"><i class="bi bi-question-circle"></i> FAQ</a></li>
+                    <li><a class="dropdown-item" href="/contact"><i class="bi bi-envelope"></i> Contact us</a></li>
+                    <li><a class="dropdown-item" href="/report"><i class="bi bi-flag"></i> Report a problem</a></li>
+                    <li th:if="${role == 'ADMIN'}"><hr class="dropdown-divider"></li>
+                    <li th:if="${role == 'ADMIN'}"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-inbox"></i> Review reports</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>

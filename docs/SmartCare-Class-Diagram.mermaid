@@ -1,0 +1,457 @@
+classDiagram
+direction LR
+
+class User {
+  - id : Long
+  # fullName : String
+  - email : String
+  - passwordHash : String
+  - phone : String
+  # active : boolean
+  # createdAt : LocalDateTime
+  + register()
+  + login()
+  + deactivate()
+}
+
+class Admin {
+  + manageUsers()
+  + updateSettings()
+}
+
+class Patient {
+  + bookAppointment()
+  + orderMedicine()
+  + requestAmbulance()
+  + setReminder()
+}
+
+class Doctor {
+  + startConsultation()
+  + writePrescription()
+  + setAvailability()
+}
+
+class Hospital {
+  + updateBeds()
+  + offerService()
+  + postSchedule()
+}
+
+class Pharmacy {
+  + addMedicine()
+  + processOrder()
+}
+
+class DiagnosticCenter {
+  + offerTest()
+}
+
+class AmbulanceProvider {
+  + manageFleet()
+  + updateLocation()
+}
+
+class Profile {
+  - id : Long
+  - address : String
+  + city : String
+  + bio : String
+  + specialization : String
+  - licenseNumber : String
+  + serviceName : String
+  + emergencyAvailable : boolean
+  - latitude : Double
+  - longitude : Double
+  - dateOfBirth : LocalDate
+  - gender : String
+  - bloodGroup : String
+  + qualification : String
+  + experienceYears : Integer
+  + consultationFee : Double
+  + /age : int
+  + updateProfile()
+}
+
+class Appointment {
+  - id : Long
+  + scheduledAt : LocalDateTime
+  + status : String
+  - reason : String
+  + createdAt : LocalDateTime
+  + book()
+  + cancel()
+  + confirm()
+}
+
+class Consultation {
+  - id : Long
+  - roomName : String
+  + status : String
+  - notes : String
+  - prescription : String
+  + scheduledAt : LocalDateTime
+  + startedAt : LocalDateTime
+  + endedAt : LocalDateTime
+  + createdAt : LocalDateTime
+  + start()
+  + updateStatus()
+  + updateNotes()
+}
+
+class RecordAccessGrant {
+  - id : Long
+  + active : boolean
+  + createdAt : LocalDateTime
+  + updatedAt : LocalDateTime
+  + grant()
+  + revoke()
+  + hasActiveAccess()
+}
+
+class Medicine {
+  - id : Long
+  + name : String
+  + description : String
+  + price : BigDecimal
+  + stockQuantity : int
+  + active : boolean
+  + search()
+  + reduceStock()
+}
+
+class Order {
+  - id : Long
+  + status : String
+  + /totalAmount : BigDecimal
+  - deliveryAddress : String
+  + createdAt : LocalDateTime
+  + placeOrder()
+  + addItem()
+  + calcTotal()
+  + updateStatus()
+}
+
+class OrderItem {
+  - id : Long
+  + quantity : int
+  + unitPrice : BigDecimal
+  + /subtotal : BigDecimal
+  + subtotal()
+}
+
+class Ambulance {
+  - id : Long
+  + vehicleNumber : String
+  + vehicleType : String
+  + capacity : int
+  - driverName : String
+  - driverPhone : String
+  + available : boolean
+  - latitude : Double
+  - longitude : Double
+  + baseFare : BigDecimal
+  + perKmRate : BigDecimal
+  + updatedAt : LocalDateTime
+  + updateLocation()
+  + updateAvailability()
+}
+
+class AmbulanceRequest {
+  - id : Long
+  - pickupAddress : String
+  - pickupLatitude : double
+  - pickupLongitude : double
+  - dropAddress : String
+  - dropLatitude : Double
+  - dropLongitude : Double
+  - emergencyType : String
+  - notes : String
+  + status : String
+  - fareEstimate : BigDecimal
+  + paid : boolean
+  + requestedAt : LocalDateTime
+  + updatedAt : LocalDateTime
+  + book()
+  + track()
+  + updateStatus()
+  + payFare()
+  + cancel()
+}
+
+class BedAvailability {
+  - id : Long
+  + wardType : String
+  + totalBeds : int
+  + availableBeds : int
+  + updatedAt : LocalDateTime
+  + updateBeds()
+}
+
+class HospitalDoctorAvailability {
+  - id : Long
+  + dayOfWeek : String
+  + startTime : LocalTime
+  + endTime : LocalTime
+  + notes : String
+  + setSchedule()
+}
+
+class HospitalServiceOffering {
+  - id : Long
+  + serviceName : String
+  + description : String
+  + price : BigDecimal
+  + available : boolean
+  + updateOffering()
+}
+
+class TestOffer {
+  - id : Long
+  + testName : String
+  + description : String
+  + price : BigDecimal
+  + turnaroundTime : String
+  + available : boolean
+  + updateOffer()
+}
+
+class MedicineReminder {
+  - id : Long
+  - medicineName : String
+  - dosage : String
+  + reminderTime : LocalTime
+  - notes : String
+  + active : boolean
+  + lastTriggeredDate : LocalDate
+  + createdAt : LocalDateTime
+  + create()
+  + trigger()
+  + delete()
+}
+
+class Notification {
+  - id : Long
+  + title : String
+  + message : String
+  + type : String
+  + read : boolean
+  - relatedAppointmentId : Long
+  + createdAt : LocalDateTime
+  + create()
+  + markAsRead()
+  + markAllAsRead()
+}
+
+class AiChatMessage {
+  - id : Long
+  - sessionId : String
+  + role : String
+  - content : String
+  + mode : String
+  + createdAt : LocalDateTime
+  + chat()
+  + symptomCheck()
+}
+
+class Campaign {
+  - id : Long
+  + title : String
+  + description : String
+  + category : String
+  + goalAmount : BigDecimal
+  + status : String
+  + createdAt : LocalDateTime
+  + /raisedAmount : BigDecimal
+  + /progressPct : double
+  + createCampaign()
+  + updateCampaign()
+  + closeCampaign()
+}
+
+class Donation {
+  - id : Long
+  - amount : BigDecimal
+  + message : String
+  - paymentMethod : String
+  - transactionId : String
+  + paymentStatus : String
+  + createdAt : LocalDateTime
+  + donate()
+}
+
+class Payment {
+  - id : Long
+  + amount : BigDecimal
+  + method : String
+  + purpose : String
+  + referenceType : String
+  + referenceId : Long
+  - senderAccount : String
+  - transactionId : String
+  + status : String
+  + createdAt : LocalDateTime
+  + record()
+  + receipt()
+}
+
+class ServiceBooking {
+  - id : Long
+  + providerType : String
+  + itemName : String
+  + amount : BigDecimal
+  + status : String
+  + createdAt : LocalDateTime
+  + book()
+}
+
+class SupportMessage {
+  - id : Long
+  + type : String
+  + subject : String
+  + message : String
+  + status : String
+  + createdAt : LocalDateTime
+  + submit()
+  + resolve()
+}
+
+class Rating {
+  - id : Long
+  + score : int
+  + comment : String
+  + createdAt : LocalDateTime
+  + submit()
+}
+
+class Review {
+  - id : Long
+  - reviewerId : Long
+  + reviewerName : String
+  - targetId : Long
+  + targetName : String
+  + rating : int
+  + comment : String
+  + createdAt : LocalDateTime
+  + updatedAt : LocalDateTime
+  + create()
+  + update()
+  + delete()
+}
+
+class Post {
+  - id : Long
+  - authorId : Long
+  + authorName : String
+  + authorRole : String
+  + title : String
+  + content : String
+  + commentCount : int
+  + createdAt : LocalDateTime
+  + updatedAt : LocalDateTime
+  + create()
+  + update()
+  + delete()
+}
+
+class Comment {
+  - id : Long
+  - postId : Long
+  - authorId : Long
+  + authorName : String
+  + authorRole : String
+  + content : String
+  + createdAt : LocalDateTime
+  + add()
+  + delete()
+}
+
+class Allergy {
+  - id : Long
+  - patientId : Long
+  - allergen : String
+  - severity : AllergySeverity
+  - reaction : String
+  + createdAt : LocalDateTime
+  + updatedAt : LocalDateTime
+  + add()
+  + update()
+  + remove()
+}
+
+class MedicalHistoryEntry {
+  - id : Long
+  - patientId : Long
+  - condition : String
+  - diagnosedOn : LocalDate
+  - notes : String
+  + createdAt : LocalDateTime
+  + updatedAt : LocalDateTime
+  + add()
+  + update()
+  + remove()
+}
+
+class AppSetting {
+  - id : Long
+  + key : String
+  - value : String
+  + updatedAt : LocalDateTime
+  + updateValue()
+}
+
+class AllergySeverity {
+  <<enumeration>>
+  MILD
+  MODERATE
+  SEVERE
+}
+
+User <|-- Admin
+User <|-- Patient
+User <|-- Doctor
+User <|-- Hospital
+User <|-- Pharmacy
+User <|-- DiagnosticCenter
+User <|-- AmbulanceProvider
+User "1" *-- "0..1" Profile : has
+User "1" --> "0..*" Notification : receives
+User "1" --> "0..*" Campaign : organizes
+User "1" --> "0..*" Donation : makes «donor»
+User "1" --> "0..*" Rating : writes «reviewer»
+User "1" --> "0..*" Rating : receives «target»
+User "1" --> "0..*" Review : writes «reviewerId»
+User "1" --> "0..*" Review : receives «targetId»
+User "1" --> "0..*" Post : authors
+User "1" --> "0..*" Comment : authors
+User "1" --> "0..*" Payment : makes
+User "1" --> "0..*" SupportMessage : submits
+Patient "1" --> "0..*" Appointment : books
+Doctor "1" --> "0..*" Appointment : attends
+Patient "1" --> "0..*" Consultation : attends
+Doctor "1" --> "0..*" Consultation : conducts
+Patient "1" --> "0..*" RecordAccessGrant : grants
+Doctor "1" --> "0..*" RecordAccessGrant : receives
+Patient "1" --> "0..*" Order : places
+Patient "1" --> "0..*" AmbulanceRequest : requests
+Patient "1" --> "0..*" MedicineReminder : sets
+Patient "1" --> "0..*" AiChatMessage : sends
+Patient "1" --> "0..*" Allergy : has
+Patient "1" --> "0..*" MedicalHistoryEntry : has
+Patient "1" --> "0..*" ServiceBooking : books
+User "1" --> "0..*" ServiceBooking : receives «provider»
+Doctor "1" --> "0..*" HospitalDoctorAvailability : available in
+Hospital "1" --> "0..*" BedAvailability : lists
+Hospital "1" --> "0..*" HospitalDoctorAvailability : posts
+Hospital "1" --> "0..*" HospitalServiceOffering : offers
+DiagnosticCenter "1" --> "0..*" TestOffer : offers
+AmbulanceProvider "1" --> "0..*" Ambulance : operates
+Pharmacy "1" --> "0..*" Medicine : stocks
+Pharmacy "1" --> "0..*" Order : fulfils
+Order "1" *-- "1..*" OrderItem : contains
+OrderItem "0..*" o-- "1" Medicine : refers to
+Consultation "0..1" o-- "1" Appointment : from
+Campaign "1" *-- "0..*" Donation : receives
+AmbulanceRequest "0..*" o-- "1" Ambulance : assigned
+Post "1" *-- "0..*" Comment : has
+Allergy ..> AllergySeverity : severity

@@ -92,6 +92,24 @@ public class AmbulanceService {
                 .toList();
     }
 
+    /** Entity list for the patient's server-rendered "my ambulance requests" page. */
+    public List<AmbulanceRequest> myRequestEntities(User patient) {
+        requireRole(patient, UserRole.PATIENT);
+        return requests.findByPatientIdOrderByRequestedAtDesc(patient.getId());
+    }
+
+    /** Marks a patient's ambulance fare as paid (called from the payment flow). */
+    public void markFarePaid(User patient, Long requestId) {
+        requireRole(patient, UserRole.PATIENT);
+        AmbulanceRequest request = requests.findById(requestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ambulance request not found"));
+        if (!request.getPatient().getId().equals(patient.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not your request");
+        }
+        request.setPaid(true);
+        requests.save(request);
+    }
+
     public AmbulanceRequestResponse track(User actor, Long requestId) {
         AmbulanceRequest request = requests.findById(requestId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ambulance request not found"));

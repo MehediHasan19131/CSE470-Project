@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{fragments/dashboard-layout :: head('Campaigns')}"></head>
+  <head th:replace="~{fragments/dashboard-layout :: head('Crowdfunding')}"></head>
   <body>
     <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
 
     <main class="container-fluid p-4">
-      <div th:replace="~{fragments/dashboard-layout :: page-heading('Campaigns', 'Support an active crowdfunding campaign', 'bi-heart-pulse')}"></div>
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Crowdfunding', 'Support an active fundraising campaign', 'bi-heart-pulse')}"></div>
 
       <div class="d-flex justify-content-end mb-3">
         <a href="/donations" class="btn btn-outline-primary btn-sm">

@@ -11,7 +11,7 @@
 
       <div class="dashboard-hero mb-4">
         <div>
-          <p class="text-uppercase text-primary small fw-semibold mb-1">Hospital &amp; Diagnostic Module</p>
+          <p class="text-uppercase text-primary small fw-semibold mb-1">Facility management</p>
           <h1 class="h3 fw-bold mb-2">Manage test offers</h1>
           <p class="mb-0">Add, price, and update the tests your centre runs - patients see this on your facility page.</p>
         </div>
@@ -24,6 +24,30 @@
       <div class="alert alert-success py-2" th:if="${param.testOfferSaved}">Test offer saved.</div>
       <div class="alert alert-success py-2" th:if="${param.testOfferDeleted}">Test offer removed.</div>
       <div class="alert alert-danger py-2" th:if="${param.error != null}" th:text="${param.error[0]}">Error</div>
+
+      <div class="panel mb-4">
+        <div class="section-title">
+          <div>
+            <p class="text-uppercase text-primary small fw-semibold mb-1">Incoming bookings</p>
+            <h2 class="h6 fw-bold mb-0" th:text="${#lists.size(bookings)} + ' paid booking(s)'">0 bookings</h2>
+          </div>
+        </div>
+        <p class="text-secondary small mb-0" th:if="${#lists.isEmpty(bookings)}">No bookings yet. Patients who book &amp; pay for your tests appear here.</p>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(bookings)}">
+          <table class="table align-middle mb-0">
+            <thead><tr><th>Patient</th><th>Test</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr th:each="b : ${bookings}">
+                <td th:text="${b.patient != null ? b.patient.fullName : '—'}">patient</td>
+                <td th:text="${b.itemName}">item</td>
+                <td>৳<span th:text="${b.amount}">0</span></td>
+                <td th:text="${#temporals.format(b.createdAt, 'dd MMM yyyy')}">date</td>
+                <td><span class="badge text-bg-success" th:text="${b.status}">PAID</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <div class="panel mb-4">
         <div class="section-title">

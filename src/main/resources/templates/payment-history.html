@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('My payments')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container py-4" style="max-width: 960px;">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading(
+              ${auditMode ? 'All payments (audit)' : 'My payments'},
+              ${auditMode ? 'Every payment made on the platform' : 'Every payment you have made through SmartCare'},
+              'bi-receipt')}"></div>
+
+      <div class="panel">
+        <p class="text-secondary" th:if="${#lists.isEmpty(payments)}">
+          <span th:if="${auditMode}">No payments recorded on the platform yet.</span>
+          <span th:unless="${auditMode}">You haven't made any payments yet. Support a <a href="/campaigns">campaign</a> to get started.</span>
+        </p>
+
+        <div class="table-responsive" th:unless="${#lists.isEmpty(payments)}">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th th:if="${auditMode}">Payer</th>
+                <th>Purpose</th>
+                <th>Method</th>
+                <th>From</th>
+                <th>Transaction</th>
+                <th class="text-end">Amount</th>
+                <th class="text-end">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="p : ${payments}">
+                <td th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy')}">date</td>
+                <td th:if="${auditMode}" th:text="${p.payer != null ? p.payer.fullName : '—'}">payer</td>
+                <td th:text="${p.purpose}">purpose</td>
+                <td><span class="badge text-bg-light" th:text="${p.method}">method</span></td>
+                <td th:text="${p.senderAccount}">from</td>
+                <td><code th:text="${p.transactionId}">TXN</code></td>
+                <td class="text-end fw-semibold">৳<span th:text="${p.amount}">0</span></td>
+                <td class="text-end"><span class="badge text-bg-success" th:text="${p.status}">SUCCESS</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

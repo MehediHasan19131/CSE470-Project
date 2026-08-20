@@ -1,5 +1,6 @@
 package com.healthcare.platform.auth;
 
+import com.healthcare.platform.model.UserRole;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RegistrationController {
@@ -18,9 +20,20 @@ public class RegistrationController {
     }
 
     @GetMapping("/register")
-    public String showForm(Model model) {
+    public String showForm(@RequestParam(required = false) String role, Model model) {
         if (!model.containsAttribute("registerRequest")) {
-            model.addAttribute("registerRequest", new RegisterRequest());
+            RegisterRequest request = new RegisterRequest();
+            // Pre-select the role when the visitor arrived from a "Join as ..." link
+            // (e.g. /register?role=DOCTOR). Unknown values are ignored so a hand-typed
+            // query string can never 400 the page.
+            if (role != null && !role.isBlank()) {
+                try {
+                    request.setRole(UserRole.valueOf(role.trim().toUpperCase()));
+                } catch (IllegalArgumentException ignored) {
+                    // leave role unselected
+                }
+            }
+            model.addAttribute("registerRequest", request);
         }
         return "register";
     }

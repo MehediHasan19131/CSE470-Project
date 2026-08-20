@@ -7,4 +7,5 @@ import com.healthcare.platform.model.Order;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByPatientIdOrderByCreatedAtDesc(Long patientId);
+    List<Order> findByPharmacyIdOrderByCreatedAtDesc(Long pharmacyId);
 }

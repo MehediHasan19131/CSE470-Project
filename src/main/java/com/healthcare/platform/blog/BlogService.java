@@ -63,12 +63,12 @@ public class BlogService {
         return blog.findPostById(id).orElseThrow();
     }
 
-    /** Extra beyond the assigned backend items - see README. Only the original author may delete it. */
-    public void deletePost(Long id, Long requesterId) {
+    /** The original author may delete their own post; an admin may delete any post (moderation). */
+    public void deletePost(Long id, Long requesterId, boolean isAdmin) {
         Post existing = blog.findPostById(id)
                 .orElseThrow(() -> new NoSuchElementException("Post not found."));
 
-        if (!existing.getAuthorId().equals(requesterId)) {
+        if (!isAdmin && !existing.getAuthorId().equals(requesterId)) {
             throw new IllegalStateException("You can only delete your own posts.");
         }
 
@@ -96,12 +96,12 @@ public class BlogService {
         return blog.insertComment(comment);
     }
 
-    /** Extra beyond "Comment System" as literally assigned - see README. Only the original author may delete it. */
-    public void deleteComment(Long id, Long requesterId) {
+    /** The original author may delete their own comment; an admin may delete any comment (moderation). */
+    public void deleteComment(Long id, Long requesterId, boolean isAdmin) {
         Comment existing = blog.findCommentById(id)
                 .orElseThrow(() -> new NoSuchElementException("Comment not found."));
 
-        if (!existing.getAuthorId().equals(requesterId)) {
+        if (!isAdmin && !existing.getAuthorId().equals(requesterId)) {
             throw new IllegalStateException("You can only delete your own comments.");
         }
 

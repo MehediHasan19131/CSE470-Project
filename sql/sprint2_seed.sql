@@ -1,3 +1,0 @@
--- Sprint 2 demo data is inserted automatically by HealthcarePlatformApplication.java on startup,
--- the same way Sprint 1 data is (see the seedData CommandLineRunner bean).
--- This file is kept only for parity with sql/seed.sql — no manual insert is required.

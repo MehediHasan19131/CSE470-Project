@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('My ambulance requests')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container py-4" style="max-width: 960px;">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('My ambulance requests', 'Track your bookings and pay the fare', 'bi-truck-front')}"></div>
+
+      <div class="d-flex justify-content-end mb-3">
+        <a href="/ambulance/book" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Book an ambulance</a>
+      </div>
+
+      <div class="panel">
+        <p class="text-secondary mb-0" th:if="${#lists.isEmpty(requests)}">
+          No ambulance requests yet. <a href="/ambulance/book">Book one</a> to get started.
+        </p>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(requests)}">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr><th>Requested</th><th>Pickup</th><th>Emergency</th><th>Status</th><th>Fare</th><th>Payment</th><th class="text-end">Action</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="r : ${requests}">
+                <td th:text="${#temporals.format(r.requestedAt, 'dd MMM, HH:mm')}">date</td>
+                <td th:text="${r.pickupAddress}">pickup</td>
+                <td><span class="badge text-bg-light" th:text="${r.emergencyType != null ? r.emergencyType : '—'}">type</span></td>
+                <td><span class="badge text-bg-info" th:text="${r.status}">status</span></td>
+                <td th:text="${r.fareEstimate != null ? '৳' + r.fareEstimate : '—'}">fare</td>
+                <td>
+                  <span class="badge text-bg-success" th:if="${r.paid}">Paid</span>
+                  <span class="badge text-bg-warning" th:unless="${r.paid}">Unpaid</span>
+                </td>
+                <td class="text-end">
+                  <a th:if="${!r.paid and r.fareEstimate != null}" class="btn btn-sm btn-success"
+                     th:href="@{/payment(intent='ambulance', requestId=${r.id}, amount=${r.fareEstimate})}">
+                    <i class="bi bi-wallet2"></i> Pay fare
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

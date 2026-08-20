@@ -2,6 +2,7 @@ package com.healthcare.platform.blog;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.model.UserRole;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,7 +84,7 @@ public class BlogApiController {
     public ResponseEntity<?> deletePost(@PathVariable Long id, Authentication authentication) {
         AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
         try {
-            blogService.deletePost(id, me.getId());
+            blogService.deletePost(id, me.getId(), me.getRole() == UserRole.ADMIN);
             return ResponseEntity.noContent().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(e.getMessage()));
@@ -122,7 +123,7 @@ public class BlogApiController {
     public ResponseEntity<?> deleteComment(@PathVariable Long id, Authentication authentication) {
         AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
         try {
-            blogService.deleteComment(id, me.getId());
+            blogService.deleteComment(id, me.getId(), me.getRole() == UserRole.ADMIN);
             return ResponseEntity.noContent().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(e.getMessage()));

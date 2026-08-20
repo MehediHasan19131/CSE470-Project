@@ -168,4 +168,22 @@ public class AdminUserService {
 
         authUsers.deleteById(id);
     }
+
+    /**
+     * One-click block (suspend/hide) or unblock, without opening the full edit
+     * form. Blocking flips is_active to false: SecurityConfig then refuses that
+     * account's login (.disabled(!active)) and inactive providers drop out of
+     * the patient-facing directories. Unblocking flips it back to true.
+     */
+    public void setActive(Long id, Long requesterId, boolean active) {
+        if (id.equals(requesterId) && !active) {
+            throw new IllegalStateException("You can't block your own account while logged in.");
+        }
+        AuthUser target = authUsers.findById(id).orElseThrow(() -> new NoSuchElementException("User not found."));
+        if (!active && target.getRole() == UserRole.ADMIN && authUsers.countByRole(UserRole.ADMIN) <= 1) {
+            throw new IllegalStateException("Can't block the last remaining admin account.");
+        }
+        authUsers.updateAsAdmin(target.getId(), target.getFullName(), target.getEmail(),
+                target.getPhone(), target.getRole(), active);
+    }
 }

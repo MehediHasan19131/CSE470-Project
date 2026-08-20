@@ -48,6 +48,7 @@ public class OrderService {
 
         Order order = new Order();
         order.setPatient(patient);
+        order.setPharmacy(medicine.getPharmacy());
         order.setDeliveryAddress(request.deliveryAddress());
 
         OrderItem item = new OrderItem(medicine, request.quantity(), medicine.getPrice());
@@ -71,5 +72,27 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have access to this order");
         }
         return order;
+    }
+
+    /** Incoming orders for a pharmacy - orders placed for medicines it owns. */
+    public List<Order> getOrdersForPharmacy(Long pharmacyId) {
+        return orders.findByPharmacyIdOrderByCreatedAtDesc(pharmacyId);
+    }
+
+    /** A pharmacy (or admin) updates the fulfilment status of one of its orders. */
+    @Transactional
+    public Order updateStatus(User pharmacy, Long orderId, String status) {
+        Order order = orders.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        boolean ownerPharmacy = order.getPharmacy() != null && order.getPharmacy().getId().equals(pharmacy.getId());
+        if (!ownerPharmacy && pharmacy.getRole() != UserRole.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "This order isn't for your pharmacy");
+        }
+        String normalized = status == null ? "" : status.toUpperCase();
+        if (!List.of("PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED").contains(normalized)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status");
+        }
+        order.setStatus(normalized);
+        return orders.save(order);
     }
 }

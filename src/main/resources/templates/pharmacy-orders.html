@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Incoming orders')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Incoming orders', 'Medicine orders placed for your pharmacy', 'bi-bag-check')}"></div>
+
+      <div class="alert alert-success py-2" th:if="${param.updated}">Order updated.</div>
+      <div class="alert alert-danger py-2" th:if="${param.error}">Couldn't update that order.</div>
+
+      <div class="panel">
+        <p class="text-secondary mb-0" th:if="${#lists.isEmpty(orders)}">
+          No orders yet. When patients order your medicines, they'll appear here.
+        </p>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(orders)}">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Date</th><th>Patient</th><th>Items</th><th>Deliver to</th><th>Total</th><th>Status</th><th class="text-end">Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="o : ${orders}">
+                <td th:text="${#temporals.format(o.createdAt, 'dd MMM, HH:mm')}">date</td>
+                <td th:text="${o.patient != null ? o.patient.fullName : '—'}">patient</td>
+                <td>
+                  <span th:each="it,iter : ${o.items}">
+                    <span th:text="${it.medicine.name} + ' ×' + ${it.quantity}">med</span><span th:if="${!iter.last}">, </span>
+                  </span>
+                </td>
+                <td th:text="${o.deliveryAddress != null and !o.deliveryAddress.isEmpty() ? o.deliveryAddress : '—'}">addr</td>
+                <td>৳<span th:text="${o.totalAmount}">0</span></td>
+                <td>
+                  <span class="badge"
+                        th:classappend="${o.status == 'DELIVERED'} ? 'text-bg-success' : (${o.status == 'CANCELLED'} ? 'text-bg-danger' : 'text-bg-info')"
+                        th:text="${o.status}">status</span>
+                </td>
+                <td class="text-end">
+                  <form th:action="@{'/pharmacy/orders/' + ${o.id} + '/status'}" method="post"
+                        class="d-inline-flex gap-2 justify-content-end">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <select name="status" class="form-select form-select-sm" style="width:auto;">
+                      <option th:each="s : ${ {'PENDING','PROCESSING','SHIPPED','DELIVERED','CANCELLED'} }"
+                              th:value="${s}" th:text="${s}" th:selected="${s == o.status}">S</option>
+                    </select>
+                    <button class="btn btn-sm btn-outline-primary" type="submit">Save</button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

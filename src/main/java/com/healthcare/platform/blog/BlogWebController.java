@@ -2,6 +2,7 @@ package com.healthcare.platform.blog;
 
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.model.UserRole;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +64,12 @@ public class BlogWebController {
     public String createPost(@RequestParam String title, @RequestParam String content,
                               Authentication authentication, Model model) {
         AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        if (!canPost(me.getRole())) {
+            model.addAttribute("me", me);
+            model.addAttribute("posts", blogService.getFeed());
+            model.addAttribute("postError", "Only patients, doctors, hospitals and diagnostic centres can publish posts.");
+            return "blog-feed";
+        }
         try {
             blogService.createPost(me.getId(), title, content);
             return "redirect:/blog?postSaved=true";
@@ -78,6 +85,9 @@ public class BlogWebController {
     public String updatePost(@PathVariable Long id, @RequestParam String title, @RequestParam String content,
                               Authentication authentication, Model model) {
         AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
+        if (!canPost(me.getRole())) {
+            return "redirect:/blog?error=" + URLEncoder.encode("You can't edit posts with this role.", StandardCharsets.UTF_8);
+        }
         try {
             blogService.updatePost(id, me.getId(), title, content);
             return "redirect:/blog?postSaved=true";
@@ -93,7 +103,7 @@ public class BlogWebController {
     public String deletePost(@PathVariable Long id, Authentication authentication) {
         AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
         try {
-            blogService.deletePost(id, me.getId());
+            blogService.deletePost(id, me.getId(), me.getRole() == UserRole.ADMIN);
             return "redirect:/blog?postDeleted=true";
         } catch (IllegalStateException | NoSuchElementException e) {
             return "redirect:/blog?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
@@ -135,10 +145,15 @@ public class BlogWebController {
     public String deleteComment(@PathVariable Long postId, @PathVariable Long commentId, Authentication authentication) {
         AuthUser me = authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow();
         try {
-            blogService.deleteComment(commentId, me.getId());
+            blogService.deleteComment(commentId, me.getId(), me.getRole() == UserRole.ADMIN);
             return "redirect:/blog/posts/" + postId + "?commentDeleted=true";
         } catch (IllegalStateException | NoSuchElementException e) {
             return "redirect:/blog/posts/" + postId + "?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
+    }
+
+    private boolean canPost(UserRole role) {
+        return role == UserRole.PATIENT || role == UserRole.DOCTOR
+                || role == UserRole.HOSPITAL || role == UserRole.DIAGNOSTIC;
     }
 }

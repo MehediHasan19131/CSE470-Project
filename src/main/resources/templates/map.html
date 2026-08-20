@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Find Care Near You | SmartCare</title>
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    <link href="/css/styles.css" rel="stylesheet">
+    <style>
+      #careMap { height: 68vh; min-height: 420px; width: 100%; border-radius: 12px; z-index: 0; }
+      .map-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+      .map-legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 0.88rem; color: #4a5b63; }
+      .map-legend .dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+      .map-popup h6 { margin: 0 0 4px; font-weight: 700; }
+      .map-popup .role-tag { font-size: 0.72rem; text-transform: uppercase; letter-spacing: .04em; color: #0f7c90; font-weight: 600; }
+      .map-popup p { margin: 4px 0 0; font-size: 0.82rem; color: #5e6b76; }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg app-navbar sticky-top">
+      <div class="container-fluid px-4">
+        <a class="brand-logo" href="/" aria-label="SmartCare home">
+          <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="174" height="46">
+        </a>
+        <div class="nav-actions">
+          <a href="/" class="nav-pill nav-pill-muted"><i class="bi bi-house"></i> Home</a>
+          <a href="/faq" class="nav-pill nav-pill-muted"><i class="bi bi-question-circle"></i> FAQ</a>
+          <a href="/register" class="nav-pill"><i class="bi bi-person-plus"></i> Create account</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-4" style="max-width: 1100px;">
+      <div class="text-center mb-3">
+        <p class="text-uppercase text-primary small fw-semibold mb-2">Map integration</p>
+        <h1 class="fw-bold mb-2">Find care near you</h1>
+        <p class="text-secondary mb-0">Hospitals, doctors, pharmacies, diagnostic centres and ambulance teams across the network.</p>
+      </div>
+
+      <div id="careMap"></div>
+
+      <div class="map-legend justify-content-center">
+        <span><span class="dot" style="background:#2563b8"></span> Doctor</span>
+        <span><span class="dot" style="background:#d9654f"></span> Hospital</span>
+        <span><span class="dot" style="background:#23836f"></span> Pharmacy</span>
+        <span><span class="dot" style="background:#7c3aed"></span> Diagnostic centre</span>
+        <span><span class="dot" style="background:#a77700"></span> Ambulance</span>
+      </div>
+
+      <p id="mapEmpty" class="text-center text-secondary small mt-3 d-none">
+        No provider locations to show yet. As providers register and add their location, they'll appear here.
+      </p>
+    </main>
+
+    <footer th:replace="~{fragments/site-footer :: footer}"></footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      (function () {
+        var COLORS = {
+          DOCTOR: '#2563b8', HOSPITAL: '#d9654f', PHARMACY: '#23836f',
+          DIAGNOSTIC: '#7c3aed', AMBULANCE: '#a77700'
+        };
+        var labels = {
+          DOCTOR: 'Doctor', HOSPITAL: 'Hospital', PHARMACY: 'Pharmacy',
+          DIAGNOSTIC: 'Diagnostic centre', AMBULANCE: 'Ambulance'
+        };
+
+        var map = L.map('careMap').setView([23.8103, 90.4125], 12); // Dhaka
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        function esc(s) {
+          if (s == null) return '';
+          return String(s).replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+          });
+        }
+
+        fetch('/api/map/providers')
+          .then(function (r) { return r.json(); })
+          .then(function (list) {
+            if (!list || !list.length) {
+              document.getElementById('mapEmpty').classList.remove('d-none');
+              return;
+            }
+            var bounds = [];
+            list.forEach(function (p) {
+              var color = COLORS[p.role] || '#0f7c90';
+              var marker = L.circleMarker([p.lat, p.lng], {
+                radius: 9, color: '#ffffff', weight: 2,
+                fillColor: color, fillOpacity: 0.9
+              }).addTo(map);
+              var details = '';
+              if (p.specialization) details += '<p><i class="bi bi-clipboard-pulse"></i> ' + esc(p.specialization) + '</p>';
+              if (p.service) details += '<p><i class="bi bi-hospital"></i> ' + esc(p.service) + '</p>';
+              if (p.city || p.address) details += '<p><i class="bi bi-geo-alt"></i> ' + esc(p.address || p.city) + '</p>';
+              if (p.emergency) details += '<p><span class="badge text-bg-danger">24/7 Emergency</span></p>';
+              marker.bindPopup(
+                '<div class="map-popup">' +
+                '<span class="role-tag">' + esc(labels[p.role] || p.role) + '</span>' +
+                '<h6>' + esc(p.name) + '</h6>' + details + '</div>'
+              );
+              bounds.push([p.lat, p.lng]);
+            });
+            if (bounds.length) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+          })
+          .catch(function () {
+            document.getElementById('mapEmpty').classList.remove('d-none');
+          });
+      })();
+    </script>
+  </body>
+</html>

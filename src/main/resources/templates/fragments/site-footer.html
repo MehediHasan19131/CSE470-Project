@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+  Shared site footer (public + in-app pages). Include with:
+    <footer th:replace="~{fragments/site-footer :: footer}"></footer>
+  Styling lives in static/css/styles.css under the "Site footer" section.
+-->
+<footer th:fragment="footer" class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-brand">
+      <div class="footer-brand-name">
+        <img src="/img/smartcare-icon.svg" alt="" width="34" height="34">
+        <span>SmartCare</span>
+      </div>
+      <p>SmartCare — an Integrated Healthcare Management &amp; Telemedicine System connecting patients,
+        doctors, hospitals, pharmacies, diagnostic centres and ambulance teams.</p>
+      <div class="footer-social" aria-label="Social media">
+        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" aria-label="X"><i class="bi bi-twitter-x"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="/">Home</a>
+      <a href="/register">Create account</a>
+      <a href="/faq">FAQ</a>
+      <a href="/map">Find care near you</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Join as</h4>
+      <a href="/register?role=DOCTOR">Doctor</a>
+      <a href="/register?role=HOSPITAL">Hospital</a>
+      <a href="/register?role=PHARMACY">Pharmacy</a>
+      <a href="/register?role=DIAGNOSTIC">Diagnostic centre</a>
+      <a href="/register?role=AMBULANCE">Ambulance service</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="/faq">Help &amp; FAQ</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="mailto:support@smartcare.local">Contact us</a>
+    </div>
+  </div>
+
+  <div class="site-footer-bottom">
+    <span>&copy; 2026 SmartCare. All rights reserved.</span>
+    <span class="footer-credit">Built for CSE470 · One Care Team</span>
+  </div>
+</footer>
+</body>
+</html>

@@ -24,11 +24,12 @@
             </p>
           </div>
           <div class="login-role-grid">
-            <span><i class="bi bi-person"></i> Patient</span>
-            <span><i class="bi bi-person-vcard"></i> Doctor</span>
-            <span><i class="bi bi-hospital"></i> Hospital</span>
-            <span><i class="bi bi-capsule"></i> Pharmacy</span>
+            <a href="/register?role=PATIENT"><i class="bi bi-person"></i> Patient</a>
+            <a href="/register?role=DOCTOR"><i class="bi bi-person-vcard"></i> Doctor</a>
+            <a href="/register?role=HOSPITAL"><i class="bi bi-hospital"></i> Hospital</a>
+            <a href="/register?role=PHARMACY"><i class="bi bi-capsule"></i> Pharmacy</a>
           </div>
+          <p class="login-role-hint">New here? Pick a role above to create your account.</p>
 
         </div>
 
@@ -64,12 +65,17 @@
               <i class="bi bi-arrow-right"></i>
             </button>
           </form>
-          <div class="demo-account-box">
-            <i class="bi bi-info-circle"></i>
-            <span>Demo accounts (password: <code>password123</code>): patient@health.test, doctor@health.test, hospital@health.test, pharmacy@health.test, diagnostic@health.test, ambulance@health.test. Admin credentials are not listed here on purpose — ask your instructor/team lead if you need admin access.</span>
+
+          <div class="register-cta">
+            <span class="register-cta-label">Don't have an account?</span>
+            <a href="/register" class="btn btn-outline-primary w-100">
+              <i class="bi bi-person-plus"></i> Create your account
+            </a>
           </div>
+
         </div>
       </div>
     </section>
+    <footer th:replace="~{fragments/site-footer :: footer}"></footer>
   </body>
 </html>
