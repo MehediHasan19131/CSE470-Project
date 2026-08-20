@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/dashboard-layout :: head('Request Creation')}"></head>
+<body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+        <div th:replace="~{fragments/dashboard-layout :: page-heading('Request Creation', 'Create a new blood request', 'bi-plus')}"></div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-lg"></i> <span th:text="${success}">Success</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="panel">
+                    <form method="post" action="/blood/requests/new" class="vstack gap-4">
+
+                        <div>
+                            <label class="form-label fw-semibold">Requester Name</label>
+                            <input class="form-control" type="text" name="requesterName"
+                                   placeholder="e.g. Dr. Ahmed" required>
+                        </div>
+
+                        <div>
+                            <label class="form-label fw-semibold">Requester Phone</label>
+                            <input class="form-control" type="tel" name="requesterPhone"
+                                   placeholder="+880-17xxxxxxxx" required>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Blood Group Needed</label>
+                                <select class="form-select" name="bloodGroupNeeded" required>
+                                    <option value="" disabled>— Select blood group —</option>
+                                    <option value="A+" th:selected="${request.bloodGroupNeeded == 'A+'}">A+</option>
+                                    <option value="A-" th:selected="${request.bloodGroupNeeded == 'A-'}">A-</option>
+                                    <option value="B+" th:selected="${request.bloodGroupNeeded == 'B+'}">B+</option>
+                                    <option value="B-" th:selected="${request.bloodGroupNeeded == 'B-'}">B-</option>
+                                    <option value="AB+" th:selected="${request.bloodGroupNeeded == 'AB+'}">AB+</option>
+                                    <option value="AB-" th:selected="${request.bloodGroupNeeded == 'AB-'}">AB-</option>
+                                    <option value="O+" th:selected="${request.bloodGroupNeeded == 'O+'}">O+</option>
+                                    <option value="O-" th:selected="${request.bloodGroupNeeded == 'O-'}">O-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Units Needed</label>
+                                <input class="form-control" type="number" name="unitsNeeded"
+                                       min="1" placeholder="e.g. 1" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Hospital/Location</label>
+                                <input class="form-control" type="text" name="hospitalOrLocation"
+                                       placeholder="e.g. Dhaka Medical College Hospital">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Needed By Date</label>
+                                <input class="form-control" type="date" name="neededByDate"
+                                       value="${neededByDate}" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Urgency</label>
+                                <select class="form-select" name="urgency">
+                                    <option value="LOW" th:selected="${urgency == 'LOW'}">LOW</option>
+                                    <option value="MEDIUM" th:selected="${urgency == 'MEDIUM'}">MEDIUM</option>
+                                    <option value="HIGH" th:selected="${urgency == 'HIGH'}">HIGH</option>
+                                    <option value="CRITICAL" th:selected="${urgency == 'CRITICAL'}">CRITICAL</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-primary px-4" type="submit">
+                                <i class="bi bi-check-lg"></i> Create Request
+                            </button>
+                            <a class="btn btn-outline-secondary px-4" href="/blood/requests">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

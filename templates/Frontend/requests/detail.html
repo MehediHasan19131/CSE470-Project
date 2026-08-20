@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/dashboard-layout :: head('Request Detail')}"></head>
+<body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+
+    <main class="container-fluid p-4">
+        <div th:replace="~{fragments/dashboard-layout :: page-heading('Request Detail', 'Blood request details and matching donors', 'bi-clock-history')}"></div>
+
+        <div class="row mb-4">
+            <div class="col-lg-4">
+                <div class="panel p-3" style="background: var(--surface); border-radius: 12px;">
+                    <h5 class="h6 mb-3">Request Details</h5>
+                    <p><strong>Requester:</strong> <span th:text="${request.requesterName}">Name</span></p>
+                    <p><strong>Phone:</strong> <span th:text="${request.requesterPhone}">+880-17xxxxxxxx</span></p>
+                    <p><strong>Blood Group:</strong> <span style="color: var(--cyan);"
+                          th:text="${request.bloodGroupNeeded}">A+</span></p>
+                    <p><strong>Units Needed:</strong> <span th:text="${request.unitsNeeded}">2</span></p>
+                    <p><strong>Urgency:</strong>
+                        <span class="badge"
+                              th:classappend="${request.urgency.name() == 'CRITICAL'} 'bg-danger' : ''
+                              th:classappend="${request.urgency.name() == 'HIGH'} 'bg-warning text-dark' : ''
+                              th:classappend="${request.urgency.name() == 'MEDIUM'} 'bg-secondary' : ''
+                              th:classappend="${request.urgency.name() == 'LOW'} 'bg-light' : ''
+                              th:text="${request.urgency}">CRITICAL</span></p>
+                    <p><strong>Hospital/Location:</strong> <span th:text="${request.hospitalOrLocation}">Nearest hospital</span></p>
+                    <p><strong>Needed by:</strong> <span th:text="${#temporals.format(req.neededByDate, 'dd MMM yyyy')}">N/A</span></p>
+                    <p><strong>Status:</strong>
+                        <span class="badge"
+                              th:classappend="${request.status.name() == 'OPEN'} 'bg-primary' : ''
+                              th:classappend="${request.status.name() == 'FULFILLED'} 'bg-success' : ''
+                              th:classappend="${request.status.name() == 'EXPIRED'} 'bg-secondary' : ''
+                              th:text="${request.status}">OPEN</span></p>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="panel p-3" style="background: var(--surface); border-radius: 12px;">
+                    <h5 class="h6 mb-3">Matching Available Donors</h5>
+                    <p class="text-secondary small mb-3">Donors with matching blood group (${request.bloodGroupNeeded}):</p>
+                    <div class="donor-grid">
+                        <div class="donor-card" th:each="d : ${matchingDonors}">
+                            <div class="donor-header">
+                                <span class="donor-name" th:text="${d.fullName}">Name</span>
+                                <span class="donor-blood" th:text="${d.bloodGroup}">A+</span>
+                            </div>
+                            <div class="donor-meta">
+                                <i class="bi bi-phone"></i> <span th:text="${d.phone}">+880-17xxxxxxxx</span>
+                                <i class="bi bi-shield-check"></i> <span th:text="${d.isAvailable}">Available</span>
+                            </div>
+                            <div class="donor-actions">
+                                <small>Contact: <a href="tel:${d.phone}">${d.phone}</a></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel text-center py-5" th:if="${#lists.isEmpty(matchingDonors)}">
+                        <i class="bi bi-emergency fs-1 text-secondary"></i>
+                        <p>No available donors found with blood group ${request.bloodGroupNeeded}.</p>
+                        <p class="text-secondary small">Try expanding the search to nearby cities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a class="btn btn-outline-primary" th:href="@{/blood/requests/${request.id}}">
+                <i class="bi bi-arrow-left"></i> Back to Request
+            </a>
+            <a th:if="${request.status.name() == 'OPEN'}" class="btn btn-success"
+               th:href="@{/blood/requests/{id}/fulfill(id=${request.id})}">Mark as Fulfilled</a>
+            <a th:if="${request.status.name() != 'EXPIRED'}" class="btn btn-secondary"
+               th:href="@{/blood/requests/{id}/expire}">Mark as Expired</a>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

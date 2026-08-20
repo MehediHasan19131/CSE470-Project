@@ -1,6 +1,12 @@
 # One Care — SmartCare Healthcare Platform
 
-**CSE470 Software Engineering — Integrated Healthcare Management & Telemedicine System**
+**CSE470 Software Engineering (BRAC University) — Integrated Healthcare Management & Telemedicine System**
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 One Care (branded **SmartCare** in the app) is a role-based healthcare platform that connects
 patients with doctors, hospitals, pharmacies, diagnostic centres and ambulance teams — covering
@@ -14,7 +20,8 @@ Admin Dashboard (approve / block / remove any account) · Search Doctor by Speci
 Online Appointment Booking · Appointment Reminders · Telemedicine (video/audio consultation) ·
 AI-Powered Symptom Checker · Pharmacy Service · Ambulance Booking (ride-sharing model) ·
 Medicine Reminder & History · **Online Payment (bKash / Bank — sandbox)** · Health Articles & Blog ·
-**FAQ** · Ratings & Reviews · Donation & Crowdfunding · **Map Integration (OpenStreetMap)**.
+**FAQ** · Ratings & Reviews · Donation & Crowdfunding · **Map Integration (OpenStreetMap)** ·
+Blood Donation directory & requests.
 
 ## Tech stack
 
@@ -39,7 +46,8 @@ The application follows a layered Model–View–Controller structure under
 | **Config / Security** | `config`, `security` | Spring Security, JWT filter, seeders |
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full package-by-package breakdown and the
-class diagram in `docs/SmartCare-Class-Diagram.svg`.
+class diagram in `docs/SmartCare-Class-Diagram.svg` (a page-by-page readable PDF is in
+`docs/SmartCare-Class-Diagram-readable.pdf`).
 
 ## Roles & permissions
 
@@ -111,7 +119,12 @@ can log in.
 
 | Name | GitHub |
 |------|--------|
-| Mehedi Hasan | MehediHasan19131 |
-| Rony Miah | Saiful101 |
-| Nahian Mahmud | nahianmahmud-2k1 |
-| Imtiaz Zaman Sami | imtiazzamansami-arch |
+| Mehedi Hasan | [@MehediHasan19131](https://github.com/MehediHasan19131) |
+| Rony Miah | [@Saiful101](https://github.com/Saiful101) |
+| Nahian Mahmud | [@nahianmahmud-2k1](https://github.com/nahianmahmud-2k1) |
+| Imtiaz Zaman Sami | [@imtiazzamansami-arch](https://github.com/imtiazzamansami-arch) |
+
+## Status
+
+Built across Sprints 1–4 using an Agile workflow. Browse the branches and commit history for
+module-by-module progress.
