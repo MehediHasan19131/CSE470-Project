@@ -1,108 +1,81 @@
-# One Care / SmartCare — MVC Architecture
+# SmartCare MVC Architecture
 
-This document describes how the codebase is organised. The project follows a layered
-**Model–View–Controller** architecture on top of Spring Boot.
+SmartCare follows a layered Model-View-Controller (MVC) architecture. Each class has one clear responsibility, and feature subfolders keep related classes easy to find without mixing layers.
 
 ## Request flow
 
-```
-Browser / API client
-        │
-        ▼
-  Controller layer      ← Spring MVC (@Controller / @RestController)
-        │                  validates input, calls services, picks the view
-        ▼
-  Service layer         ← business rules (@Service)
-        │
-        ▼
-  Repository layer      ← data access (Spring Data JPA + hand-written JDBC)
-        │
-        ▼
-   MySQL database
+```text
+Browser or API client
+        |
+        v
+Controller layer       Handles HTTP requests and selects an HTML view or JSON response
+        |
+        v
+Service layer          Applies business rules and coordinates work
+        |
+        v
+Repository layer       Reads and writes data through JPA or JDBC
+        |
+        v
+Model and MySQL        Domain data and persistent storage
 
-  View layer            ← Thymeleaf + Bootstrap templates rendered by the controllers
+View layer             Thymeleaf templates rendered for browser requests
 ```
 
-Security is enforced by a Spring Security filter chain (`config/SecurityConfig`) that runs before
-any controller, plus a JWT filter for stateless API access.
+Spring Security runs before the controller layer and enforces authentication and role-based access.
 
 ## Source layout
 
-```
+```text
 src/main/java/com/healthcare/platform/
-├── HealthcarePlatformApplication.java   # entry point + demo-data seeder
-├── config/                              # SecurityConfig, seeders
-├── security/                            # JWT filter & token service
-├── controller/                          # web + REST controllers (incl. sprint1/, sprint2/)
-├── service/                             # business logic (incl. sprint2/)
-├── repository/                          # Spring Data JPA repositories
-├── model/                               # JPA entities + enums
-├── dto/                                 # request/response records
-├── auth/                                # authentication & registration module (JDBC)
-├── admin/                               # admin user-management module
-├── blog/                                # health blog module
-├── review/                              # ratings & reviews module
-└── healthprofile/                       # medical history & allergies module
+├── HealthcarePlatformApplication.java     # application entry point and demo-data seeder
+├── config/                                # Spring configuration and seeders
+├── security/                              # authentication filters and JWT support
+├── controller/                            # all web and REST controllers
+│   ├── admin/ auth/ blog/ healthprofile/ review/
+│   ├── appointment/ facility/
+│   └── ... feature controllers
+├── service/                               # all business services and schedulers
+│   ├── admin/ auth/ blog/ healthprofile/ review/ appointment/
+│   └── ... shared and feature services
+├── repository/                            # all JPA and JDBC repositories
+│   ├── auth/ blog/ healthprofile/ review/
+│   └── ... JPA repositories
+├── model/                                 # entities, JDBC domain models, and enums
+│   ├── auth/ blog/ healthprofile/ review/
+│   └── ... shared JPA entities
+└── dto/                                   # API and form request/response classes
+    ├── auth/ blog/ healthprofile/ review/
+    └── ... shared DTOs
 
 src/main/resources/
-├── templates/                           # Thymeleaf views (+ fragments/, sprint1/, sprint2/)
-├── static/css, static/img               # Bootstrap theme + assets
-└── *.sql                                # schema/seed scripts run at startup
+├── templates/                             # Thymeleaf view files
+│   ├── fragments/                         # shared page layout components
+│   └── ... feature pages
+├── static/                                # CSS, images, and browser assets
+└── *.sql                                  # database schema and seed scripts
 ```
 
-## Layers in detail
+## Layer responsibilities
 
-### Model (`model/`)
-JPA entities mapped to database tables: `User`, `Profile`, `Appointment`, `Medicine`, `Order`,
-`Campaign`, `Donation`, **`Payment`**, `Notification`, `Consultation`, `Ambulance`,
-`BedAvailability`, `TestOffer`, `MedicineReminder`, and the `UserRole` enum, among others.
+| Layer | Responsibility | Examples |
+|---|---|---|
+| Model | Represents domain data and relationships. | `User`, `Appointment`, `model/blog/Post`, `model/review/Review` |
+| View | Renders the user interface with Thymeleaf. | `templates/dashboard-patient.html`, `templates/blood-requests.html` |
+| Controller | Receives HTTP requests, calls services, returns an HTML view or JSON. | `controller/BloodDonationController`, `controller/blog/BlogWebController` |
+| Service | Contains business rules and workflows. | `BloodDonationService`, `service/review/ReviewService` |
+| Repository | Provides data access through Spring Data JPA or `JdbcTemplate`. | `DonorRepository`, `repository/blog/BlogJdbcRepository` |
+| DTO | Carries request and response data between the API and clients. | `LoginRequest`, `dto/blog/PostResponse` |
 
-### View (`templates/`)
-Server-rendered Thymeleaf pages styled with Bootstrap. Shared chrome lives in
-`templates/fragments/` — `dashboard-layout.html` (head, role-aware navbar, page headings) and
-`site-footer.html` (the public footer). Role dashboards are `dashboard-<role>.html`.
+## MVC implementation notes
 
-### Controller (`controller/` + feature packages)
-Each controller is thin: it reads the request, delegates to a service, and returns a view name or
-JSON. Web controllers render Thymeleaf; `*ApiController` classes return JSON for the REST API.
+- Web controllers return named templates from `src/main/resources/templates`.
+- API controllers return JSON DTOs and are named `*ApiController`.
+- Business logic is kept out of controllers and belongs in the service layer.
+- Most persistence uses Spring Data JPA. The authentication, blog, review, and health-profile modules use `JdbcTemplate` repositories where plain JDBC is required.
+- Feature subfolders appear inside a layer only; for example, blog code is separated into `controller/blog`, `service/blog`, `repository/blog`, `model/blog`, and `dto/blog`.
 
-### Service (`service/` + feature packages)
-All business rules live here — appointment booking, dashboards, payments, donations, ambulance
-dispatch, medicine reminders, the AI symptom checker, etc.
+## Documentation
 
-### Repository (`repository/` + feature packages)
-Spring Data JPA interfaces for most modules. The **auth**, **review**, **blog** and
-**health-profile** modules deliberately use hand-written JDBC (`JdbcTemplate`) instead of JPA, to
-satisfy the course's "no ORM for my module" requirement — both styles coexist against the same
-MySQL database.
-
-## Feature modules
-
-| Module | Package(s) | Notes |
-|--------|-----------|-------|
-| Auth & registration | `auth`, `config`, `security` | Session + JWT login, BCrypt, role-based approval |
-| Admin | `admin` | Approve / block / unblock / edit / delete any account |
-| Doctors & patients | `controller`, `service`, `model` (sprint1) | Search by specialty, records |
-| Appointments | `controller/sprint2`, `service/sprint2` | Booking + reminders |
-| Telemedicine | `controller`, `service` | Video/audio consultation |
-| AI symptom checker | `service` (`AiChatService`, `OllamaClient`) | Optional local Ollama model |
-| Pharmacy | `controller`, `service` | Store, orders |
-| Ambulance | `controller`, `service` | Ride-sharing style booking |
-| Medicine reminders | `controller`, `service`, `model` | Reminders + dose history |
-| **Online payment** | `controller/PaymentController`, `service/PaymentService`, `model/Payment` | **bKash / Bank sandbox checkout + ledger** |
-| Blog | `blog` | Health articles & comments (JDBC) |
-| Reviews | `review` | Ratings for providers (JDBC) |
-| Donations | `controller`, `service`, `model` | Crowdfunding campaigns |
-| Health profile | `healthprofile` | Medical history & allergies (JDBC) |
-| **Map** | `controller/MapController`, `service/MapService` | **Leaflet + OpenStreetMap provider map** |
-| **FAQ** | `controller/PublicController` | **Public help page** |
-
-## Cross-cutting notes
-
-- **Two user representations, one `users` table:** the JPA `User` entity (used by most modules and
-  Hibernate DDL) and the plain `AuthUser` (used by the JDBC auth module) both map to `users`.
-- **Sandbox payments:** `PaymentService` and `DonationService` never contact a real gateway — every
-  payment is recorded as `SUCCESS` with a generated transaction id (`app_settings.payment_gateway =
-  sandbox`).
-- **Seeding:** `HealthcarePlatformApplication` seeds demo users, providers, campaigns and facility
-  data on startup if the tables are empty.
+- `SmartCare-Class-Diagram.pdf` is the current class diagram for the project.
+- API endpoint guides and the demo guide are retained because they describe how to use and test the finished system.

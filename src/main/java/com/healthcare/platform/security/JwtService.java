@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.healthcare.platform.model.User;
 
-// Named explicitly: com.healthcare.platform.auth.JwtService has the same simple
+// Named explicitly: com.healthcare.platform.security.auth.JwtService has the same simple
 // name, and two beans sharing the default name "jwtService" break context startup.
 @Service("securityJwtService")
 public class JwtService {

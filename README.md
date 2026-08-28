@@ -39,15 +39,14 @@ The application follows a layered Model–View–Controller structure under
 |-------|------------|----------------|
 | **Controller** | `controller`, `auth`, `admin`, `blog`, `review`, `healthprofile` | HTTP endpoints (web pages + REST APIs) |
 | **Service** | `service`, and the service classes inside the feature packages | Business logic |
-| **Repository** | `repository`, `auth`, `review`, `blog`, `healthprofile` | Data access (Spring Data JPA + hand-written JDBC) |
-| **Model** | `model` | JPA entities & domain enums |
-| **DTO** | `dto` | Request/response shapes |
+| **Repository** | `repository/` | Spring Data JPA and JDBC data-access classes, grouped by feature where needed |
+| **Model** | `model/` | JPA entities, JDBC domain models, and enums |
+| **DTO** | `dto/` | Request/response shapes, grouped by feature where needed |
 | **View** | `src/main/resources/templates` | Thymeleaf + Bootstrap pages |
 | **Config / Security** | `config`, `security` | Spring Security, JWT filter, seeders |
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full package-by-package breakdown and the
-class diagram in `docs/SmartCare-Class-Diagram.svg` (a page-by-page readable PDF is in
-`docs/SmartCare-Class-Diagram-readable.pdf`).
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full package-by-package breakdown and
+[`docs/SmartCare-Class-Diagram.pdf`](docs/SmartCare-Class-Diagram.pdf) for the class diagram.
 
 ## Roles & permissions
 

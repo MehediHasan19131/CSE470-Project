@@ -1,6 +1,6 @@
 package com.healthcare.platform.dto;
 
-import com.healthcare.platform.auth.AuthUser;
+import com.healthcare.platform.model.auth.AuthUser;
 import com.healthcare.platform.model.UserRole;
 
 public record UserResponse(
