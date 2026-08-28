@@ -134,6 +134,10 @@
                 <i class="bi bi-geo-alt"></i><span>Find Care</span>
             </a>
 
+            <a href="/blood/donors" class="nav-pill" th:if="${user != null}">
+                <i class="bi bi-droplet-fill"></i><span>Blood Donation</span>
+            </a>
+
             <span class="nav-divider" aria-hidden="true"></span>
 
             <a class="nav-user" href="/profile">

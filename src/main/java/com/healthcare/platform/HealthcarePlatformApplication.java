@@ -4,6 +4,7 @@ import com.healthcare.platform.model.AppSetting;
 import com.healthcare.platform.model.Appointment;
 import com.healthcare.platform.model.BedAvailability;
 import com.healthcare.platform.model.Campaign;
+import com.healthcare.platform.model.Donor;
 import com.healthcare.platform.model.Faq;
 import com.healthcare.platform.model.HospitalDoctorAvailability;
 import com.healthcare.platform.model.HospitalServiceOffering;
@@ -18,6 +19,7 @@ import com.healthcare.platform.repository.AppointmentRepository;
 import com.healthcare.platform.repository.BedAvailabilityRepository;
 import com.healthcare.platform.repository.CampaignRepository;
 import com.healthcare.platform.repository.DonationRepository;
+import com.healthcare.platform.repository.DonorRepository;
 import com.healthcare.platform.repository.FaqRepository;
 import com.healthcare.platform.repository.HospitalDoctorAvailabilityRepository;
 import com.healthcare.platform.repository.HospitalServiceOfferingRepository;
@@ -57,6 +59,7 @@ public class HealthcarePlatformApplication {
             MedicineRepository medicines,
             CampaignRepository campaigns,
             DonationRepository donationsRepo,
+            DonorRepository donors,
             FaqRepository faqs,
             BedAvailabilityRepository beds,
             HospitalDoctorAvailabilityRepository doctorAvailabilities,
@@ -201,6 +204,12 @@ public class HealthcarePlatformApplication {
                 faqs.save(new Faq("How do I book an appointment?", "Sign in as a patient, open Doctors, choose a provider, and select an available appointment slot.", 3));
                 faqs.save(new Faq("Is my health data protected?", "Access is role-based and health records are only available to you and doctors you explicitly authorize.", 4));
                 faqs.save(new Faq("How do I get more help?", "Contact the support team at support@smartcare.local for help with your account or the platform.", 5));
+            }
+
+            if (donors.count() == 0) {
+                donors.save(new Donor(null, "Amina Rahman", "O+", "+8801711111111", "Dhaka", null, true));
+                donors.save(new Donor(null, "Sakib Hasan", "A+", "+8801722222222", "Dhaka", null, true));
+                donors.save(new Donor(null, "Nusrat Jahan", "B+", "+8801733333333", "Chattogram", null, true));
             }
         };
     }
