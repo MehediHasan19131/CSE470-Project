@@ -1,5 +1,6 @@
 package com.healthcare.platform.controller.review;
 import com.healthcare.platform.dto.review.*;
+import com.healthcare.platform.model.review.Review;
 import com.healthcare.platform.service.review.*;
 
 import com.healthcare.platform.model.auth.AuthUser;

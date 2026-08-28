@@ -1,5 +1,7 @@
 package com.healthcare.platform.repository.review;
 import com.healthcare.platform.model.review.*;
+import com.healthcare.platform.dto.review.ProviderSummary;
+import com.healthcare.platform.dto.review.RatingSummary;
 
 import com.healthcare.platform.model.UserRole;
 import org.springframework.jdbc.core.JdbcTemplate;
