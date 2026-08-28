@@ -106,7 +106,13 @@ public class DashboardService {
         data.put("metrics", metrics);
 
         data.put("settings", settings.findAll().stream()
-                .map(setting -> Map.of("key", setting.getKey(), "value", setting.getValue()))
+                .map(setting -> Map.of(
+                        "key", setting.getKey(),
+                        "value", setting.getValue(),
+                        "label", settingLabel(setting.getKey()),
+                        "description", settingDescription(setting.getKey()),
+                        "icon", settingIcon(setting.getKey())
+                ))
                 .toList());
         data.put("features", List.of("Admin settings", "Dashboard APIs", "User role management"));
         return data;
@@ -134,5 +140,32 @@ public class DashboardService {
                 "email", currentUser.getEmail()
         ));
         return data;
+    }
+
+    private String settingLabel(String key) {
+        return switch (key) {
+            case "appointment_reminders" -> "Appointment reminders";
+            case "ai_agent_status" -> "AI assistant";
+            case "payment_gateway" -> "Payment gateway";
+            default -> key.replace('_', ' ');
+        };
+    }
+
+    private String settingDescription(String key) {
+        return switch (key) {
+            case "appointment_reminders" -> "Automatic notifications before appointments";
+            case "ai_agent_status" -> "Symptom-checking assistant availability";
+            case "payment_gateway" -> "Payment processing environment";
+            default -> "Platform configuration";
+        };
+    }
+
+    private String settingIcon(String key) {
+        return switch (key) {
+            case "appointment_reminders" -> "bi-bell";
+            case "ai_agent_status" -> "bi-robot";
+            case "payment_gateway" -> "bi-credit-card";
+            default -> "bi-gear";
+        };
     }
 }

@@ -159,6 +159,7 @@
                     <li><a class="dropdown-item" href="/report"><i class="bi bi-flag"></i> Report a problem</a></li>
                     <li th:if="${role == 'ADMIN'}"><hr class="dropdown-divider"></li>
                     <li th:if="${role == 'ADMIN'}"><a class="dropdown-item" href="/admin/reports"><i class="bi bi-inbox"></i> Review reports</a></li>
+                    <li th:if="${role == 'ADMIN'}"><a class="dropdown-item" href="/admin/faqs"><i class="bi bi-question-circle"></i> Manage FAQs</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
                 </ul>

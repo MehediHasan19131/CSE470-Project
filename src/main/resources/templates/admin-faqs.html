@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/dashboard-layout :: head('Manage FAQs')}"></head>
+  <body>
+    <nav th:replace="~{fragments/dashboard-layout :: navbar}"></nav>
+    <main class="container-fluid p-4">
+      <div th:replace="~{fragments/dashboard-layout :: page-heading('Manage FAQs', 'Create, edit, publish, or remove help-centre answers', 'bi-question-circle')}"></div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-secondary mb-0">Only published FAQs appear on the public help centre.</p>
+        <a href="/admin/faqs/new" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add FAQ</a>
+      </div>
+      <div class="alert alert-success py-2" th:if="${param.created}">FAQ added successfully.</div>
+      <div class="alert alert-success py-2" th:if="${param.updated}">FAQ updated successfully.</div>
+      <div class="alert alert-success py-2" th:if="${param.deleted}">FAQ removed successfully.</div>
+      <div class="panel p-0 overflow-hidden">
+        <div class="table-responsive" th:if="${!#lists.isEmpty(faqs)}">
+          <table class="table align-middle mb-0">
+            <thead><tr><th>Order</th><th>Question</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+            <tbody>
+              <tr th:each="faq : ${faqs}">
+                <td th:text="${faq.displayOrder}">1</td>
+                <td><strong th:text="${faq.question}">Question</strong><div class="small text-secondary text-truncate" style="max-width: 620px;" th:text="${faq.answer}">Answer</div></td>
+                <td><span class="badge" th:classappend="${faq.published} ? ' text-bg-success' : ' text-bg-secondary'" th:text="${faq.published} ? 'Published' : 'Hidden'">Published</span></td>
+                <td class="text-end text-nowrap"><a class="btn btn-outline-primary btn-sm" th:href="@{'/admin/faqs/' + ${faq.id} + '/edit'}"><i class="bi bi-pencil"></i> Edit</a>
+                  <form class="d-inline" method="post" th:action="@{'/admin/faqs/' + ${faq.id} + '/delete'}" onsubmit="return confirm('Remove this FAQ?');"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button class="btn btn-outline-danger btn-sm" type="submit"><i class="bi bi-trash"></i> Delete</button></form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-secondary text-center py-4 mb-0" th:if="${#lists.isEmpty(faqs)}">No FAQs yet. Add the first one.</p>
+      </div>
+    </main>
+  </body>
+</html>

@@ -70,7 +70,7 @@
       </div>
 
       <div class="row g-4">
-        <div class="col-lg-6">
+        <div class="col-12">
           <div class="panel h-100">
             <div class="section-title">
               <div>
@@ -78,34 +78,17 @@
                 <h2 class="h6 fw-bold mb-0">Quick actions</h2>
               </div>
             </div>
-            <div class="action-grid">
+            <div class="action-grid admin-action-grid">
               <a class="action-tile" href="/admin/users"><i class="bi bi-people"></i><span>Manage users</span></a>
               <a class="action-tile" href="/admin/reports"><i class="bi bi-inbox"></i><span>Review reports</span></a>
               <a class="action-tile" href="/payments"><i class="bi bi-receipt"></i><span>Payments audit</span></a>
               <a class="action-tile" href="/reviews"><i class="bi bi-star"></i><span>Providers &amp; reviews</span></a>
+              <a class="action-tile" href="/admin/faqs"><i class="bi bi-question-circle"></i><span>Manage FAQs</span></a>
             </div>
             <a class="btn btn-outline-primary btn-sm mt-3" href="/admin"><i class="bi bi-shield-check"></i> Open full admin panel</a>
           </div>
         </div>
 
-        <div class="col-lg-6">
-          <div class="panel h-100">
-            <div class="section-title">
-              <div>
-                <p class="text-uppercase text-primary small fw-semibold mb-1">Platform</p>
-                <h2 class="h6 fw-bold mb-0">Application Settings</h2>
-              </div>
-            </div>
-            <div class="data-list">
-              <div class="data-row" th:each="setting : ${data.settings}">
-                <div>
-                  <strong th:text="${setting.key}">key</strong>
-                  <span th:text="${setting.value}">value</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </main>
 

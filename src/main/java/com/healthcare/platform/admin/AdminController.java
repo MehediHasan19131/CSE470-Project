@@ -3,6 +3,7 @@ package com.healthcare.platform.admin;
 import com.healthcare.platform.auth.AuthUser;
 import com.healthcare.platform.auth.AuthUserJdbcRepository;
 import com.healthcare.platform.model.UserRole;
+import com.healthcare.platform.service.FaqService;
 import com.healthcare.platform.review.ReviewService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -37,12 +38,14 @@ public class AdminController {
     private final AdminUserService adminUserService;
     private final AuthUserJdbcRepository authUsers;
     private final ReviewService reviewService;
+    private final FaqService faqService;
 
     public AdminController(AdminUserService adminUserService, AuthUserJdbcRepository authUsers,
-                            ReviewService reviewService) {
+                            ReviewService reviewService, FaqService faqService) {
         this.adminUserService = adminUserService;
         this.authUsers = authUsers;
         this.reviewService = reviewService;
+        this.faqService = faqService;
     }
 
     @GetMapping
@@ -203,5 +206,57 @@ public class AdminController {
         } catch (IllegalStateException | NoSuchElementException e) {
             return "redirect:/admin/users?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
+    }
+
+    @GetMapping("/faqs")
+    public String listFaqs(Authentication authentication, Model model) {
+        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        model.addAttribute("faqs", faqService.allFaqs());
+        return "admin-faqs";
+    }
+
+    @GetMapping("/faqs/new")
+    public String newFaqForm(Authentication authentication, Model model) {
+        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        addFaqForm(model, "Create FAQ", "/admin/faqs", "", "", true, faqService.allFaqs().size() + 1);
+        return "admin-faq-form";
+    }
+
+    @PostMapping("/faqs")
+    public String createFaq(@RequestParam String question, @RequestParam String answer,
+                            @RequestParam(required = false) String published, @RequestParam int displayOrder) {
+        faqService.create(question, answer, "on".equals(published), displayOrder);
+        return "redirect:/admin/faqs?created=true";
+    }
+
+    @GetMapping("/faqs/{id}/edit")
+    public String editFaqForm(@PathVariable Long id, Authentication authentication, Model model) {
+        var faq = faqService.get(id);
+        model.addAttribute("me", authUsers.findByEmail(authentication.getName().trim().toLowerCase()).orElseThrow());
+        addFaqForm(model, "Edit FAQ", "/admin/faqs/" + id, faq.getQuestion(), faq.getAnswer(), faq.isPublished(), faq.getDisplayOrder());
+        return "admin-faq-form";
+    }
+
+    @PostMapping("/faqs/{id}")
+    public String updateFaq(@PathVariable Long id, @RequestParam String question, @RequestParam String answer,
+                            @RequestParam(required = false) String published, @RequestParam int displayOrder) {
+        faqService.update(id, question, answer, "on".equals(published), displayOrder);
+        return "redirect:/admin/faqs?updated=true";
+    }
+
+    @PostMapping("/faqs/{id}/delete")
+    public String deleteFaq(@PathVariable Long id) {
+        faqService.delete(id);
+        return "redirect:/admin/faqs?deleted=true";
+    }
+
+    private void addFaqForm(Model model, String title, String action, String question, String answer,
+                            boolean published, int displayOrder) {
+        model.addAttribute("title", title);
+        model.addAttribute("formAction", action);
+        model.addAttribute("formQuestion", question);
+        model.addAttribute("formAnswer", answer);
+        model.addAttribute("formPublished", published);
+        model.addAttribute("formDisplayOrder", displayOrder);
     }
 }

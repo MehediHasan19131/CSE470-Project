@@ -471,6 +471,8 @@ body {
   gap: 12px;
 }
 
+.admin-action-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
 .action-tile {
   min-height: 92px;
   display: flex;
@@ -544,6 +546,46 @@ body {
 .data-row strong { display: block; color: var(--ink); }
 
 .data-row span { display: block; color: var(--muted); font-size: 0.88rem; }
+
+.settings-list { display: flex; flex-direction: column; gap: 10px; }
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e7eff1;
+  border-radius: 10px;
+  background: #fbfdfd;
+}
+
+.setting-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  color: var(--cyan);
+  background: var(--cyan-100);
+  border-radius: 9px;
+}
+
+.setting-row strong, .setting-row span { display: block; }
+.setting-row strong { color: var(--ink); }
+.setting-row .flex-grow-1 > span { color: var(--muted); font-size: .82rem; }
+
+.setting-status {
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: #8a5900;
+  background: var(--gold-100);
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.setting-status.is-active { color: #117047; background: var(--green-100); }
 
 .sprint-badge {
   display: inline-flex;

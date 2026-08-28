@@ -16,6 +16,9 @@
           <img src="/img/smartcare-logo.svg" alt="SmartCare Healthcare Platform" class="brand-logo-img" width="174" height="46">
         </a>
         <div class="nav-actions">
+          <a href="/dashboard" class="nav-pill" th:if="${user.role.name() == 'PATIENT'}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
           <!-- Patients browse the provider directory; providers see only their own page. -->
           <a href="/reviews" class="nav-pill"
              th:if="${user.role.name() == 'PATIENT' or user.role.name() == 'ADMIN'}">

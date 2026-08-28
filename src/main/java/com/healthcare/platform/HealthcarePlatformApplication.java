@@ -4,6 +4,7 @@ import com.healthcare.platform.model.AppSetting;
 import com.healthcare.platform.model.Appointment;
 import com.healthcare.platform.model.BedAvailability;
 import com.healthcare.platform.model.Campaign;
+import com.healthcare.platform.model.Faq;
 import com.healthcare.platform.model.HospitalDoctorAvailability;
 import com.healthcare.platform.model.HospitalServiceOffering;
 import com.healthcare.platform.model.Medicine;
@@ -17,6 +18,7 @@ import com.healthcare.platform.repository.AppointmentRepository;
 import com.healthcare.platform.repository.BedAvailabilityRepository;
 import com.healthcare.platform.repository.CampaignRepository;
 import com.healthcare.platform.repository.DonationRepository;
+import com.healthcare.platform.repository.FaqRepository;
 import com.healthcare.platform.repository.HospitalDoctorAvailabilityRepository;
 import com.healthcare.platform.repository.HospitalServiceOfferingRepository;
 import com.healthcare.platform.repository.MedicineRepository;
@@ -55,6 +57,7 @@ public class HealthcarePlatformApplication {
             MedicineRepository medicines,
             CampaignRepository campaigns,
             DonationRepository donationsRepo,
+            FaqRepository faqs,
             BedAvailabilityRepository beds,
             HospitalDoctorAvailabilityRepository doctorAvailabilities,
             HospitalServiceOfferingRepository hospitalServices,
@@ -191,6 +194,14 @@ public class HealthcarePlatformApplication {
             createSettingIfMissing(settings, "appointment_reminders", "enabled");
             createSettingIfMissing(settings, "ai_agent_status", "planned");
             createSettingIfMissing(settings, "payment_gateway", "sandbox");
+
+            if (faqs.count() == 0) {
+                faqs.save(new Faq("What is SmartCare?", "SmartCare is an integrated healthcare platform that connects patients with doctors, hospitals, pharmacies, diagnostic centres and ambulance teams.", 1));
+                faqs.save(new Faq("Who can register, and do I need approval?", "Patients can use their accounts right away. Provider accounts are reviewed by an administrator before they are activated.", 2));
+                faqs.save(new Faq("How do I book an appointment?", "Sign in as a patient, open Doctors, choose a provider, and select an available appointment slot.", 3));
+                faqs.save(new Faq("Is my health data protected?", "Access is role-based and health records are only available to you and doctors you explicitly authorize.", 4));
+                faqs.save(new Faq("How do I get more help?", "Contact the support team at support@smartcare.local for help with your account or the platform.", 5));
+            }
         };
     }
 

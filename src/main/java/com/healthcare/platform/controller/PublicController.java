@@ -1,6 +1,8 @@
 package com.healthcare.platform.controller;
 
+import com.healthcare.platform.service.FaqService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -10,9 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class PublicController {
+    private final FaqService faqService;
+
+    public PublicController(FaqService faqService) { this.faqService = faqService; }
 
     @GetMapping("/faq")
-    public String faq() {
+    public String faq(Model model) {
+        model.addAttribute("faqs", faqService.publicFaqs());
         return "faq";
     }
 }
