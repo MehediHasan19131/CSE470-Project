@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/appointments")
@@ -61,10 +62,11 @@ public class AppointmentController {
     }
 
     @GetMapping("/book")
-    public String bookForm(Authentication authentication, Model model) {
+    public String bookForm(@RequestParam(required = false) Long doctorId, Authentication authentication, Model model) {
         User user = currentUserService.get(authentication);
         model.addAttribute("user", user);
         model.addAttribute("doctors", listingService.doctors(null, null));
+        model.addAttribute("selectedDoctorId", doctorId);
         return "sprint2/appointments/book";
     }
 
@@ -73,9 +75,15 @@ public class AppointmentController {
             @RequestParam Long doctorId,
             @RequestParam String scheduledAt,
             @RequestParam(required = false) String reason,
-            Authentication authentication) {
+            @RequestParam(defaultValue = "IN_PERSON") String visitType,
+            Authentication authentication, RedirectAttributes redirectAttributes) {
         User patient = currentUserService.get(authentication);
-        appointmentService.book(patient, doctorId, LocalDateTime.parse(scheduledAt), reason);
+        try {
+            appointmentService.book(patient, doctorId, LocalDateTime.parse(scheduledAt), reason, visitType);
+        } catch (IllegalArgumentException | IllegalStateException exception) {
+            redirectAttributes.addFlashAttribute("error", exception.getMessage());
+            return "redirect:/appointments/book?doctorId=" + doctorId;
+        }
         return "redirect:/appointments";
     }
 

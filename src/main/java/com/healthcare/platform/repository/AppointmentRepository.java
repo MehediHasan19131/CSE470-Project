@@ -2,6 +2,7 @@ package com.healthcare.platform.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import com.healthcare.platform.model.Appointment;
 
@@ -13,4 +14,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     // newest first.
     List<Appointment> findByPatientIdOrderByScheduledAtDesc(Long patientId);
     List<Appointment> findByDoctorIdOrderByScheduledAtDesc(Long doctorId);
+    long countByDoctorIdAndScheduledAtBetweenAndStatusNot(Long doctorId, LocalDateTime from, LocalDateTime to, String status);
 }

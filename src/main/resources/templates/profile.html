@@ -30,6 +30,10 @@
             <i class="bi bi-star"></i> My Reviews
           </a>
           <a href="/blog" class="nav-pill"><i class="bi bi-journal-richtext"></i> Health Blog</a>
+          <a href="/notifications" class="nav-pill position-relative" aria-label="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-danger" th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount}">0</span>
+          </a>
           <span class="nav-divider" aria-hidden="true"></span>
           <a class="nav-user" href="/profile">
             <span class="nav-user-avatar" th:text="${user.fullName != null and !user.fullName.isEmpty()

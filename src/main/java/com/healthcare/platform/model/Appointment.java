@@ -29,6 +29,9 @@ public class Appointment {
     private LocalDateTime scheduledAt;
     private String status = "pending";
 
+    @Column(nullable = false, length = 20)
+    private String visitType = "IN_PERSON";
+
     @Column(columnDefinition = "TEXT")
     private String reason;
 
@@ -43,6 +46,8 @@ public class Appointment {
     public void setScheduledAt(LocalDateTime scheduledAt) { this.scheduledAt = scheduledAt; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getVisitType() { return visitType; }
+    public void setVisitType(String visitType) { this.visitType = visitType; }
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
     public LocalDateTime getCreatedAt() { return createdAt; }

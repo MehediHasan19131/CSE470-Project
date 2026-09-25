@@ -29,6 +29,10 @@
                 <i class="bi bi-calendar-event"></i>
                 <span th:text="${#temporals.format(a.scheduledAt, 'dd MMM yyyy, hh:mm a')}">Date</span>
               </div>
+              <div class="appointment-detail">
+                <i th:class="${a.visitType == 'TELEMEDICINE'} ? 'bi bi-camera-video' : 'bi bi-hospital'"></i>
+                <span th:text="${a.visitType == 'TELEMEDICINE'} ? 'Telemedicine' : 'In-person visit'">Visit type</span>
+              </div>
               <div class="appointment-detail" th:if="${a.reason}">
                 <i class="bi bi-chat-quote"></i>
                 <span th:text="${a.reason}">Reason</span>
@@ -55,7 +59,7 @@
                   <i class="bi bi-check-circle"></i> Confirm
                 </button>
               </form>
-              <form method="post" th:action="@{/appointments/{id}/start-call(id=${a.id})}" class="d-inline" th:if="${a.status == 'confirmed'}">
+              <form method="post" th:action="@{/appointments/{id}/start-call(id=${a.id})}" class="d-inline" th:if="${a.status == 'confirmed' and a.visitType == 'TELEMEDICINE'}">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <button class="btn btn-sm btn-primary" type="submit">
                   <i class="bi bi-camera-video"></i> Start video call

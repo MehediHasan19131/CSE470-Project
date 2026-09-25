@@ -97,6 +97,11 @@ public class ReviewService {
 
         AuthUser target = authUsers.findById(targetId)
                 .orElseThrow(() -> new NoSuchElementException("That provider doesn't exist."));
+        AuthUser reviewer = authUsers.findById(reviewerId)
+                .orElseThrow(() -> new NoSuchElementException("Reviewer doesn't exist."));
+        if (reviewer.getRole() == UserRole.ADMIN) {
+            throw new IllegalArgumentException("Administrators can browse reviews but cannot submit them.");
+        }
 
         if (target.getRole() == UserRole.PATIENT || target.getRole() == UserRole.ADMIN) {
             throw new IllegalArgumentException(
