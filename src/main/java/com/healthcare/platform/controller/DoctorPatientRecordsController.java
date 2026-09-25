@@ -1,6 +1,6 @@
 package com.healthcare.platform.controller;
 
-import com.healthcare.platform.healthprofile.HealthProfileService;
+import com.healthcare.platform.service.healthprofile.HealthProfileService;
 import com.healthcare.platform.model.RecordAccessGrant;
 import com.healthcare.platform.model.User;
 import com.healthcare.platform.repository.UserRepository;

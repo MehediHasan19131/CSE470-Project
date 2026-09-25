@@ -1,7 +1,7 @@
 package com.healthcare.platform.controller;
 
-import com.healthcare.platform.auth.AuthUser;
-import com.healthcare.platform.auth.AuthUserJdbcRepository;
+import com.healthcare.platform.model.auth.AuthUser;
+import com.healthcare.platform.repository.auth.AuthUserJdbcRepository;
 import com.healthcare.platform.dto.LoginRequest;
 import com.healthcare.platform.dto.LoginResponse;
 import com.healthcare.platform.dto.UserResponse;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Session-based login (browser). Uses AuthUserJdbcRepository (plain JDBC) - no ORM.
- * See com.healthcare.platform.auth.TokenAuthController for the separate, stateless
+ * See com.healthcare.platform.controller.auth.TokenAuthController for the separate, stateless
  * JWT login used by API clients.
  */
 @RestController
